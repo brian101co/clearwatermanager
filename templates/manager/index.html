@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %} 
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h1 class="title text-center mb-0 pt-4 pb-2 border-bottom border-primary">Clearwater Manager</h1>
+            <div class="container map">
+                {% include 'partials/_map.html' %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            <div class="d-flex justify-content-left align-items-center">
+              <a href="{% url 'calendar' %}" class="btn pure-material-button-contained bg-primary mr-3" >Calendar</a>
+              <button type="button" class="btn-plus bg-primary" data-toggle="modal" data-target="#customer-form-modal"><i class="fas fa-plus"></i></button>
+            </div>
+            <h2 class="text-center mb-3">Reservations</h2>
+            <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Check-in</th>
+                    <th scope="col">Check-out</th>
+                    <th scope="col">Lot</th>
+                    <th scope="col">Phone Number</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for customer in customers %}
+                  <tr>
+                    <th scope="row">{{ customer.id }}</th>
+                    <td class="name"><button type="button" data-toggle="modal" data-target="#customer-delete" class="btn-delete">{{ customer.name }}</button></td>
+                    <td class="checkin">{{ customer.start|date:"M d Y" }}</td>
+                    <td class="checkout">{{ customer.end|date:"M d Y" }}</td>
+                    <td class="site">{{ customer.site }}</td>
+                    <td>{{ customer.phoneNum }}</td>
+                  </tr>
+                    {% endfor %}
+                </tbody>
+              </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="customer-form-modal" tabindex="-1" role="dialog" aria-labelledby="customer-form-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="form">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add Reservation</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            {% include 'partials/_add-customer-form.html' %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="modal fade" id="customer-delete" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="form">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Delete Reservation</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form class="delete-form" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="primary_key">
+                <button type="button" class="btn pure-material-button-contained bg-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn pure-material-button-contained bg-danger">Delete</button>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block extraJS %}
+<script src="{% static 'js/main.js' %}"></script>
+{% endblock %}

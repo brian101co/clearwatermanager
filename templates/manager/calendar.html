@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extraCSS %}
+<link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.css" />
+{% endblock %}
+
+{% block content %} 
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 border mt-3 shadow-sm">
+            <h1 class="title text-center mt-3">Calendar</h1>
+            <div id="menu">
+                <span id="menu-navi">
+                  <a href="{% url 'home' %}" class="btn pure-material-button-contained bg-primary mb-1">Map</a>
+                  <button type="button" class="btn pure-material-button-contained bg-primary mb-1" onclick="prev()">
+                    <i class="fas fa-arrow-left"></i>
+                  </button>
+                  <button type="button" class="btn pure-material-button-contained bg-primary mb-1" onclick="next()">
+                    <i class="fas fa-arrow-right"></i>
+                  </button>
+                </span>
+                <span id="renderRange" class="text-center lead"></span>
+              </div>
+              <input type="hidden" name="events" value="{% url 'events' %}">
+              <div id="calendar"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block extraJS %}
+<script src="https://uicdn.toast.com/tui.code-snippet/v1.5.2/tui-code-snippet.min.js"></script>
+<script src="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.js"></script>
+<script>
+  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  let month = document.querySelector('#renderRange');
+  month.innerHTML = dateFns.format(Date.now(), 'MMMM');
+  
+  let cal = new tui.Calendar('#calendar', {
+      defaultView: 'month',
+      taskView: true,
+  });
+  
+  function prev() {
+      let currentMonth = month.innerHTML;
+      let index = months.indexOf(currentMonth);
+      if ( index == 0 ) {
+          month.innerHTML = months[11];
+      } else {
+          month.innerHTML = months[index - 1];
+      }
+      cal.prev();
+  }
+  
+  function next() {
+      let currentMonth = month.innerHTML;
+      let index = months.indexOf(currentMonth);
+      if ( index == 11 ) {
+          month.innerHTML = months[0];
+      } else {
+          month.innerHTML = months[index + 1];
+      }
+      cal.next();
+  }
+
+  function getReservations() {
+    let url = document.querySelector('[name="events"]').value;
+
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        cal.createSchedules(data);
+      })
+      .catch(err => console.log(err))
+  }
+
+  getReservations()
+
+</script>
+{% endblock %}
