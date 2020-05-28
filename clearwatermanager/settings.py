@@ -125,3 +125,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIR = [
     os.path.join(BASE_DIR, 'static')
 ]
+
+try: 
+    from .local_settings import *
+except ImportError:
+    print('Looks like no local file you must be on produciton')
