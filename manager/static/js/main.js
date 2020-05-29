@@ -34,7 +34,7 @@ window.onload = () => {
     names.forEach(name => {
         name.addEventListener('click', (event) => {
             let id = parseInt(event.target.parentElement.previousElementSibling.innerText);
-            document.querySelector('.delete-form').setAttribute("action", `dashboard/delete/${id}`);
+            document.querySelector('.delete-form').setAttribute("action", `delete/${id}`);
         })
     });
     

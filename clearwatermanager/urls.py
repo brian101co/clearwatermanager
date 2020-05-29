@@ -9,5 +9,6 @@ urlpatterns = [
     path('events/', views.event, name="events"),
     path('dashboard/delete/<int:id>', views.delete, name="delete"),
     path('addcustomer/', views.addCustomer, name="addcustomer"),
+    path('avaliable/', views.getAvaliability, name="avaliable"),
     path('admin/', admin.site.urls),
 ]
