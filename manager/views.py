@@ -120,11 +120,10 @@ def getAvaliability(request):
                         overlap.append(True)
 
                 if True in overlap:
-                    messages.error(request, 'Lot is Unavaliable.')
+                    messages.error(request, 'Unavaliable.')
                     return redirect('home')
                 else:
-                    customer = Customer(name=name, site=lot, title=name, start=start, end=end, phoneNum=phoneNum)
-                    customer.save()
+                    messages.success(request, 'Avaliable.')
                     return redirect('home') 
     else:
         return redirect('loginuser')

@@ -24,6 +24,11 @@
                             {{ message }}
                         </div>
                     {% endif %}
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                        <div class="alert alert-success" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endif %}
                 {% endfor %}
             {% endif %}
             <div class="d-flex justify-content-left align-items-center">
