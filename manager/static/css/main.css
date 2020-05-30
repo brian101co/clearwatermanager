@@ -6,6 +6,21 @@ body {
     margin-top: -4.0rem;
 }
 
+.popup-parent {
+    position: relative;
+}
+
+.popup {
+    position: absolute;
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    top: -10rem;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+}
+
 .modal {
     margin: 0 auto;
 }
