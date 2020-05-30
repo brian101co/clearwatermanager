@@ -50,12 +50,11 @@
                 left: 'title',
               },
             eventRender: function(info) {
-                console.log(info);
                 info.el.innerHTML += `<div class="card popup d-none">
                                         <h5 class="mb-0">${info.event.title}</h5>
                                         <hr class="mt-1">
-                                        <p><b>Check-In:</b> ${dateFns.format(info.event.start, 'MMM-d-YYYY')}</p>
-                                        <p><b>Check-Out:</b> ${dateFns.format(info.event.end, 'MMM-d-YYYY')}</p>
+                                        <p><b>Check-In:</b> ${dateFns.format(info.event.start, 'MMM d, YYYY')}</p>
+                                        <p><b>Check-Out:</b> ${dateFns.format(info.event.end, 'MMM d, YYYY')}</p>
                                         <p><b>Lot:</b> ${info.event.extendedProps.site}</p>
                                         <p><b>Telephone:</b> ${info.event.extendedProps.phoneNum}</p>
                                       </div>`;
