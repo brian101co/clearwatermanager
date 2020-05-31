@@ -44,6 +44,29 @@ def delete(request, id):
     else:
         return redirect('loginuser')
 
+def edit(request, id):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            name = request.POST.get('name')
+            start = request.POST.get('checkin')
+            end = request.POST.get('checkout')
+            lot = request.POST.get('lot')
+            phoneNum = request.POST.get('phone')
+
+            reservation = Customer.objects.get(pk=id)
+            
+            reservation.name = name
+            reservation.title = name
+            reservation.site = lot
+            reservation.start = start
+            reservation.end = end
+            reservation.phoneNum = phoneNum
+
+            reservation.save()
+            return redirect('home')
+    else:
+        return redirect('loginuser')
+
 
 def addCustomer(request):
     if request.user.is_authenticated:
@@ -109,6 +132,14 @@ def event(request):
         events = Customer.objects.all().values('id', 'title', 'start', 'end', 'site', 'phoneNum')
         events_list = list(events)
         return JsonResponse(events_list, safe=False)
+    else:
+        return redirect('loginuser')
+
+def getReservation(request, id):
+    if request.user.is_authenticated:
+        reservation = Customer.objects.filter(pk=id).all().values('id', 'title', 'start', 'end', 'site', 'phoneNum')
+        resList = list(reservation)
+        return JsonResponse(resList, safe=False)
     else:
         return redirect('loginuser')
 
