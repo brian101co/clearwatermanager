@@ -55,7 +55,8 @@
                 map: {
                   text: 'map',
                   click: function() {
-                    window.location.href = "http://localhost:8000/dashboard/"
+                    let url = window.location.origin + "/dashboard/";
+                    window.location.href = url;
                   }
                 }
               },

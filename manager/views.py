@@ -24,15 +24,18 @@ def calendar(request):
 
 
 def loginuser(request):
-    if request.method == 'GET':
-        return render(request, 'manager/login.html')
+    if request.user.is_authenticated:
+        return redirect('home')
     else:
-        user = authenticate(request, username=request.POST['login'], password=request.POST['password'])
-        if user is None:
-            return render(request, 'manager/login.html', {'error': 'Incorrect username or password'})
+        if request.method == 'GET':
+            return render(request, 'manager/login.html')
         else:
-            login(request, user)
-            return render(request, 'manager/index.html')
+            user = authenticate(request, username=request.POST['login'], password=request.POST['password'])
+            if user is None:
+                return render(request, 'manager/login.html', {'error': 'Incorrect username or password'})
+            else:
+                login(request, user)
+                return render(request, 'manager/index.html')
 
 
 def delete(request, id):
