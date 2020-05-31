@@ -2,7 +2,7 @@ from django.db import models
 
 class Customer(models.Model):
     name = models.CharField(max_length=255)
-    site = models.IntegerField(null=True)
+    site = models.CharField(max_length=4)
     title = models.CharField(max_length=255)
     start = models.DateTimeField()
     end = models.DateTimeField()

@@ -12,6 +12,14 @@
         <div class="col-sm-12 mt-3 p-4 shadow">
             <h1 class="title text-center mt-1">Calendar</h1>
             <div id='calendar'></div>
+            <div class="card popup d-none">
+              <h5 class="mb-0"></h5>
+              <hr class="mt-1">
+              <p class="checkin"></p>
+              <p class="checkout"></p>
+              <p class="lot"></p>
+              <p class="tele"></p>
+            </div>
         </div>
     </div>
 </div>
@@ -36,6 +44,12 @@
         .then(data => {
           var calendar = new FullCalendar.Calendar(calendarEl, {
             plugins: [ 'dayGrid' ],
+            eventLimit: true,
+            views: {
+              dayGrid: {
+                eventLimit: 4
+              }
+            },
             events: data,
             customButtons: {
                 map: {
@@ -50,18 +64,20 @@
                 left: 'title',
               },
             eventRender: function(info) {
-                info.el.innerHTML += `<div class="card popup d-none">
-                                        <h5 class="mb-0">${info.event.title}</h5>
-                                        <hr class="mt-1">
-                                        <p><b>Check-In:</b> ${dateFns.format(info.event.start, 'MMM d, YYYY')}</p>
-                                        <p><b>Check-Out:</b> ${dateFns.format(info.event.end, 'MMM d, YYYY')}</p>
-                                        <p><b>Lot:</b> ${info.event.extendedProps.site}</p>
-                                        <p><b>Telephone:</b> ${info.event.extendedProps.phoneNum}</p>
-                                      </div>`;
-
-                info.el.classList.add('popup-parent');
                 info.el.addEventListener('click', () => {
-                    info.el.querySelector('.popup').classList.toggle('d-none');
+                  let popup = document.querySelector('.popup');
+                  popup.querySelector('h5').innerHTML = "";
+                  popup.querySelector('.checkin').innerHTML = "";
+                  popup.querySelector('.checkout').innerHTML = "";
+                  popup.querySelector('.lot').innerHTML = "";
+                  popup.querySelector('.tele').innerHTML = "";
+
+                  popup.querySelector('h5').innerHTML += info.event.title;
+                  popup.querySelector('.checkin').innerHTML += `<b>Check-In:</b> ${dateFns.format(info.event.start, 'MMM d, YYYY')}`;
+                  popup.querySelector('.checkout').innerHTML += `<b>Check-Out:</b> ${dateFns.format(info.event.end, 'MMM d, YYYY')}`;
+                  popup.querySelector('.lot').innerHTML += `<b>Lot:</b> ${info.event.extendedProps.site}`;
+                  popup.querySelector('.tele').innerHTML += `<b>Telephone:</b> ${info.event.extendedProps.phoneNum}`;
+                  popup.classList.toggle('d-none');
                 })
             },
           });

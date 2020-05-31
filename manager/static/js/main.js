@@ -8,6 +8,7 @@ window.onload = () => {
     
     let activelots = [];
     
+    // Building an Array of active lots based on current reservations in the reservation table
     for (let i = 0; i < siteNodes.length; i++) {
         let obj = {};
         obj.site = siteNodes[i].innerText;
@@ -16,9 +17,14 @@ window.onload = () => {
         activelots.push(obj);
     }
 
+    // Looping through each lot on the map
     lotNodes.forEach(lot => {
+        // Lot Number
         let lotNum = lot.getAttribute("data-site"); 
-        let search = activelots.find(element => element.site == lotNum);
+        // Checking if lot number is in the active lots array to see if it needs to be highlighted
+        let search = activelots.find(element => {
+            return element.site == lotNum
+        });
         
         if (search) {
             if ( dateFns.isAfter(search.checkout, currentTime) ) {
@@ -37,7 +43,6 @@ window.onload = () => {
             document.querySelector('.delete-form').setAttribute("action", `delete/${id}`);
         })
     });
-    
 }
 
 

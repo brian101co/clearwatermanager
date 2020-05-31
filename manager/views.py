@@ -27,13 +27,12 @@ def loginuser(request):
     if request.method == 'GET':
         return render(request, 'manager/login.html')
     else:
-        user = authenticate(
-            request, username=request.POST['login'], password=request.POST['password'])
+        user = authenticate(request, username=request.POST['login'], password=request.POST['password'])
         if user is None:
             return render(request, 'manager/login.html', {'error': 'Incorrect username or password'})
         else:
             login(request, user)
-            return redirect('home')
+            return render(request, 'manager/index.html')
 
 
 def delete(request, id):
