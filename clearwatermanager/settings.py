@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'kpy&c9@wgn)+)k6u5p^3d7!4=729rckq-vk7%%op@%p((_ucqc'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -76,8 +76,11 @@ WSGI_APPLICATION = 'clearwatermanager.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'clearwaterrv$default',
+        'USER': 'clearwaterrv',
+        'PASSWORD': os.getenv("DB_PASS"),
+        'HOST': 'clearwaterrv.mysql.pythonanywhere-services.com',
     }
 }
 
