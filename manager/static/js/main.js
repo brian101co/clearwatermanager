@@ -24,10 +24,23 @@ window.onload = () => {
         // Lot Number
         let lotNum = lot.getAttribute("data-site"); 
         // Checking if lot number is in the active lots array to see if it needs to be highlighted
-        let search = activelots.find(element => {
-            return element.site == lotNum
-        });
-        
+        let filterdActiveLots = activelots.filter(elem => elem.site == lotNum);
+
+        let search;
+        if (filterdActiveLots.length == 1) {
+            search = activelots.find(element => {
+                return element.site == lotNum
+            });
+        } else {
+            filterdActiveLots.forEach(lot => {
+                if ( dateFns.isAfter(lot.checkout, currentTime) ) {
+                    if ( dateFns.isBefore(lot.checkin, currentTime) ) {
+                        document.querySelector(`[data-site="${lot.site}"]`).setAttribute("id", "active");
+                    } 
+                } 
+            });
+        }
+      
         if (search) {
             if ( dateFns.isAfter(search.checkout, currentTime) ) {
                 if ( dateFns.isBefore(search.checkin, currentTime) ) {
@@ -62,6 +75,8 @@ window.onload = () => {
                 editForm.querySelector('[name="name"]').value = data[0].title;
                 editForm.querySelector('[name="lot"]').value = data[0].site;
                 editForm.querySelector('[name="phone"]').value = data[0].phoneNum;
+                editForm.querySelector('[name="checkin"]').value = data[0].start.slice(0, -1);
+                editForm.querySelector('[name="checkout"]').value = data[0].end.slice(0, -1);
             })
             .catch(err => console.log(err));
     });
@@ -75,6 +90,14 @@ window.onload = () => {
             }, 300);
         });
     });
+
+    // let url = window.location.origin + "/api/reservations/";
+    // fetch(url)
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         document.querySelector('.badge').innerHTML = data;
+    //     })
+    //     .catch(err => console.log(err));
 }
 
 

@@ -12,5 +12,6 @@ urlpatterns = [
     path('dashboard/edit/<int:id>', views.edit, name="edit"),
     path('addcustomer/', views.addCustomer, name="addcustomer"),
     path('avaliable/', views.getAvaliability, name="avaliable"),
+    path('api/', include('api.urls')),
     path('admin/', admin.site.urls),
 ]

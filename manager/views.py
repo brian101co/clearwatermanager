@@ -11,7 +11,12 @@ from django.utils import timezone
 def index(request):
     if request.user.is_authenticated:
         customers = Customer.objects.all()
-        return render(request, 'manager/index.html', {"customers": customers})
+        reservations = Customer.objects.all().count()
+        return render(request, 'manager/index.html', 
+        {
+            "customers": customers, 
+            "totalReservations":reservations
+        })
     else:
         return redirect('loginuser')
 
