@@ -6,12 +6,19 @@ from django.contrib.auth import login, authenticate
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from dateutil import parser
 from django.utils import timezone
+from datetime import date, timedelta
 
 
 def index(request):
     if request.user.is_authenticated:
+        today = date.today()
+        checkedout = Customer.objects.filter(end__lte=today).all()
+        checkedout.delete()
+
         customers = Customer.objects.all()
+
         reservations = Customer.objects.all().count()
+
         return render(request, 'manager/index.html', 
         {
             "customers": customers, 
@@ -133,24 +140,6 @@ def addCustomer(request):
                 return redirect('home')
     else:
         return redirect('loginuser')
-
-
-def event(request):
-    if request.user.is_authenticated:
-        events = Customer.objects.all().values('id', 'title', 'start', 'end', 'site', 'phoneNum')
-        events_list = list(events)
-        return JsonResponse(events_list, safe=False)
-    else:
-        return redirect('loginuser')
-
-def getReservation(request, id):
-    if request.user.is_authenticated:
-        reservation = Customer.objects.filter(pk=id).all().values('id', 'title', 'start', 'end', 'site', 'phoneNum')
-        resList = list(reservation)
-        return JsonResponse(resList, safe=False)
-    else:
-        return redirect('loginuser')
-
 
 def getAvaliability(request):
     if request.user.is_authenticated:

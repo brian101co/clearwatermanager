@@ -37,7 +37,6 @@
 
     function getReservations() {
       let url = document.querySelector('[name="events"]').value;
-      console.log('In reservations')
   
       fetch(url)
         .then(response => response.json())

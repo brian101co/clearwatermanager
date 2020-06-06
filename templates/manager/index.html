@@ -31,6 +31,7 @@
                     {% endif %}
                 {% endfor %}
             {% endif %}
+            <!-- Toolbar -->
             <div class="toolbar d-flex justify-content-between align-items-center">
               <div class="d-flex justify-content-left align-items-center">
                 <a href="{% url 'calendar' %}" class="btn pure-material-button-contained bg-primary mr-3" >Calendar</a>
@@ -41,6 +42,10 @@
                 Total Reservations
                 <span class="badge badge-light badge-pill">{{ totalReservations }}</span>
               </div>
+            </div>
+            <!-- Notifications -->
+            <div class="notifications-container">
+
             </div>
               <!-- Reservations -->
               <h2 class="text-center mb-3">Reservations</h2>

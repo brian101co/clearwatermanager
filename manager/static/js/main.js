@@ -68,7 +68,7 @@ window.onload = () => {
         editForm.classList.toggle('d-none');
         editForm.setAttribute("action", `edit/${id}`);
 
-        let url = window.location.origin + "/reservation/" + id;
+        let url = window.location.origin + "/api/reservation/" + id;
         fetch(url)
             .then(response => response.json())
             .then(data => {
@@ -91,13 +91,25 @@ window.onload = () => {
         });
     });
 
-    // let url = window.location.origin + "/api/reservations/";
-    // fetch(url)
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         document.querySelector('.badge').innerHTML = data;
-    //     })
-    //     .catch(err => console.log(err));
+    
+    let url = window.location.origin + "/api/notifications/";
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            if (data[0].title) {
+                document.querySelector('.notifications-container').innerHTML = `<h2 class="text-center mt-4">Checkout Tomorrow</h2>`
+            }
+            data.forEach(reservation => {
+                let time = new Date(reservation.end);
+                document.querySelector('.notifications-container').innerHTML += `<div class="alert alert-primary mt-3" role="alert">
+                                                                                    ${reservation.title} | Site: ${reservation.site} | Checkout: ${time.toDateString()}
+                                                                                 </div>`;                                                               
+            });
+        })
+        .catch(err => console.log(err));
+
+
+
 }
 
 
