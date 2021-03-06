@@ -1028,7 +1028,7 @@ Lots taken from Flatly (MIT): https://bootswatch.com/4/flatly/bootstrap.css
   /* Vertical Scroller & Containers
   --------------------------------------------------------------------------------------------------*/
   /* kill the scrollbars and allow natural height */
-  .fc-scroller,
+.fc-scroller,
 .fc-day-grid-container,
 .fc-time-grid-container {
     /* */

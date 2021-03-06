@@ -4,201 +4,201 @@
 
 {% block content %}
 <header>
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12">
-                <h1 class="title mt-3 mb-0 pb-3">Clearwater Manager</h1>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12">
-                {% include 'partials/_map.html' %}
-            </div>
-        </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <h1 class="title mt-3 mb-0 pb-3">Clearwater Manager</h1>
+      </div>
     </div>
+    <div class="row">
+      <div class="col-sm-12">
+        {% include 'partials/_map.html' %}
+      </div>
+    </div>
+  </div>
 </header>
 
 <section>
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12">
-                <!-- Form Error Messages -->
-                {% if messages %}
-                    {% for message in messages %}
-                        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-                            <div class="alert alert-danger" role="alert">
-                                {{ message }}
-                            </div>
-                        {% endif %}
-                        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
-                            <div class="alert alert-success" role="alert">
-                                {{ message }}
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-
-                <!-- Tool Bar -->
-                <div class="toolbar">
-                    <div class="d-flex justify-content-left align-items-center">
-                      <a href="{% url 'calendar' %}" class="btn pure-material-button-contained bg-primary mr-3" >Calendar</a>
-                      <a href="{% url 'avaliable' %}" class="btn pure-material-button-contained bg-primary mr-3" data-toggle="modal" data-target="#check-avaliability" >Avaliablity</a>
-                      <button type="button" class="btn-plus bg-primary" data-toggle="modal" data-target="#customer-form-modal"><i class="fas fa-plus"></i></button>
-                    </div>
-                    <div class="btn btn-dark mt-2">
-                      Total Reservations
-                      <span class="badge badge-light badge-pill">{{ totalReservations }}</span>
-                    </div>
-                </div>
-
-                   <!-- Notifications -->
-                <div class="notifications-container mt-4">
-                    <h2 class="title-secondary">Checkout</h2>
-                </div>
-            </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <!-- Form Error Messages -->
+        {% if messages %}
+        {% for message in messages %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+        <div class="alert alert-danger" role="alert">
+          {{ message }}
         </div>
+        {% endif %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+        <div class="alert alert-success" role="alert">
+          {{ message }}
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+
+        <!-- Tool Bar -->
+        <div class="toolbar">
+          <div class="d-flex justify-content-left align-items-center">
+            <a href="{% url 'calendar' %}" class="btn pure-material-button-contained bg-primary mr-3">Calendar</a>
+            <a href="{% url 'avaliable' %}" class="btn pure-material-button-contained bg-primary mr-3" data-toggle="modal" data-target="#check-avaliability">Avaliablity</a>
+            <button type="button" class="btn-plus bg-primary" data-toggle="modal" data-target="#customer-form-modal"><i class="fas fa-plus"></i></button>
+          </div>
+          <div class="btn btn-dark mt-2">
+            Total Reservations
+            <span class="badge badge-light badge-pill">{{ totalReservations }}</span>
+          </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="notifications-container mt-4">
+          <h2 class="title-secondary">Checkout</h2>
+        </div>
+      </div>
     </div>
+  </div>
 </section>
 
 <section id="reservation-table" class="">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12">
-                <h2 class="text-center mb-3">Reservations</h2>
-              <table id="tb" class="table table-striped display">
-                  <thead>
-                    <tr>
-                      <th scope="col" class="d-none">db-id</th>
-                      <th scope="col" class="mobile-hidden">#</th>
-                      <th scope="col">Name</th>
-                      <th scope="col">Check-in</th>
-                      <th scope="col">Check-out</th>
-                      <th scope="col">Lot</th>
-                      <th scope="col">Phone Number</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                      {% for customer in customers %}
-                    <tr>
-                      <th scope="row" class="d-none">{{ customer.id }}</th>
-                      <th scope="row" class="mobile-hidden">{{ forloop.counter }}</th>
-                      <td class="name"><button type="button" data-toggle="modal" data-target="#customer-delete" class="btn-delete">{{ customer.name }}</button></td>
-                      <td class="checkin">{{ customer.start|date:"M d Y" }}</td>
-                      <td class="checkout">{{ customer.end|date:"M d Y" }}</td>
-                      <td class="site">{{ customer.site }}</td>
-                      <td>{{ customer.phoneNum }}</td>
-                    </tr>
-                      {% endfor %}
-                  </tbody>
-                </table>
-            </div>
-        </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <h2 class="text-center mb-3">Reservations</h2>
+        <table id="tb" class="table table-striped display">
+          <thead>
+            <tr>
+              <th scope="col" class="d-none">db-id</th>
+              <th scope="col" class="mobile-hidden">#</th>
+              <th scope="col">Name</th>
+              <th scope="col">Check-in</th>
+              <th scope="col">Check-out</th>
+              <th scope="col">Lot</th>
+              <th scope="col">Phone Number</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for customer in customers %}
+            <tr>
+              <th scope="row" class="d-none">{{ customer.id }}</th>
+              <th scope="row" class="mobile-hidden">{{ forloop.counter }}</th>
+              <td class="name"><button type="button" data-toggle="modal" data-target="#customer-delete" class="btn-delete">{{ customer.name }}</button></td>
+              <td class="checkin">{{ customer.start|date:"M d Y" }}</td>
+              <td class="checkout">{{ customer.end|date:"M d Y" }}</td>
+              <td class="site">{{ customer.site }}</td>
+              <td>{{ customer.phoneNum }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
+  </div>
 </section>
 
 <section id="Longterm" class="mb-5">
-    <div class="container py-5">
-        <div class="row">
-            <div class="col-sm-12">
-                <h2 class="text-center mb-3">Longterm Residents</h2>
-              <table id="tb-2" class="table table-striped display">
-                  <thead>
-                    <tr>
-                      <th scope="col" class="d-none">db-id</th>
-                      <th scope="col" class="mobile-hidden">#</th>
-                      <th scope="col">Name</th>
-                      <th scope="col">Check-in</th>
-                      <th scope="col">Check-out</th>
-                      <th scope="col">Lot</th>
-                      <th scope="col">Phone Number</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                      {% for resident in longterms %}
-                    <tr>
-                      <th scope="row" class="d-none">{{ resident.id }}</th>
-                      <th scope="row" class="mobile-hidden">{{ forloop.counter }}</th>
-                      <td class="name"><button type="button" data-toggle="modal" data-target="#customer-delete" class="btn-delete">{{ resident.name }}</button></td>
-                      <td class="checkin">{{ resident.start|date:"M d Y" }}</td>
-                      <td class="checkout">{{ resident.end|date:"M d Y" }}</td>
-                      <td class="site">{{ resident.site }}</td>
-                      <td>{{ resident.phoneNum }}</td>
-                    </tr>
-                      {% endfor %}
-                  </tbody>
-                </table>
-            </div>
-        </div>
+  <div class="container py-5">
+    <div class="row">
+      <div class="col-sm-12">
+        <h2 class="text-center mb-3">Longterm Residents</h2>
+        <table id="tb-2" class="table table-striped display">
+          <thead>
+            <tr>
+              <th scope="col" class="d-none">db-id</th>
+              <th scope="col" class="mobile-hidden">#</th>
+              <th scope="col">Name</th>
+              <th scope="col">Check-in</th>
+              <th scope="col">Check-out</th>
+              <th scope="col">Lot</th>
+              <th scope="col">Phone Number</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for resident in longterms %}
+            <tr>
+              <th scope="row" class="d-none">{{ resident.id }}</th>
+              <th scope="row" class="mobile-hidden">{{ forloop.counter }}</th>
+              <td class="name"><button type="button" data-toggle="modal" data-target="#customer-delete" class="btn-delete">{{ resident.name }}</button></td>
+              <td class="checkin">{{ resident.start|date:"M d Y" }}</td>
+              <td class="checkout">{{ resident.end|date:"M d Y" }}</td>
+              <td class="site">{{ resident.site }}</td>
+              <td>{{ resident.phoneNum }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
+  </div>
 </section>
 
 <div class="modal fade" id="customer-form-modal" tabindex="-1" role="dialog" aria-labelledby="customer-form-modal" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="form">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Add Reservation</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-            {% include 'partials/_add-customer-form.html' %}
-        </div>
+  <div class="modal-dialog modal-dialog-centered" role="form">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add Reservation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {% include 'partials/_add-customer-form.html' %}
       </div>
     </div>
   </div>
+</div>
 
 <div class="modal fade" id="customer-delete" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="form">
-      <div class="modal-content">
-        <div class="modal-header edit-header">
-          <h5 class="modal-title">Delete Reservation</h5>
-        </div>
-        <div class="modal-body">
-            {% include 'partials/_edit-reservation.html' %}
-            <form class="delete-form" method="POST">
-                {% csrf_token %}
-                <input type="hidden" name="primary_key">
-                <button type="button" class="btn pure-material-button-contained bg-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="edit btn pure-material-button-contained bg-primary">Edit</button>
-                <button type="submit" class="btn pure-material-button-contained bg-danger">Delete</button>
-            </form>
-        </div>
+  <div class="modal-dialog modal-dialog-centered" role="form">
+    <div class="modal-content">
+      <div class="modal-header edit-header">
+        <h5 class="modal-title">Delete Reservation</h5>
+      </div>
+      <div class="modal-body">
+        {% include 'partials/_edit-reservation.html' %}
+        <form class="delete-form" method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="primary_key">
+          <button type="button" class="btn pure-material-button-contained bg-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="edit btn pure-material-button-contained bg-primary">Edit</button>
+          <button type="submit" class="btn pure-material-button-contained bg-danger">Delete</button>
+        </form>
       </div>
     </div>
   </div>
+</div>
 
 <div class="modal fade" id="check-avaliability" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="form">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Check Avaliablity</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-            <form method="POST" action="{% url 'avaliable' %}">
-                {% csrf_token %}
-              <div class="form-group">
+  <div class="modal-dialog modal-dialog-centered" role="form">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Check Avaliablity</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="{% url 'avaliable' %}">
+          {% csrf_token %}
+          <!-- <div class="form-group">
                   <label for="lot">Lot</label>
                   <input type="text" class="form-control" id="lot" name="lot" placeholder="lot">
-              </div>
-              <div class="form-group">
-                  <label for="checkin">Check-in</label>
-                  <input type="date" class="form-control" id="checkin" name="checkin" placeholder="Check-in date">
-              </div>
-              <div class="form-group">
-                  <label for="checkout">Check-out</label>
-                  <input type="date" class="form-control" id="checkout" name="checkout" placeholder="Check-out date">
-              </div>
-                <button type="button" class="btn pure-material-button-contained bg-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn pure-material-button-contained bg-primary">Check</button>
-            </form>
-        </div>
+              </div> -->
+          <div class="form-group">
+            <label for="checkin">Check-in</label>
+            <input type="datetime-local" class="form-control" id="checkin" name="checkin" placeholder="Check-in date">
+          </div>
+          <div class="form-group">
+            <label for="checkout">Check-out</label>
+            <input type="datetime-local" class="form-control" id="checkout" name="checkout" placeholder="Check-out date">
+          </div>
+          <button type="button" class="btn pure-material-button-contained bg-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn pure-material-button-contained bg-primary">Check</button>
+        </form>
       </div>
     </div>
   </div>
+</div>
 
 {% endblock %}
 
