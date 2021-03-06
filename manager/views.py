@@ -169,11 +169,11 @@ def getAvaliability(request):
                     if checkin >= timezone.make_naive(reservation.start, timezone=None) and checkin <= timezone.make_naive(reservation.end, timezone=None):
                         # print(timezone.make_naive(
                         #     reservation.start, timezone=None))
-                        sites.remove(strip(reservation.site))
+                        sites.remove(reservation.site.strip())
                     elif checkin <= timezone.make_naive(reservation.start, timezone=None) and checkout > timezone.make_naive(reservation.start, timezone=None):
                         # print(timezone.make_naive(
                         #     reservation.start, timezone=None))
-                        sites.remove(strip(reservation.site))
+                        sites.remove(reservation.site.strip())
             except:
                 print("error")
                 return redirect('home')
