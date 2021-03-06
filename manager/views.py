@@ -1,28 +1,32 @@
 from django.shortcuts import render, redirect
 from .models import Customer
 from django.contrib import messages
-from django.http import JsonResponse
 from django.contrib.auth import login, authenticate
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from dateutil import parser
 from django.utils import timezone
-from datetime import date, timedelta
+from datetime import date
+from .utils import get_short_term_reservations, get_long_term_reservations
 
 
 def index(request):
     if request.user.is_authenticated:
         today = date.today()
-        checkedout = Customer.objects.filter(end__lte=today).all()
+        checkedout = Customer.objects.filter(end__lt=today).all()
         checkedout.delete()
 
-        customers = Customer.objects.all()
+        customers = Customer.objects.all().order_by('start')
+
+        long_terms = get_long_term_reservations(customers)
+        short_terms = get_short_term_reservations(customers)
 
         reservations = Customer.objects.all().count()
 
-        return render(request, 'manager/index.html', 
+        return render(request, 'manager/index.html',
         {
-            "customers": customers, 
-            "totalReservations":reservations
+            "customers": short_terms,
+            "totalReservations":reservations,
+            "longterms":long_terms,
         })
     else:
         return redirect('loginuser')
@@ -47,7 +51,8 @@ def loginuser(request):
                 return render(request, 'manager/login.html', {'error': 'Incorrect username or password'})
             else:
                 login(request, user)
-                return render(request, 'manager/index.html')
+                # return render(request, 'manager/index.html')
+                return redirect('home');
 
 
 def delete(request, id):
@@ -69,7 +74,7 @@ def edit(request, id):
             phoneNum = request.POST.get('phone')
 
             reservation = Customer.objects.get(pk=id)
-            
+
             reservation.name = name
             reservation.title = name
             reservation.site = lot

@@ -25,7 +25,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['clearwaterrv.pythonanywhere.com']
+ALLOWED_HOSTS = ['www.clearwatermanager.com']
 
 
 # Application definition
@@ -129,7 +129,14 @@ STATICFILES_DIR = [
     os.path.join(BASE_DIR, 'static')
 ]
 
-try: 
+TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
+TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+TWILIO_NUMBER = os.getenv("TWILIO_NUMBER")
+SMS_BROADCAST_TO_NUMBERS = [
+    "+16015900576",
+]
+
+try:
     from .local_settings import *
 except ImportError:
     print('Looks like no local file you must be on produciton')
