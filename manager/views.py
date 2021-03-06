@@ -158,7 +158,7 @@ def getAvaliability(request):
             sites = ["122", "120", "118", "116", "114", "112", "110", "108", "106", "104", "102", "19", "17", "15", "13", "11",
                      "9", "7", "5", "6", "8", "10", "12", "14", "10C", "12C", "14C", "16", "18", "20", "22", "24", "26", "28",
                      "30", "85", "51", "53", "55", "57", "59", "65", "67", "69", "73", "75", "77", "79", "81", "83", "82", "80",
-                     "78", "76", "74", "72", "70", "68", "66", "64", "62", "60", "58", "56"]
+                     "78", "76", "74", "72", "70", "68", "66", "64", "62", "60", "58", "56", "63"]
             checkin = datetime.fromisoformat(request.POST.get('checkin'))
             checkout = datetime.fromisoformat(request.POST.get('checkout'))
             print(checkin)
@@ -169,11 +169,11 @@ def getAvaliability(request):
                     if checkin >= timezone.make_naive(reservation.start, timezone=None) and checkin <= timezone.make_naive(reservation.end, timezone=None):
                         # print(timezone.make_naive(
                         #     reservation.start, timezone=None))
-                        sites.remove(reservation.site)
+                        sites.remove(strip(reservation.site))
                     elif checkin <= timezone.make_naive(reservation.start, timezone=None) and checkout > timezone.make_naive(reservation.start, timezone=None):
                         # print(timezone.make_naive(
                         #     reservation.start, timezone=None))
-                        sites.remove(reservation.site)
+                        sites.remove(strip(reservation.site))
             except:
                 print("error")
                 return redirect('home')
