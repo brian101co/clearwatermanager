@@ -174,8 +174,10 @@ def getAvaliability(request):
                         # print(timezone.make_naive(
                         #     reservation.start, timezone=None))
                         sites.remove(reservation.site.strip())
-            except:
-                print("error")
+            except ValueError as e:
+                print(e)
+            except Exception as e:
+                print(e)
                 return redirect('home')
             return render(request, "manager/openings.html", {"sites": sites, "checkin": checkin, "checkout": checkout})
     else:
