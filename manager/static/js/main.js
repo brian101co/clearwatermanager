@@ -157,7 +157,4 @@ window.onload = () => {
     InitModal.addEditFunctionality();
     InitModal.addCloseEditFunctionality();
 
-
-    // $('#tb').DataTable();
-    // $('#tb-2').DataTable();
 }
