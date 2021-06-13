@@ -2,6 +2,14 @@
 
 {% load static %}
 
+{% block extraCSS %} 
+<style>
+    .active {
+        fill: rgb(49, 228, 49) !important;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <section class="container">
     <div class="row">
@@ -31,4 +39,20 @@
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block extraJS %} 
+<script data-sites="{{ sites }}"></script>
+<script>
+    const openSites = eval(document.querySelector("[data-sites]").dataset.sites);
+    const mapSites = document.querySelectorAll("[data-site]");
+
+    for (siteNum of openSites) {
+        try {
+            document.querySelector(`[data-site="${siteNum}"`).classList.add("active");
+        } catch (error) {
+            console.log(error);
+        }
+    }
+</script>
 {% endblock %}
