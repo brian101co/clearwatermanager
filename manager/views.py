@@ -1,3 +1,5 @@
+import pytz
+
 from django.shortcuts import render, redirect
 from .models import Customer
 from django.contrib import messages
@@ -159,21 +161,27 @@ def getAvaliability(request):
                      "9", "7", "5", "6", "8", "10", "12", "14", "10C", "12C", "14C", "16", "18", "20", "22", "24", "26", "28",
                      "30", "85", "51", "53", "55", "57", "59", "65", "67", "69", "73", "75", "77", "79", "81", "83", "82", "80",
                      "78", "76", "74", "72", "70", "68", "66", "64", "62", "60", "58", "56", "63"]
-            checkin = datetime.fromisoformat(request.POST.get('checkin'))
-            checkout = datetime.fromisoformat(request.POST.get('checkout'))
-            print(checkin)
+            checkin = datetime.fromisoformat(request.POST.get('checkin')).replace(tzinfo=pytz.UTC)
+            checkout = datetime.fromisoformat(request.POST.get('checkout')).replace(tzinfo=pytz.UTC)
 
             try:
                 all_reservations = Customer.objects.all()
                 for reservation in all_reservations:
-                    if checkin >= timezone.make_naive(reservation.start, timezone=None) and checkin <= timezone.make_naive(reservation.end, timezone=None):
-                        # print(timezone.make_naive(
-                        #     reservation.start, timezone=None))
-                        sites.remove(reservation.site.strip())
-                    elif checkin <= timezone.make_naive(reservation.start, timezone=None) and checkout > timezone.make_naive(reservation.start, timezone=None):
-                        # print(timezone.make_naive(
-                        #     reservation.start, timezone=None))
-                        sites.remove(reservation.site.strip())
+                    end = reservation.end.replace(tzinfo=pytz.UTC)
+                    start = reservation.start.replace(tzinfo=pytz.UTC)
+                    print(f'{reservation.site} Start: {start}, End: {end}')
+                    if checkin >= start and checkin <= end:
+                        # print(reservation.site)
+                        try:
+                            sites.remove(reservation.site.strip())
+                        except Exception as e:
+                            print(e)
+                    elif checkin <= start and checkout > start:
+                        # print(reservation.site)
+                        try:
+                            sites.remove(reservation.site.strip())
+                        except Exception as e:
+                            print(e)
             except ValueError as e:
                 print(e)
             except Exception as e:
