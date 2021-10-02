@@ -135,7 +135,7 @@
   <div class="modal-dialog modal-dialog-centered" role="form">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Add Reservation</h5>
+        <h5 class="modal-title">Add Reservation</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -167,6 +167,22 @@
   </div>
 </div>
 
+<div class="modal fade" id="site-info" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="form">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Site Information</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="check-avaliability" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="form">
     <div class="modal-content">
@@ -179,10 +195,6 @@
       <div class="modal-body">
         <form method="POST" action="{% url 'avaliable' %}">
           {% csrf_token %}
-          <!-- <div class="form-group">
-                  <label for="lot">Lot</label>
-                  <input type="text" class="form-control" id="lot" name="lot" placeholder="lot">
-              </div> -->
           <div class="form-group">
             <label for="checkin">Check-in</label>
             <input type="datetime-local" class="form-control" id="checkin" name="checkin" placeholder="Check-in date">

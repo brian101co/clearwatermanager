@@ -17,6 +17,27 @@ window.onload = () => {
             this.checkoutTimes = checkout;
             this.checkinTimes = checkin;
             this.activelots = [];
+            this.infoModal = document.querySelector("#site-info");
+            this.setEventListeners();
+        }
+
+        setEventListeners() {
+            this.mapLots.forEach(lot => {
+                lot.addEventListener("click", (e) => {
+                    const url = window.location.origin + "/site/info/" + lot.getAttribute("data-site");
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.infoModal.querySelector(".modal-title").innerText = `Site ${data[0].identifier}`;
+                            this.infoModal.querySelector(".modal-body").innerText = data[0].info;
+                        })
+                        .catch(err => {
+                            this.infoModal.querySelector(".modal-title").innerText = `Site ${lot.getAttribute("data-site")}`;
+                            this.infoModal.querySelector(".modal-body").innerText = "No information available.";
+                        });
+                    
+                });
+            });
         }
 
         buildReservedLots() {
