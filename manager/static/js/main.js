@@ -10,6 +10,22 @@ window.onload = () => {
     const editModalHeader = document.querySelector('.edit-header h5');
     let id;
 
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
     class Map {
         constructor(mapLots, reservedLots, checkout, checkin) {
             this.mapLots = mapLots;
@@ -23,20 +39,46 @@ window.onload = () => {
 
         setEventListeners() {
             this.mapLots.forEach(lot => {
+                const siteNumber = lot.getAttribute("data-site");
                 lot.addEventListener("click", (e) => {
-                    const url = window.location.origin + "/site/info/" + lot.getAttribute("data-site");
+                    const url = window.location.origin + "/site/info/" + siteNumber;
                     fetch(url)
                         .then(response => response.json())
                         .then(data => {
                             this.infoModal.querySelector(".modal-title").innerText = `Site ${data[0].identifier}`;
-                            this.infoModal.querySelector(".modal-body").innerText = data[0].info;
+                            this.infoModal.querySelector(".content").innerText = data[0].info;
+                            this.infoModal.querySelector(".content").setAttribute("site", data[0].identifier);
                         })
                         .catch(err => {
-                            this.infoModal.querySelector(".modal-title").innerText = `Site ${lot.getAttribute("data-site")}`;
-                            this.infoModal.querySelector(".modal-body").innerText = "No information available.";
+                            this.infoModal.querySelector(".modal-title").innerText = `Site ${siteNumber}`;
+                            this.infoModal.querySelector(".content").setAttribute("site", siteNumber);
+                            this.infoModal.querySelector(".content").innerText = "No information available.";
                         });
                     
                 });
+            });
+
+            this.infoModal.querySelector(".modal-body").addEventListener("click", (e) => {
+                if (e.target.classList.contains("save")) {
+                    const siteInfoText = e.currentTarget.querySelector(".content").innerText;
+                    const siteNumber = e.currentTarget.querySelector(".content").getAttribute("site");
+                    const url = window.location.origin + "/site/info/" + siteNumber;
+                    console.log(JSON.stringify({"info": siteInfoText}))
+                    fetch(url, {
+                        method: "POST",
+                        headers: {
+                            "Accept": "application/json",
+                            "X-CSRFToken": csrftoken
+                        },
+                        body: JSON.stringify({"info": siteInfoText})
+                    }).then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+                }
             });
         }
 
