@@ -178,7 +178,7 @@ window.onload = () => {
                         data.forEach(reservation => {
                             let time = new Date(reservation.end);
                             document.querySelector('.notifications-container').innerHTML += `<div class="alert alert-primary mt-1" role="alert">
-                                                                                                <strong>${reservation.title}</strong> | Site: ${reservation.site} | Checkout: ${time.toDateString()}
+                                                                                                <strong>${reservation.name}</strong> | Site: ${reservation.site} | Checkout: ${time.toDateString()}
                                                                                             </div>`;
                         });
                     }
