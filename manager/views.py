@@ -107,7 +107,7 @@ def addCustomer(request):
                     if parser.parse(start) < timezone.make_naive(res.start, timezone=None) or parser.parse(start) > timezone.make_naive(res.end, timezone=None):
                         if parser.parse(end) < timezone.make_naive(res.start, timezone=None) or parser.parse(end) > timezone.make_naive(res.end, timezone=None):
                             customer = Customer(
-                                name=name, site=lot, title=name, start=start, end=end, phoneNum=phoneNum)
+                                name=name, site=lot, start=start, end=end, phoneNum=phoneNum)
                             customer.save()
                             return redirect('home')
                         else:

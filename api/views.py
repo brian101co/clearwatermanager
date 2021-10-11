@@ -15,7 +15,7 @@ def getTotalReservations(request):
 
 def getReservation(request, id):
     if request.user.is_authenticated:
-        reservation = Customer.objects.filter(pk=id).all().values('id', 'title', 'start', 'end', 'site', 'phoneNum')
+        reservation = Customer.objects.filter(pk=id).all().values('id', 'name', 'start', 'end', 'site', 'phoneNum')
         resList = list(reservation)
         return JsonResponse(resList, safe=False)
     else:
@@ -23,7 +23,7 @@ def getReservation(request, id):
 
 def event(request):
     if request.user.is_authenticated:
-        events = Customer.objects.all().values('id', 'title', 'start', 'end', 'site', 'phoneNum')
+        events = Customer.objects.all().values('id', 'name', 'start', 'end', 'site', 'phoneNum')
         events_list = list(events)
         return JsonResponse(events_list, safe=False)
     else:
@@ -33,7 +33,7 @@ def getNotifications(request):
     if request.user.is_authenticated:
         today = date.today()
         tomorrow = today + timedelta(days = 2)
-        notifications = Customer.objects.filter(end__range=[today, tomorrow]).all().values('title', 'end', 'site')
+        notifications = Customer.objects.filter(end__range=[today, tomorrow]).all().values('name', 'end', 'site')
         notification_list = list(notifications)
         # for notification in notification_list:
         #     if notification:

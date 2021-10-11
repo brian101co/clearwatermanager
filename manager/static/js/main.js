@@ -150,7 +150,7 @@ window.onload = () => {
                 fetch(url)
                     .then(response => response.json())
                     .then(data => {
-                        form.querySelector('[name="name"]').value = data[0].title;
+                        form.querySelector('[name="name"]').value = data[0].name;
                         form.querySelector('[name="lot"]').value = data[0].site;
                         form.querySelector('[name="phone"]').value = data[0].phoneNum;
                         form.querySelector('[name="checkin"]').value = data[0].start.slice(0, -1);
