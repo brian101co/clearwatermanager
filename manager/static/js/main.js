@@ -158,24 +158,6 @@ window.onload = () => {
                     })
                     .catch(err => console.log(err));
             });
-            this.config.mobileEditBtnElems.forEach(elem => {
-                elem.addEventListener("click", (event) => {
-                    const id = event.target.dataset.id;
-                    const form = document.querySelector('.edit-form');
-                    const url = window.location.origin + "/api/reservation/" + id;
-                    form.setAttribute("action", `edit/${id}`);
-                    fetch(url)
-                        .then(response => response.json())
-                        .then(data => {
-                            form.querySelector('[name="name"]').value = data[0].title;
-                            form.querySelector('[name="lot"]').value = data[0].site;
-                            form.querySelector('[name="phone"]').value = data[0].phoneNum;
-                            form.querySelector('[name="checkin"]').value = data[0].start.slice(0, -1);
-                            form.querySelector('[name="checkout"]').value = data[0].end.slice(0, -1);
-                        })
-                        .catch(err => console.log(err));
-                });
-            });
         }
     }
 

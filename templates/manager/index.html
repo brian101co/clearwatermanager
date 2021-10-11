@@ -64,39 +64,8 @@
     <div class="row">
       <div class="col-sm-12">
         <h2 class="text-center mb-3">Reservations</h2>
-        <div id="accordion" class="d-md-none">
-          {% for customer in customers %}
-          <div class="card">
-            <div class="card-header" id="heading-{{ customer.id }}">
-              <h5 class="mb-0">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#{{ customer.id }}" aria-expanded="true" aria-controls="{{ customer.id }}">
-                  Site {{ customer.site }} | {{ customer.name }}
-                </button>
-              </h5>
-            </div>
 
-            <div id="{{ customer.id }}" class="collapse" aria-labelledby="heading-{{ customer.id }}" data-parent="#accordion">
-              <div class="card-body">
-                <ul>
-                  <li>Checkin: {{ customer.start|date:"M d Y" }}</li>
-                  <li>Checkout: {{ customer.end|date:"M d Y" }}</li>
-                  <li>Phone: {{ customer.phoneNum }}</li>
-                </ul>
-                <div>
-                  <form method="POST" action="delete/{{ customer.id }}">
-                    {% csrf_token %}
-                    <button type="button" class="btn pure-material-button-contained bg-primary mobile-edit" data-id="{{ customer.id }}" data-toggle="modal" data-target="#edit-reservation">Edit</button>
-                    <button type="submit" class="btn pure-material-button-contained bg-danger">Delete</button>
-                  </form>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-          {% endfor %}
-        </div>
-
-        <div class="table-responsive d-none d-md-block">
+        <div class="table-responsive">
           <table id="tb" class="table table-striped display">
             <thead>
               <tr>
@@ -134,39 +103,7 @@
     <div class="row">
       <div class="col-sm-12">
         <h2 class="text-center mb-3">Longterm Residents</h2>
-        <div id="accordion" class="d-md-none">
-          {% for resident in longterms %}
-          <div class="card">
-            <div class="card-header" id="heading-{{ resident.id }}">
-              <h5 class="mb-0">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#{{ resident.id }}" aria-expanded="true" aria-controls="{{ resident.id }}">
-                  Site {{ resident.site }} | {{ resident.name }}
-                </button>
-              </h5>
-            </div>
-
-            <div id="{{ resident.id }}" class="collapse" aria-labelledby="heading-{{ resident.id }}" data-parent="#accordion">
-              <div class="card-body">
-                <ul>
-                  <li>Checkin: {{ resident.start|date:"M d Y" }}</li>
-                  <li>Checkout: {{ resident.end|date:"M d Y" }}</li>
-                  <li>Phone: {{ resident.phoneNum }}</li>
-                </ul>
-                <div>
-                  <form method="POST" action="delete/{{ resident.id }}">
-                    {% csrf_token %}
-                    <button type="button" class="btn pure-material-button-contained bg-primary mobile-edit" data-id="{{ resident.id }}" data-toggle="modal" data-target="#edit-reservation">Edit</button>
-                    <button type="submit" class="btn pure-material-button-contained bg-danger">Delete</button>
-                  </form>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-          {% endfor %}
-        </div>
-
-        <div class="d-none d-md-block">
+        <div class="table-responsive">
           <table id="tb-2" class="table table-striped display">
             <thead>
               <tr>
