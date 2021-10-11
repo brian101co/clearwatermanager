@@ -184,7 +184,7 @@
               <tr>
                 <th scope="row" class="d-none">{{ resident.id }}</th>
                 <th scope="row" class="mobile-hidden">{{ forloop.counter }}</th>
-                <td class="name"><button type="button" data-toggle="modal" data-target="#customer-delete" class="btn-delete">{{ resident.name }}</button></td>
+                <td class="name"><button type="button" data-toggle="modal" data-target="#manage-reservation" data-id="{{ resident.id }}" class="btn-delete">{{ resident.name }}</button></td>
                 <td class="checkin">{{ resident.start|date:"M d Y" }}</td>
                 <td class="checkout">{{ resident.end|date:"M d Y" }}</td>
                 <td class="site">{{ resident.site }}</td>
