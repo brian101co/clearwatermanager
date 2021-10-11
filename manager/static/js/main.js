@@ -4,11 +4,13 @@ window.onload = () => {
     const checkoutNodes = document.querySelectorAll(".checkout");
     const checkinNodes = document.querySelectorAll(".checkin");
     const editBtn = document.querySelector('.edit');
-    const closeEdit = document.querySelectorAll('.close-edit');
     const currentTime = Date.now();
     const names = document.querySelectorAll('.name');
-    const editModalHeader = document.querySelector('.edit-header h5');
-    let id;
+    const mobileEditBtnElems = document.querySelectorAll(".mobile-edit");
+
+    const state = {
+        activeSiteId: null,
+    }
 
     function getCookie(name) {
         let cookieValue = null;
@@ -131,51 +133,50 @@ window.onload = () => {
     class Modal {
         constructor(obj) {
             this.config = obj;
+            this.setEventListeners();
         }
 
-        addDeleteFunctionality() {
+        setEventListeners() {
             this.config.deleteElem.forEach(name => {
-                name.addEventListener('click', (event) => {
-                    id = parseInt(event.target.parentElement.previousElementSibling.previousElementSibling.innerText);
-                    document.querySelector('.delete-form').setAttribute("action", `delete/${id}`);
-                })
+                name.addEventListener("click", (event) => {
+                    state.activeSiteId = event.target.dataset.id;
+                    document.querySelector('.delete-form').setAttribute("action", `delete/${state.activeSiteId}`);
+                });
             });
-        }
-
-        addEditFunctionality() {
-            this.config.editElem.addEventListener('click', () => {
-                document.querySelector('.delete-form').classList.toggle('d-none');
-                editModalHeader.innerHTML = "Edit Reservation";
-                let editForm = document.querySelector('.edit-form');
-                editForm.classList.toggle('d-none');
-                editForm.setAttribute("action", `edit/${id}`);
-
-                let url = window.location.origin + "/api/reservation/" + id;
+            this.config.editElem.addEventListener("click", (event) => {
+                const form = document.querySelector('.edit-form');
+                const url = window.location.origin + "/api/reservation/" + state.activeSiteId;
+                form.setAttribute("action", `edit/${state.activeSiteId}`);
                 fetch(url)
                     .then(response => response.json())
                     .then(data => {
-                        editForm.querySelector('[name="name"]').value = data[0].title;
-                        editForm.querySelector('[name="lot"]').value = data[0].site;
-                        editForm.querySelector('[name="phone"]').value = data[0].phoneNum;
-                        editForm.querySelector('[name="checkin"]').value = data[0].start.slice(0, -1);
-                        editForm.querySelector('[name="checkout"]').value = data[0].end.slice(0, -1);
+                        form.querySelector('[name="name"]').value = data[0].title;
+                        form.querySelector('[name="lot"]').value = data[0].site;
+                        form.querySelector('[name="phone"]').value = data[0].phoneNum;
+                        form.querySelector('[name="checkin"]').value = data[0].start.slice(0, -1);
+                        form.querySelector('[name="checkout"]').value = data[0].end.slice(0, -1);
                     })
                     .catch(err => console.log(err));
             });
-        }
-
-        addCloseEditFunctionality() {
-            this.config.closeElem.forEach(elem => {
-                elem.addEventListener('click', () => {
-                    editModalHeader.innerHTML = "Delete Reservation"
-                    setTimeout(() => {
-                        document.querySelector('.delete-form').classList.toggle('d-none');
-                        document.querySelector('.edit-form').classList.toggle('d-none');
-                    }, 300);
+            this.config.mobileEditBtnElems.forEach(elem => {
+                elem.addEventListener("click", (event) => {
+                    const id = event.target.dataset.id;
+                    const form = document.querySelector('.edit-form');
+                    const url = window.location.origin + "/api/reservation/" + id;
+                    form.setAttribute("action", `edit/${id}`);
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            form.querySelector('[name="name"]').value = data[0].title;
+                            form.querySelector('[name="lot"]').value = data[0].site;
+                            form.querySelector('[name="phone"]').value = data[0].phoneNum;
+                            form.querySelector('[name="checkin"]').value = data[0].start.slice(0, -1);
+                            form.querySelector('[name="checkout"]').value = data[0].end.slice(0, -1);
+                        })
+                        .catch(err => console.log(err));
                 });
             });
         }
-
     }
 
     class Notification {
@@ -211,13 +212,9 @@ window.onload = () => {
     const InitModal = new Modal({
         deleteElem: names,
         editElem: editBtn,
-        closeElem: closeEdit,
+        mobileEditBtnElems: mobileEditBtnElems,
     });
 
     NewMap.highlightLots();
     Notifications.getNotifications();
-    InitModal.addDeleteFunctionality();
-    InitModal.addEditFunctionality();
-    InitModal.addCloseEditFunctionality();
-
 }

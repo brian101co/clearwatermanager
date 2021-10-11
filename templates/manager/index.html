@@ -52,7 +52,7 @@
 
         <!-- Notifications -->
         <div class="notifications-container mt-4">
-          <h2 class="title-secondary">Checkout</h2>
+          <h2 class="title-secondary">Checking Out Soon</h2>
         </div>
       </div>
     </div>
@@ -64,32 +64,66 @@
     <div class="row">
       <div class="col-sm-12">
         <h2 class="text-center mb-3">Reservations</h2>
-        <table id="tb" class="table table-striped display">
-          <thead>
-            <tr>
-              <th scope="col" class="d-none">db-id</th>
-              <th scope="col" class="mobile-hidden">#</th>
-              <th scope="col">Name</th>
-              <th scope="col">Check-in</th>
-              <th scope="col">Check-out</th>
-              <th scope="col">Lot</th>
-              <th scope="col">Phone Number</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for customer in customers %}
-            <tr>
-              <th scope="row" class="d-none">{{ customer.id }}</th>
-              <th scope="row" class="mobile-hidden">{{ forloop.counter }}</th>
-              <td class="name"><button type="button" data-toggle="modal" data-target="#customer-delete" class="btn-delete">{{ customer.name }}</button></td>
-              <td class="checkin">{{ customer.start|date:"M d Y" }}</td>
-              <td class="checkout">{{ customer.end|date:"M d Y" }}</td>
-              <td class="site">{{ customer.site }}</td>
-              <td>{{ customer.phoneNum }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+        <div id="accordion" class="d-md-none">
+          {% for customer in customers %}
+          <div class="card">
+            <div class="card-header" id="heading-{{ customer.id }}">
+              <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#{{ customer.id }}" aria-expanded="true" aria-controls="{{ customer.id }}">
+                  {{ customer.name }} | Site {{ customer.site }}
+                </button>
+              </h5>
+            </div>
+
+            <div id="{{ customer.id }}" class="collapse" aria-labelledby="heading-{{ customer.id }}" data-parent="#accordion">
+              <div class="card-body">
+                <ul>
+                  <li>Checkin: {{ customer.start|date:"M d Y" }}</li>
+                  <li>Checkout: {{ customer.end|date:"M d Y" }}</li>
+                  <li>Phone: {{ customer.phoneNum }}</li>
+                </ul>
+                <div>
+                  <form method="POST" action="delete/{{ customer.id }}">
+                    {% csrf_token %}
+                    <button type="button" class="btn pure-material-button-contained bg-primary mobile-edit" data-id="{{ customer.id }}" data-toggle="modal" data-target="#edit-reservation">Edit</button>
+                    <button type="submit" class="btn pure-material-button-contained bg-danger">Delete</button>
+                  </form>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="table-responsive d-none d-md-block">
+          <table id="tb" class="table table-striped display">
+            <thead>
+              <tr>
+                <th scope="col" class="d-none">db-id</th>
+                <th scope="col" class="mobile-hidden">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Check-in</th>
+                <th scope="col">Check-out</th>
+                <th scope="col">Lot</th>
+                <th scope="col">Phone Number</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for customer in customers %}
+              <tr>
+                <th scope="row" class="d-none">{{ customer.id }}</th>
+                <th scope="row" class="mobile-hidden">{{ forloop.counter }}</th>
+                <td class="name"><button type="button" data-toggle="modal" data-target="#manage-reservation" data-id="{{ customer.id }}" class="btn-delete">{{ customer.name }}</button></td>
+                <td class="checkin">{{ customer.start|date:"M d Y" }}</td>
+                <td class="checkout">{{ customer.end|date:"M d Y" }}</td>
+                <td class="site">{{ customer.site }}</td>
+                <td>{{ customer.phoneNum }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -100,32 +134,67 @@
     <div class="row">
       <div class="col-sm-12">
         <h2 class="text-center mb-3">Longterm Residents</h2>
-        <table id="tb-2" class="table table-striped display">
-          <thead>
-            <tr>
-              <th scope="col" class="d-none">db-id</th>
-              <th scope="col" class="mobile-hidden">#</th>
-              <th scope="col">Name</th>
-              <th scope="col">Check-in</th>
-              <th scope="col">Check-out</th>
-              <th scope="col">Lot</th>
-              <th scope="col">Phone Number</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for resident in longterms %}
-            <tr>
-              <th scope="row" class="d-none">{{ resident.id }}</th>
-              <th scope="row" class="mobile-hidden">{{ forloop.counter }}</th>
-              <td class="name"><button type="button" data-toggle="modal" data-target="#customer-delete" class="btn-delete">{{ resident.name }}</button></td>
-              <td class="checkin">{{ resident.start|date:"M d Y" }}</td>
-              <td class="checkout">{{ resident.end|date:"M d Y" }}</td>
-              <td class="site">{{ resident.site }}</td>
-              <td>{{ resident.phoneNum }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+        <div id="accordion" class="d-md-none">
+          {% for resident in longterms %}
+          <div class="card">
+            <div class="card-header" id="heading-{{ resident.id }}">
+              <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#{{ resident.id }}" aria-expanded="true" aria-controls="{{ resident.id }}">
+                  {{ resident.name }} | Site {{ resident.site }}
+                </button>
+              </h5>
+            </div>
+
+            <div id="{{ resident.id }}" class="collapse" aria-labelledby="heading-{{ resident.id }}" data-parent="#accordion">
+              <div class="card-body">
+                <ul>
+                  <li>Checkin: {{ resident.start|date:"M d Y" }}</li>
+                  <li>Checkout: {{ resident.end|date:"M d Y" }}</li>
+                  <li>Phone: {{ resident.phoneNum }}</li>
+                </ul>
+                <div>
+                  <form method="POST" action="delete/{{ resident.id }}">
+                    {% csrf_token %}
+                    <button type="button" class="btn pure-material-button-contained bg-primary mobile-edit" data-id="{{ resident.id }}" data-toggle="modal" data-target="#edit-reservation">Edit</button>
+                    <button type="submit" class="btn pure-material-button-contained bg-danger">Delete</button>
+                  </form>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="d-none d-md-block">
+          <table id="tb-2" class="table table-striped display">
+            <thead>
+              <tr>
+                <th scope="col" class="d-none">db-id</th>
+                <th scope="col" class="mobile-hidden">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Check-in</th>
+                <th scope="col">Check-out</th>
+                <th scope="col">Lot</th>
+                <th scope="col">Phone Number</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for resident in longterms %}
+              <tr>
+                <th scope="row" class="d-none">{{ resident.id }}</th>
+                <th scope="row" class="mobile-hidden">{{ forloop.counter }}</th>
+                <td class="name"><button type="button" data-toggle="modal" data-target="#customer-delete" class="btn-delete">{{ resident.name }}</button></td>
+                <td class="checkin">{{ resident.start|date:"M d Y" }}</td>
+                <td class="checkout">{{ resident.end|date:"M d Y" }}</td>
+                <td class="site">{{ resident.site }}</td>
+                <td>{{ resident.phoneNum }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        
       </div>
     </div>
   </div>
@@ -147,21 +216,32 @@
   </div>
 </div>
 
-<div class="modal fade" id="customer-delete" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="manage-reservation" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="form">
     <div class="modal-content">
       <div class="modal-header edit-header">
-        <h5 class="modal-title">Delete Reservation</h5>
+        <h5 class="modal-title">Manage Reservation</h5>
+      </div>
+      <div class="modal-body">
+        <form class="delete-form" method="POST">
+          {% csrf_token %}
+          <button type="button" class="btn pure-material-button-contained bg-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="edit btn pure-material-button-contained bg-primary" data-dismiss="modal" data-toggle="modal" data-target="#edit-reservation">Edit</button>
+          <button type="submit" class="btn delete pure-material-button-contained bg-danger">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="edit-reservation" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="form">
+    <div class="modal-content">
+      <div class="modal-header edit-header">
+        <h5 class="modal-title">Edit Reservation</h5>
       </div>
       <div class="modal-body">
         {% include 'partials/_edit-reservation.html' %}
-        <form class="delete-form" method="POST">
-          {% csrf_token %}
-          <input type="hidden" name="primary_key">
-          <button type="button" class="btn pure-material-button-contained bg-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="edit btn pure-material-button-contained bg-primary">Edit</button>
-          <button type="submit" class="btn pure-material-button-contained bg-danger">Delete</button>
-        </form>
       </div>
     </div>
   </div>
