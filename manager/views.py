@@ -118,7 +118,7 @@ def addCustomer(request):
                         return redirect('home')
                 except ObjectDoesNotExist:
                     customer = Customer(
-                        name=name, site=lot, title=name, start=start, end=end, phoneNum=phoneNum)
+                        name=name, site=lot, start=start, end=end, phoneNum=phoneNum)
                     customer.save()
                     return redirect('home')
                 except MultipleObjectsReturned:

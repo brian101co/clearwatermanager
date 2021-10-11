@@ -40,11 +40,11 @@
 
         <!-- Tool Bar -->
         <div class="toolbar">
-          <div class="d-flex justify-content-left align-items-center">
+          <div class="d-flex align-items-center">
             <a href="{% url 'avaliable' %}" class="btn pure-material-button-contained bg-primary mr-3" data-toggle="modal" data-target="#check-avaliability">Avaliablity</a>
             <button type="button" class="btn-plus bg-primary" data-toggle="modal" data-target="#customer-form-modal"><i class="fas fa-plus"></i></button>
           </div>
-          <div class="btn btn-dark mt-2">
+          <div class="btn btn-dark total-reservations">
             Total Reservations
             <span class="badge badge-light badge-pill">{{ totalReservations }}</span>
           </div>
@@ -131,7 +131,6 @@
             </tbody>
           </table>
         </div>
-        
       </div>
     </div>
   </div>
