@@ -14,5 +14,4 @@ def get_site_info(request, site):
     if qs:
         data = json.dumps(list(qs))
         return HttpResponse(data, content_type="application/json")
-    else:
-        return HttpResponse(status=404)
+    return HttpResponse(status=404)
