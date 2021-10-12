@@ -33,14 +33,6 @@ def index(request):
     else:
         return redirect('loginuser')
 
-
-def calendar(request):
-    if request.user.is_authenticated:
-        return render(request, 'manager/calendar.html')
-    else:
-        return redirect('loginuser')
-
-
 def loginuser(request):
     if request.user.is_authenticated:
         return redirect('home')
