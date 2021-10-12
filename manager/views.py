@@ -72,7 +72,6 @@ def edit(request, id):
             reservation = Customer.objects.get(pk=id)
 
             reservation.name = name
-            reservation.title = name
             reservation.site = lot
             reservation.start = start
             reservation.end = end
@@ -135,7 +134,7 @@ def addCustomer(request):
                         return redirect('home')
                     else:
                         customer = Customer(
-                            name=name, site=lot, title=name, start=start, end=end, phoneNum=phoneNum)
+                            name=name, site=lot, start=start, end=end, phoneNum=phoneNum)
                         customer.save()
                         return redirect('home')
             else:
