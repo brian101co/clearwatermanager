@@ -33,6 +33,10 @@ def index(request):
     else:
         return redirect('loginuser')
 
+def reservation_detail(request, id):
+    reservation = Customer.objects.get(pk=id)
+    return render(request, 'manager/reservation_detail.html', {"reservation": reservation})
+
 def loginuser(request):
     if request.user.is_authenticated:
         return redirect('home')
@@ -68,6 +72,7 @@ def edit(request, id):
             end = request.POST.get('checkout')
             lot = request.POST.get('lot')
             phoneNum = request.POST.get('phone')
+            info = request.POST.get('info')
 
             reservation = Customer.objects.get(pk=id)
 
@@ -76,6 +81,7 @@ def edit(request, id):
             reservation.start = start
             reservation.end = end
             reservation.phoneNum = phoneNum
+            reservation.info = info
 
             reservation.save()
             return redirect('home')
@@ -91,6 +97,7 @@ def addCustomer(request):
             end = request.POST.get('checkout')
             lot = request.POST.get('lot')
             phoneNum = request.POST.get('phone')
+            info = request.POST.get('info')
 
             if name and start and end and lot and phoneNum:
                 try:
@@ -98,7 +105,7 @@ def addCustomer(request):
                     if parser.parse(start) < timezone.make_naive(res.start, timezone=None) or parser.parse(start) > timezone.make_naive(res.end, timezone=None):
                         if parser.parse(end) < timezone.make_naive(res.start, timezone=None) or parser.parse(end) > timezone.make_naive(res.end, timezone=None):
                             customer = Customer(
-                                name=name, site=lot, start=start, end=end, phoneNum=phoneNum)
+                                name=name, site=lot, start=start, end=end, phoneNum=phoneNum, info=info)
                             customer.save()
                             return redirect('home')
                         else:
@@ -109,7 +116,7 @@ def addCustomer(request):
                         return redirect('home')
                 except ObjectDoesNotExist:
                     customer = Customer(
-                        name=name, site=lot, start=start, end=end, phoneNum=phoneNum)
+                        name=name, site=lot, start=start, end=end, phoneNum=phoneNum, info=info)
                     customer.save()
                     return redirect('home')
                 except MultipleObjectsReturned:
@@ -134,7 +141,7 @@ def addCustomer(request):
                         return redirect('home')
                     else:
                         customer = Customer(
-                            name=name, site=lot, start=start, end=end, phoneNum=phoneNum)
+                            name=name, site=lot, start=start, end=end, phoneNum=phoneNum, info=info)
                         customer.save()
                         return redirect('home')
             else:

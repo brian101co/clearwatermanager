@@ -6,6 +6,7 @@ class Customer(models.Model):
     start = models.DateTimeField()
     end = models.DateTimeField()
     phoneNum = models.CharField(max_length=25)
+    info = models.TextField(blank=True)
 
     def __str__(self):
         return self.name

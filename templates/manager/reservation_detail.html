@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+<section class="container">
+    <div class="row">
+        <div class="col-sm-12" style="height: 100vh;">
+            <div class="p-2">
+                <h1>{{ reservation.name|title }}'s Reservation Details</h1>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Details</h5>
+                        <ul>
+                            <li>Site: {{ reservation.site }}</li>
+                            <li>Checkin: {{ reservation.start|date:"M d Y" }}</li>
+                            <li>Checkout: {{ reservation.end|date:"M d Y" }}</li>
+                            <li>Phone Number: {{ reservation.phoneNum }}</li>
+                        </ul>
+                        <h5>Additional Information</h5>
+                        <p>
+                            {% if reservation.info %}
+                            {{ reservation.info|linebreaks }}
+                            {% else %}
+                            No additional information
+                            {% endif %}
+                        </p>
+                        <a href="{% url 'home' %}" class="btn btn-primary">Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

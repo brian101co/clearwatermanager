@@ -141,6 +141,7 @@ window.onload = () => {
                 name.addEventListener("click", (event) => {
                     state.activeSiteId = event.target.dataset.id;
                     document.querySelector('.delete-form').setAttribute("action", `delete/${state.activeSiteId}`);
+                    document.querySelector('#reservation-detail').setAttribute("href", `reservation/${state.activeSiteId}`)
                 });
             });
             this.config.editElem.addEventListener("click", (event) => {
@@ -153,6 +154,7 @@ window.onload = () => {
                         form.querySelector('[name="name"]').value = data[0].name;
                         form.querySelector('[name="lot"]').value = data[0].site;
                         form.querySelector('[name="phone"]').value = data[0].phoneNum;
+                        form.querySelector('[name="info"]').value = data[0].info;
                         form.querySelector('[name="checkin"]').value = data[0].start.slice(0, -1);
                         form.querySelector('[name="checkout"]').value = data[0].end.slice(0, -1);
                     })

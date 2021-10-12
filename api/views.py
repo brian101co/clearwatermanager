@@ -11,7 +11,7 @@ def getTotalReservations(request):
 
 def getReservation(request, id):
     if request.user.is_authenticated:
-        reservation = Customer.objects.filter(pk=id).all().values('id', 'name', 'start', 'end', 'site', 'phoneNum')
+        reservation = Customer.objects.filter(pk=id).all().values('id', 'name', 'start', 'end', 'site', 'phoneNum', 'info')
         resList = list(reservation)
         return JsonResponse(resList, safe=False)
     return redirect('loginuser')
