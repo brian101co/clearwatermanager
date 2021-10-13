@@ -201,4 +201,5 @@ window.onload = () => {
 
     NewMap.highlightLots();
     Notifications.getNotifications();
+
 }

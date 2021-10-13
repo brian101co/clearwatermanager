@@ -1,7 +1,7 @@
 import pytz
 
 from django.shortcuts import render, redirect
-from .models import Customer
+from .models import Customer, Metric
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
@@ -53,11 +53,13 @@ def loginuser(request):
                 # return render(request, 'manager/index.html')
                 return redirect('home')
 
-
 def delete(request, id):
     if request.user.is_authenticated:
         if request.method == 'POST':
             customer = Customer.objects.get(pk=id)
+            metric = Metric.objects.get(customer=customer)
+            metric.canceled = True
+            metric.save()
             customer.delete()
             return redirect('home')
     else:
@@ -104,9 +106,10 @@ def addCustomer(request):
                     res = Customer.objects.get(site=lot)
                     if parser.parse(start) < timezone.make_naive(res.start, timezone=None) or parser.parse(start) > timezone.make_naive(res.end, timezone=None):
                         if parser.parse(end) < timezone.make_naive(res.start, timezone=None) or parser.parse(end) > timezone.make_naive(res.end, timezone=None):
-                            customer = Customer(
-                                name=name, site=lot, start=start, end=end, phoneNum=phoneNum, info=info)
+                            customer = Customer(name=name, site=lot, start=start, end=end, phoneNum=phoneNum, info=info)
+                            metric = Metric(site=lot, start=start, end=end, customer=customer)
                             customer.save()
+                            metric.save()
                             return redirect('home')
                         else:
                             messages.error(request, 'Unavaliable.')
@@ -115,8 +118,9 @@ def addCustomer(request):
                         messages.error(request, 'Unavaliable.')
                         return redirect('home')
                 except ObjectDoesNotExist:
-                    customer = Customer(
-                        name=name, site=lot, start=start, end=end, phoneNum=phoneNum, info=info)
+                    customer = Customer(name=name, site=lot, start=start, end=end, phoneNum=phoneNum, info=info)
+                    metric = Metric(site=lot, start=start, end=end, customer=customer)
+                    metric.save()
                     customer.save()
                     return redirect('home')
                 except MultipleObjectsReturned:
@@ -142,6 +146,8 @@ def addCustomer(request):
                     else:
                         customer = Customer(
                             name=name, site=lot, start=start, end=end, phoneNum=phoneNum, info=info)
+                        metric = Metric(site=lot, start=start, end=end, customer=customer)
+                        metric.save()
                         customer.save()
                         return redirect('home')
             else:

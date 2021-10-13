@@ -3,10 +3,11 @@ from manager.models import Customer
 from django.http import JsonResponse
 from datetime import date, timedelta
 
-def getTotalReservations(request):
+def getReservations(request):
     if request.user.is_authenticated:
-        reservations = Customer.objects.all().count()
-        return JsonResponse(reservations, safe=False)
+        reservations = Customer.objects.all().values('id', 'name', 'start', 'end', 'site', 'phoneNum')
+        resList = list(reservations)
+        return JsonResponse(resList, safe=False)
     return redirect('loginuser')
 
 def getReservation(request, id):

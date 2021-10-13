@@ -41,7 +41,8 @@
         <!-- Tool Bar -->
         <div class="toolbar">
           <div class="d-flex align-items-center">
-            <a href="{% url 'avaliable' %}" class="btn pure-material-button-contained bg-primary mr-3" data-toggle="modal" data-target="#check-avaliability">Avaliablity</a>
+            <button class="btn pure-material-button-contained bg-primary mr-3" data-toggle="modal" data-target="#check-avaliability">Avaliablity</button>
+            <a href="#" class="btn pure-material-button-contained bg-primary mr-3">Metrics</a>
             <button type="button" class="btn-plus bg-primary" data-toggle="modal" data-target="#customer-form-modal"><i class="fas fa-plus"></i></button>
           </div>
           <div class="btn btn-dark total-reservations">
@@ -64,9 +65,8 @@
     <div class="row">
       <div class="col-sm-12">
         <h2 class="text-center mb-3">Reservations</h2>
-
         <div class="table-responsive">
-          <table id="tb" class="table table-striped display">
+          <table id="tb reservation-table" class="table table-striped display">
             <thead>
               <tr>
                 <th scope="col" class="d-none">db-id</th>
@@ -166,7 +166,7 @@
           {% csrf_token %}
           <a class="btn pure-material-button-contained bg-info" id="reservation-detail">Details</a>
           <button type="button" class="edit btn pure-material-button-contained bg-primary" data-dismiss="modal" data-toggle="modal" data-target="#edit-reservation">Edit</button>
-          <button type="submit" class="btn delete pure-material-button-contained bg-danger">Delete</button>
+          <button type="submit" class="btn delete pure-material-button-contained bg-danger">Cancel</button>
         </form>
       </div>
     </div>
