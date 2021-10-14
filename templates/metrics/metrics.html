@@ -47,42 +47,52 @@
     fetch(url + "?year=2021")
         .then(response => response.json())
         .then(data => {
-            new Chartist.Line('#chart-1', {
-                labels: data.map((record => {
-                    return record.month;
-                })),
-                series: [
-                    data.map(record => {
-                        return record.total;
-                    })
-                ]
-            }, {
-                low: 0,
-                showArea: true,
-                plugins: [
-                    Chartist.plugins.ctAxisTitle({
-                        axisX: {
-                            axisTitle: 'Months',
-                            axisClass: 'ct-axis-title',
-                            offset: {
-                            x: 0,
-                            y: 35
-                            },
-                            textAnchor: 'middle'
-                        },
-                        axisY: {
-                            axisTitle: 'Reservations',
-                            axisClass: 'ct-axis-title',
-                            offset: {
-                            x: 0,
-                            y: 15
-                            },
-                            textAnchor: 'middle',
-                            flipTitle: true
-                        }
-                    })
-                ]
+            const series_1 = data.map(record => {
+                return record.total;
             });
+            fetch(url + "?year=2020")
+                .then(response => response.json())
+                .then(data => {
+                    const series_2 = data.map(record => {
+                        return record.total;
+                    });
+                    new Chartist.Line('#chart-1', {
+                        labels: data.map((record => {
+                            return record.month;
+                        })),
+                        series: [
+                            series_1,
+                            series_2
+                        ]
+                    }, {
+                        low: 0,
+                        showArea: true,
+                        plugins: [
+                            Chartist.plugins.ctAxisTitle({
+                                axisX: {
+                                    axisTitle: 'Months',
+                                    axisClass: 'ct-axis-title',
+                                    offset: {
+                                    x: 0,
+                                    y: 35
+                                    },
+                                    textAnchor: 'middle'
+                                },
+                                axisY: {
+                                    axisTitle: 'Reservations',
+                                    axisClass: 'ct-axis-title',
+                                    offset: {
+                                    x: 0,
+                                    y: 15
+                                    },
+                                    textAnchor: 'middle',
+                                    flipTitle: true
+                                }
+                            })
+                        ]
+                    });
+                })
+                .catch(err => console.log(err))
         })
         .catch(err => console.log(err));
 
