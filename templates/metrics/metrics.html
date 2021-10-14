@@ -20,18 +20,17 @@
 <section class="container">
     <div class="row">
         <div class="col-sm-12">
-            <h1 class="text-center">Metrics</h1>
+            <h1 class="text-center mt-3">Metrics</h1>
+            <a href="{% url 'home' %}" class="btn btn-primary">Dashboard</a>
         </div>
-        <div class="col-sm-12 col-md-6">
-            <div class="wrapper py-3">
-                <div class="chart-container my-3">
-                    <h5 class="ml-5">Reservations per Month</h5>
-                    <div id="chart-1"></div>
-                </div>
+        <div class="col-sm-12 col-md-6"> 
+            <div class="chart-container my-3 card shadow-sm p-3">
+                <h5 class="ml-5">Reservations per Month</h5>
+                <div id="chart-1"></div>
             </div>
         </div>
         <div class="col-sm-12 col-md-6">
-            <div class="chart-container my-3">
+            <div class="chart-container my-3 card shadow-sm p-3">
                 <h5 class="ml-5">Cancelations per Month</h5>
                 <div id="chart-2"></div>
             </div>
