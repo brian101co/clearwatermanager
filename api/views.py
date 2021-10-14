@@ -1,5 +1,5 @@
 from django.shortcuts import redirect
-from manager.models import Customer
+from manager.models import Customer, Metric
 from django.http import JsonResponse
 from datetime import date, timedelta
 
@@ -16,6 +16,21 @@ def getReservation(request, id):
         resList = list(reservation)
         return JsonResponse(resList, safe=False)
     return redirect('loginuser')
+
+def metrics(request):
+    if request.user.is_authenticated:
+        if request.GET.get("last_month"):
+            return JsonResponse(Metric.objects.last_month(), safe=False)
+        elif request.GET.get("current_month"):
+            return JsonResponse(Metric.objects.current_month(), safe=False)
+        elif request.GET.get("cancelations"):
+            return JsonResponse(Metric.objects.cancelations_per_month(int(request.GET.get("year"))), safe=False)
+        elif request.GET.get("year"):
+            return JsonResponse(Metric.objects.reservations_per_month(int(request.GET.get("year"))), safe=False)
+        else:
+            metrics = Metric.objects.all().values()
+            data = list(metrics)
+            return JsonResponse(data, safe=False)
 
 def getNotifications(request):
     if request.user.is_authenticated:

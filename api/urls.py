@@ -5,4 +5,5 @@ urlpatterns = [
     path('reservations/', views.getReservations, name="reservations"),
     path('reservation/<int:id>/', views.getReservation, name="reservation"),
     path('notifications/', views.getNotifications, name="notifications"),
+    path('metrics/', views.metrics, name="api_metrics"),
 ]

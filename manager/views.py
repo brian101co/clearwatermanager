@@ -1,4 +1,4 @@
-import pytz
+import pytz, json
 
 from django.shortcuts import render, redirect
 from .models import Customer, Metric
@@ -194,3 +194,6 @@ def getAvaliability(request):
             return render(request, "manager/openings.html", {"sites": sites, "checkin": checkin, "checkout": checkout})
     else:
         return redirect('loginuser')
+
+def metric(request):  
+    return render(request, "metrics/metrics.html")

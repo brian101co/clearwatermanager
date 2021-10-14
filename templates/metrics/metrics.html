@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block extraCSS %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.4/chartist.min.css" integrity="sha512-V0+DPzYyLzIiMiWCg3nNdY+NyIiK9bED/T1xNBj08CaIUyK3sXRpB26OUCIzujMevxY9TRJFHQIxTwgzb0jVLg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+    #chart-1 .ct-line,
+    #chart-1 .ct-point {
+        stroke: rgb(11, 218, 81);
+    }
+
+    #chart-1 .ct-area {
+        fill: rgba(11, 218, 81, 0.5);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h1 class="text-center">Metrics</h1>
+        </div>
+        <div class="col-sm-12 col-md-6">
+            <div class="wrapper py-3">
+                <div class="chart-container my-3">
+                    <h5 class="ml-5">Reservations per Month</h5>
+                    <div id="chart-1"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6">
+            <div class="chart-container my-3">
+                <h5 class="ml-5">Cancelations per Month</h5>
+                <div id="chart-2"></div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extraJS %} 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.4/chartist.min.js" integrity="sha512-9rxMbTkN9JcgG5euudGbdIbhFZ7KGyAuVomdQDI9qXfPply9BJh0iqA7E/moLCatH2JD4xBGHwV6ezBkCpnjRQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartist-plugin-axistitle@0.0.7/dist/chartist-plugin-axistitle.min.js"></script>
+<script>
+    const url = "{% url 'api_metrics' %}";
+    fetch(url + "?year=2021")
+        .then(response => response.json())
+        .then(data => {
+            new Chartist.Line('#chart-1', {
+                labels: data.map((record => {
+                    return record.month;
+                })),
+                series: [
+                    data.map(record => {
+                        return record.total;
+                    })
+                ]
+            }, {
+                low: 0,
+                showArea: true,
+                plugins: [
+                    Chartist.plugins.ctAxisTitle({
+                        axisX: {
+                            axisTitle: 'Months',
+                            axisClass: 'ct-axis-title',
+                            offset: {
+                            x: 0,
+                            y: 35
+                            },
+                            textAnchor: 'middle'
+                        },
+                        axisY: {
+                            axisTitle: 'Reservations',
+                            axisClass: 'ct-axis-title',
+                            offset: {
+                            x: 0,
+                            y: 15
+                            },
+                            textAnchor: 'middle',
+                            flipTitle: true
+                        }
+                    })
+                ]
+            });
+        })
+        .catch(err => console.log(err));
+
+    fetch(url + "?year=2021&cancelations=True")
+        .then(response => response.json())
+        .then(data => {
+            new Chartist.Bar('#chart-2', {
+                labels: data.map((record => {
+                    return record.month;
+                })),
+                series: [
+                    data.map(record => {
+                        return record.total;
+                    })
+                ]
+            }, {
+                low: 0,
+                plugins: [
+                    Chartist.plugins.ctAxisTitle({
+                        axisX: {
+                            axisTitle: 'Months',
+                            axisClass: 'ct-axis-title',
+                            offset: {
+                            x: 0,
+                            y: 35
+                            },
+                            textAnchor: 'middle'
+                        },
+                        axisY: {
+                            axisTitle: 'Cancelations',
+                            axisClass: 'ct-axis-title',
+                            offset: {
+                            x: 0,
+                            y: 12
+                            },
+                            textAnchor: 'middle',
+                            flipTitle: true
+                        }
+                    })
+                ]
+            });
+        })
+        .catch(err => console.log(err));
+</script>
+{% endblock %}
