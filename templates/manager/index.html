@@ -39,13 +39,13 @@
         {% endif %}
 
         <!-- Tool Bar -->
-        <div class="toolbar">
+        <div class="toolbar flex-wrap">
           <div class="d-flex align-items-center">
             <button class="btn pure-material-button-contained bg-primary mr-3" data-toggle="modal" data-target="#check-avaliability">Avaliablity</button>
             <a href="{% url 'metrics' %}" class="btn pure-material-button-contained bg-primary mr-3">Metrics</a>
             <button type="button" class="btn-plus bg-primary" data-toggle="modal" data-target="#customer-form-modal"><i class="fas fa-plus"></i></button>
           </div>
-          <div class="btn btn-dark total-reservations">
+          <div class="btn btn-dark total-reservations mt-3 mt-md-0">
             Total Reservations
             <span class="badge badge-light badge-pill">{{ totalReservations }}</span>
           </div>
