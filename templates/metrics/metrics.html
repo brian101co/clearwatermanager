@@ -43,14 +43,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.4/chartist.min.js" integrity="sha512-9rxMbTkN9JcgG5euudGbdIbhFZ7KGyAuVomdQDI9qXfPply9BJh0iqA7E/moLCatH2JD4xBGHwV6ezBkCpnjRQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartist-plugin-axistitle@0.0.7/dist/chartist-plugin-axistitle.min.js"></script>
 <script>
+    const year = new Date().getFullYear()
     const url = "{% url 'api_metrics' %}";
-    fetch(url + "?year=2021")
+    fetch(url + `?year=${year}`)
         .then(response => response.json())
         .then(data => {
             const series_1 = data.map(record => {
                 return record.total;
             });
-            fetch(url + "?year=2020")
+            fetch(url + `?year=${year - 1}`)
                 .then(response => response.json())
                 .then(data => {
                     const series_2 = data.map(record => {
