@@ -5,13 +5,13 @@
 {% block extraCSS %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.4/chartist.min.css" integrity="sha512-V0+DPzYyLzIiMiWCg3nNdY+NyIiK9bED/T1xNBj08CaIUyK3sXRpB26OUCIzujMevxY9TRJFHQIxTwgzb0jVLg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
-    #chart-1 .ct-line,
-    #chart-1 .ct-point {
-        stroke: rgb(11, 218, 81);
+    .ct-series-a .ct-line,
+    .ct-series-a .ct-point {
+        stroke:#e37c80;
     }
-
-    #chart-1 .ct-area {
-        fill: rgba(11, 218, 81, 0.5);
+    .ct-series-b .ct-line,
+    .ct-series-b .ct-point {
+        stroke: #0bda51;
     }
 </style>
 {% endblock %}
@@ -61,12 +61,11 @@
                             return record.month;
                         })),
                         series: [
-                            series_1,
-                            series_2
+                            series_2,
+                            series_1
                         ]
                     }, {
                         low: 0,
-                        showArea: true,
                         plugins: [
                             Chartist.plugins.ctAxisTitle({
                                 axisX: {
