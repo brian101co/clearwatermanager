@@ -107,8 +107,8 @@ def addCustomer(request):
                     if parser.parse(start) < timezone.make_naive(res.start, timezone=None) or parser.parse(start) > timezone.make_naive(res.end, timezone=None):
                         if parser.parse(end) < timezone.make_naive(res.start, timezone=None) or parser.parse(end) > timezone.make_naive(res.end, timezone=None):
                             customer = Customer(name=name, site=lot, start=start, end=end, phoneNum=phoneNum, info=info)
-                            metric = Metric(site=lot, start=start, end=end, customer=customer)
                             customer.save()
+                            metric = Metric(site=lot, start=start, end=end, customer=customer)
                             metric.save()
                             return redirect('home')
                         else:
@@ -119,9 +119,9 @@ def addCustomer(request):
                         return redirect('home')
                 except ObjectDoesNotExist:
                     customer = Customer(name=name, site=lot, start=start, end=end, phoneNum=phoneNum, info=info)
+                    customer.save()
                     metric = Metric(site=lot, start=start, end=end, customer=customer)
                     metric.save()
-                    customer.save()
                     return redirect('home')
                 except MultipleObjectsReturned:
                     reservations = Customer.objects.filter(site=lot).all()
@@ -146,9 +146,9 @@ def addCustomer(request):
                     else:
                         customer = Customer(
                             name=name, site=lot, start=start, end=end, phoneNum=phoneNum, info=info)
+                        customer.save()
                         metric = Metric(site=lot, start=start, end=end, customer=customer)
                         metric.save()
-                        customer.save()
                         return redirect('home')
             else:
                 messages.error(
