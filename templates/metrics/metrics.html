@@ -13,6 +13,49 @@
     .ct-series-b .ct-point {
         stroke: #0bda51;
     }
+
+    #chart-2 .ct-series-a .ct-bar {
+        fill: #e37c80;
+    }
+
+    .ct-legend {
+        position: relative;
+        z-index: 10;
+        display: flex;
+        list-style: none;
+    }
+    
+    .ct-legend li {
+        position: relative;
+        padding-left: 23px;
+        margin-bottom: 3px;
+        display: flex;
+        align-items: center;
+        margin-right: 12px;
+    }
+
+    .ct-legend li::before {
+        width: 12px;
+        height: 12px;
+        position: absolute;
+        left: 0;
+        content: '';
+        border: 3px solid transparent;
+        border-radius: 2px;
+    }
+
+    .ct-legend li.inactive::before {
+        background: transparent;
+    }
+    .ct-series-0::before {
+        background-color: #e37c80;
+    }
+    .ct-series-1::before {
+        background-color: #0bda51;
+    }
+    #chart-2 .ct-series-0::before {
+        background-color: #e37c80;
+    }
 </style>
 {% endblock %}
 
@@ -25,13 +68,13 @@
         </div>
         <div class="col-sm-12 col-md-6"> 
             <div class="chart-container my-3 card shadow-sm p-3">
-                <h5 class="ml-5">Reservations per Month</h5>
+                <h5 class="text-center">Reservations per Month</h5>
                 <div id="chart-1"></div>
             </div>
         </div>
         <div class="col-sm-12 col-md-6">
             <div class="chart-container my-3 card shadow-sm p-3">
-                <h5 class="ml-5">Cancelations per Month</h5>
+                <h5 class="text-center">Cancelations per Month</h5>
                 <div id="chart-2"></div>
             </div>
         </div>
@@ -42,6 +85,7 @@
 {% block extraJS %} 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.4/chartist.min.js" integrity="sha512-9rxMbTkN9JcgG5euudGbdIbhFZ7KGyAuVomdQDI9qXfPply9BJh0iqA7E/moLCatH2JD4xBGHwV6ezBkCpnjRQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartist-plugin-axistitle@0.0.7/dist/chartist-plugin-axistitle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartist-plugin-legend/0.6.2/chartist-plugin-legend.min.js" integrity="sha512-J82gmCXFu+eMIvhK2cCa5dIiKYfjFY4AySzCCjG4EcnglcPQTST/nEtaf5X6egYs9vbbXpttR7W+wY3Uiy37UQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
     const year = new Date().getFullYear()
     const url = "{% url 'api_metrics' %}";
@@ -88,6 +132,9 @@
                                     textAnchor: 'middle',
                                     flipTitle: true
                                 }
+                            }),
+                            Chartist.plugins.legend({
+                                legendNames: [`${year - 1}`, `${year}`],
                             })
                         ]
                     });
@@ -131,6 +178,9 @@
                             textAnchor: 'middle',
                             flipTitle: true
                         }
+                    }),
+                    Chartist.plugins.legend({
+                        legendNames: [`${year}`],
                     })
                 ]
             });
