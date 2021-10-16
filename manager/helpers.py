@@ -10,22 +10,22 @@ def is_double_booked(reservations, checkin, checkout):
             if checkin_dt >= reservation.start and checkin_dt <= reservation.end:
                 return True
             elif checkin_dt <= reservation.start and checkout_dt > reservation.start:
-                return True
-            else:
-                return False
+                return True    
+        return False
     return False
 
 
 def get_reservation_type(checkin, checkout):
-    """ Returns whether the reservations is daily (0), weekly (1), or monthly (2) """
+    """ Returns whether the reservations is daily (1), weekly (2), or monthly (3) """
     checkin_dt = pendulum.parse(checkin, tz="UTC")
     checkout_dt = pendulum.parse(checkout, tz="UTC")
-    days = checkin_dt.diff(checkout_dt).in_days()
-    if days < 7:
-        return 0
-    elif days >= 7 and days <= 28:
-        return 1
-    return 2
+    weeks = checkin_dt.diff(checkout_dt).in_weeks()
+    months = checkin_dt.diff(checkout_dt).in_months()
+    if months >= 1:
+        return 3
+    elif weeks >= 1:
+        return 2
+    return 1
 
 def get_long_term_reservations(customer_list):
     filtered_customers = []

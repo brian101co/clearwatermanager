@@ -73,6 +73,25 @@ class MetricQuerySet(models.QuerySet):
                 data.append({"month": "Dec", "total": total_canc_per_month})
         return data
 
+    def reservations_by_type(self):
+        daily = self.filter(res_type=1).count()
+        weekly = self.filter(res_type=2).count()
+        monthly = self.filter(res_type=3).count()
+        total = self.all().count()
+        return [
+            {
+                "labels": ["daily", "weekly", "monthly"],
+                "percentages": [daily/total, weekly/total, monthly/total]
+            },
+            {
+                "daily": daily,
+                "weekly": weekly,
+                "monthly": monthly,
+                "total": total
+            }
+        ]
+
+
 class Metric(models.Model):
     site = models.CharField(max_length=4)
     start = models.DateTimeField()
