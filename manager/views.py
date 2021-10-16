@@ -1,9 +1,12 @@
 import pytz
 
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import DetailView, DeleteView
 from .models import Customer, Metric
 from django.contrib import messages
-from django.contrib.auth import login, authenticate
 from datetime import date, datetime
 from .helpers import (
     get_short_term_reservations, 
@@ -34,37 +37,27 @@ def index(request):
     else:
         return redirect('loginuser')
 
-def reservation_detail(request, id):
-    reservation = Customer.objects.get(pk=id)
-    return render(request, 'manager/reservation_detail.html', {"reservation": reservation})
+class DashboardLoginView(LoginView):
+    template_name = "manager/dashboard_login.html"
+    success_url = reverse_lazy('home')
 
-def loginuser(request):
-    if request.user.is_authenticated:
-        return redirect('home')
-    else:
-        if request.method == 'GET':
-            return render(request, 'manager/login.html')
-        else:
-            user = authenticate(
-                request, username=request.POST['login'], password=request.POST['password'])
-            if user is None:
-                return render(request, 'manager/login.html', {'error': 'Incorrect username or password'})
-            else:
-                login(request, user)
-                return redirect('home')
+class ReservationDetailView(LoginRequiredMixin, DetailView):
+    model = Customer
+    pk_url_kwarg = "id"
+    context_object_name = "reservation"
+    template_name = "manager/reservation_detail.html"
 
-def delete(request, id):
-    if request.user.is_authenticated:
-        if request.method == 'POST':
-            customer = Customer.objects.get(pk=id)
-            metric = Metric.objects.get(customer=customer)
-            metric.canceled = True
-            metric.save()
-            customer.delete()
-            return redirect('home')
-    else:
-        return redirect('loginuser')
+class DeleteReservationView(LoginRequiredMixin, DeleteView):
+    model = Customer
+    pk_url_kwarg = "id"
+    success_url = reverse_lazy('home')
 
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        metric = Metric.objects.get(customer=self.object)
+        metric.canceled = True
+        metric.save()
+        return super().delete(request, *args, **kwargs)
 
 def edit(request, id):
     if request.user.is_authenticated:

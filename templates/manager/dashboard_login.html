@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% load static crispy_forms_tags %}
+
+{% block extraCSS %}
+    <style>
+        .col-sm-12 {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: whitesmoke;
+        }
+        .card {
+            min-width: 360px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<section class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card shadow-sm m-5">
+                <div class="card-body">
+                    <h1 class="text-center h1">Login</h1>
+                    <form action="." method="POST">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <input type="submit" value="Login" class="btn btn-primary">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
