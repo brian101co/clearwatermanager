@@ -1,14 +1,15 @@
-import pytz, json
+import pytz
 
 from django.shortcuts import render, redirect
 from .models import Customer, Metric
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
-from dateutil import parser
-from django.utils import timezone
 from datetime import date, datetime
-from .utils import get_short_term_reservations, get_long_term_reservations
+from .helpers import (
+    get_short_term_reservations, 
+    get_long_term_reservations, 
+    is_double_booked
+)
 
 
 def index(request):
@@ -50,7 +51,6 @@ def loginuser(request):
                 return render(request, 'manager/login.html', {'error': 'Incorrect username or password'})
             else:
                 login(request, user)
-                # return render(request, 'manager/index.html')
                 return redirect('home')
 
 def delete(request, id):
@@ -85,7 +85,11 @@ def edit(request, id):
             reservation.phoneNum = phoneNum
             reservation.info = info
 
-            reservation.save()
+            all_reservations = Customer.objects.exclude(pk=id).filter(site=lot)
+            if not is_double_booked(all_reservations, reservation.start, reservation.end):
+                reservation.save()
+                return redirect('home')
+            messages.error(request, 'Unavaliable.')
             return redirect('home')
     else:
         return redirect('loginuser')
@@ -102,57 +106,17 @@ def addCustomer(request):
             info = request.POST.get('info')
 
             if name and start and end and lot and phoneNum:
-                try:
-                    res = Customer.objects.get(site=lot)
-                    if parser.parse(start) < timezone.make_naive(res.start, timezone=None) or parser.parse(start) > timezone.make_naive(res.end, timezone=None):
-                        if parser.parse(end) < timezone.make_naive(res.start, timezone=None) or parser.parse(end) > timezone.make_naive(res.end, timezone=None):
-                            customer = Customer(name=name, site=lot, start=start, end=end, phoneNum=phoneNum, info=info)
-                            customer.save()
-                            metric = Metric(site=lot, start=start, end=end, customer=customer)
-                            metric.save()
-                            return redirect('home')
-                        else:
-                            messages.error(request, 'Unavaliable.')
-                            return redirect('home')
-                    else:
-                        messages.error(request, 'Unavaliable.')
-                        return redirect('home')
-                except ObjectDoesNotExist:
+                all_reservations = Customer.objects.filter(site=lot)
+                if not is_double_booked(all_reservations, start, end):
                     customer = Customer(name=name, site=lot, start=start, end=end, phoneNum=phoneNum, info=info)
                     customer.save()
                     metric = Metric(site=lot, start=start, end=end, customer=customer)
                     metric.save()
                     return redirect('home')
-                except MultipleObjectsReturned:
-                    reservations = Customer.objects.filter(site=lot).all()
-                    reservationList = list(reservations)
-
-                    overlap = False
-
-                    for res in reservationList:
-                        if parser.parse(start) < timezone.make_naive(res.start, timezone=None) or parser.parse(start) > timezone.make_naive(res.end, timezone=None):
-                            if parser.parse(end) < timezone.make_naive(res.start, timezone=None) or parser.parse(end) > timezone.make_naive(res.end, timezone=None):
-                                overlap = False
-                            else:
-                                overlap = True
-                                break
-                        else:
-                            overlap = True
-                            break
-
-                    if overlap:
-                        messages.error(request, 'Lot is Unavaliable.')
-                        return redirect('home')
-                    else:
-                        customer = Customer(
-                            name=name, site=lot, start=start, end=end, phoneNum=phoneNum, info=info)
-                        customer.save()
-                        metric = Metric(site=lot, start=start, end=end, customer=customer)
-                        metric.save()
-                        return redirect('home')
+                messages.error(request, 'Unavaliable.')
+                return redirect('home')
             else:
-                messages.error(
-                    request, 'Please make sure to fill out all the feilds.')
+                messages.error(request, 'Please make sure to fill out all the fields.')
                 return redirect('home')
     else:
         return redirect('loginuser')
@@ -173,15 +137,12 @@ def getAvaliability(request):
                 for reservation in all_reservations:
                     end = reservation.end.replace(tzinfo=pytz.UTC)
                     start = reservation.start.replace(tzinfo=pytz.UTC)
-                    print(f'{reservation.site} Start: {start}, End: {end}')
                     if checkin >= start and checkin <= end:
-                        # print(reservation.site)
                         try:
                             sites.remove(reservation.site.strip())
                         except Exception as e:
                             print(e)
                     elif checkin <= start and checkout > start:
-                        # print(reservation.site)
                         try:
                             sites.remove(reservation.site.strip())
                         except Exception as e:
