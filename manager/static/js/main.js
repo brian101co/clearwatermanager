@@ -12,6 +12,23 @@ window.onload = () => {
         activeSiteId: null,
     }
 
+    function showLoader(className, clearInfo=true) {
+        if (clearInfo == true) {
+            document.querySelector(".info-model-body .content").innerText = "";
+        }
+        const loaderContainer = document.createElement('div');
+        loaderContainer.classList.add("d-flex", "justify-content-center", "loader-container");
+        loaderContainer.innerHTML = `<div class="spinner-grow text-primary" role="status">
+                                       <span class="sr-only">Loading...</span>
+                                     </div>`;
+        document.querySelector(className).prepend(loaderContainer);
+    }
+
+    function removeLoader(className) {
+        const cln = className + " .loader-container";
+        document.querySelector(cln).remove();
+    }
+
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -44,14 +61,17 @@ window.onload = () => {
                 const siteNumber = lot.getAttribute("data-site");
                 lot.addEventListener("click", (e) => {
                     const url = window.location.origin + "/site/info/" + siteNumber;
+                    showLoader(".info-model-body");
                     fetch(url)
                         .then(response => response.json())
                         .then(data => {
+                            removeLoader(".info-model-body");
                             this.infoModal.querySelector(".modal-title").innerText = `Site ${data[0].identifier}`;
                             this.infoModal.querySelector(".content").innerText = data[0].info;
                             this.infoModal.querySelector(".content").setAttribute("site", data[0].identifier);
                         })
                         .catch(err => {
+                            removeLoader(".info-model-body");
                             this.infoModal.querySelector(".modal-title").innerText = `Site ${siteNumber}`;
                             this.infoModal.querySelector(".content").setAttribute("site", siteNumber);
                             this.infoModal.querySelector(".content").innerText = "No information available.";

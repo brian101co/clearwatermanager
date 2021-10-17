@@ -1,10 +1,11 @@
 import pytz
 
 from django.shortcuts import render, redirect
+from .forms import ReservationForm
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import DetailView, DeleteView
+from django.views.generic import DetailView, DeleteView, TemplateView
 from .models import Customer, Metric
 from django.contrib import messages
 from datetime import date, datetime
@@ -14,6 +15,18 @@ from .helpers import (
     is_double_booked
 )
 
+
+class DashboardView(LoginRequiredMixin, TemplateView):
+    template_name = "manager/index.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        customers = Customer.objects.all().order_by('start')
+        context["reservation_form"] = ReservationForm()
+        context["customers"] = get_short_term_reservations(customers)
+        context["longterms"] = get_long_term_reservations(customers)
+        context["totalReservations"] = Customer.objects.all().count()
+        return context
 
 def index(request):
     if request.user.is_authenticated:
