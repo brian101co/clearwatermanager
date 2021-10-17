@@ -1,8 +1,5 @@
 {% load crispy_forms_tags %}
 
 <form method="POST" action="{% url 'addcustomer' %}" novalidate>
-    {% csrf_token %}
-    {{ reservation_form|crispy }}
-    <button type="button" class="btn pure-material-button-contained bg-secondary" data-dismiss="modal">Close</button>
-    <button type="submit" class="btn pure-material-button-contained">Submit</button>
+    {% crispy reservation_form %}
 </form>

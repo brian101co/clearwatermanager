@@ -16,7 +16,7 @@ from .helpers import (
 )
 
 
-class DashboardView(LoginRequiredMixin, TemplateView):
+class DashboardHomeView(LoginRequiredMixin, TemplateView):
     template_name = "manager/index.html"
 
     def get_context_data(self, **kwargs):
@@ -28,30 +28,16 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context["totalReservations"] = Customer.objects.all().count()
         return context
 
-def index(request):
-    if request.user.is_authenticated:
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
         today = date.today()
         checkedout = Customer.objects.filter(end__lt=today).all()
         checkedout.delete()
-
-        customers = Customer.objects.all().order_by('start')
-
-        long_terms = get_long_term_reservations(customers)
-        short_terms = get_short_term_reservations(customers)
-
-        reservations = Customer.objects.all().count()
-
-        return render(request, 'manager/index.html',
-                      {
-                          "customers": short_terms,
-                          "totalReservations": reservations,
-                          "longterms": long_terms,
-                      })
-    else:
-        return redirect('loginuser')
+        return self.render_to_response(context)
 
 class DashboardLoginView(LoginView):
     template_name = "manager/dashboard_login.html"
+    redirect_authenticated_user = True
     success_url = reverse_lazy('home')
 
 class ReservationDetailView(LoginRequiredMixin, DetailView):
@@ -104,25 +90,18 @@ def edit(request, id):
 def addCustomer(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
-            name = request.POST.get('name')
-            start = request.POST.get('checkin')
-            end = request.POST.get('checkout')
-            lot = request.POST.get('lot')
-            phoneNum = request.POST.get('phone')
-            info = request.POST.get('info')
-
-            if name and start and end and lot and phoneNum:
-                all_reservations = Customer.objects.filter(site=lot)
-                if not is_double_booked(all_reservations, start, end):
-                    customer = Customer(name=name, site=lot, start=start, end=end, phoneNum=phoneNum, info=info)
-                    customer.save()
-                    metric = Metric(site=lot, start=start, end=end, customer=customer)
+            form = ReservationForm(request.POST)
+            if form.is_valid():
+                site = form.cleaned_data["site"]
+                start = form.cleaned_data["start"]
+                end = form.cleaned_data["end"]
+                all_reservations = Customer.objects.filter(site=site)
+                if not is_double_booked(all_reservations, start.isoformat(), end.isoformat()):
+                    customer = form.save()
+                    metric = Metric(site=site, start=start, end=end, customer=customer)
                     metric.save()
                     return redirect('home')
                 messages.error(request, 'Unavaliable.')
-                return redirect('home')
-            else:
-                messages.error(request, 'Please make sure to fill out all the fields.')
                 return redirect('home')
     else:
         return redirect('loginuser')

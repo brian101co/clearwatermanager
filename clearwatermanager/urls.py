@@ -5,7 +5,7 @@ from sites import views as site_views
 
 urlpatterns = [
     path('', manager_views.DashboardLoginView.as_view(), name="loginuser"),
-    path('dashboard/', manager_views.index, name='home'),
+    path('dashboard/', manager_views.DashboardHomeView.as_view(), name='home'),
     path('dashboard/delete/<int:id>', manager_views.DeleteReservationView.as_view(), name="delete-reservation"),
     path('dashboard/edit/<int:id>', manager_views.edit, name="edit"),
     path('dashboard/reservation/<int:id>', manager_views.ReservationDetailView.as_view(), name="reservation-detail"),
