@@ -1,11 +1,12 @@
 import pytz
 
 from django.shortcuts import render, redirect
+from django.http import HttpResponseRedirect
 from .forms import ReservationForm
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import DetailView, DeleteView, TemplateView
+from django.views.generic import DetailView, DeleteView, TemplateView, CreateView
 from .models import Customer, Metric
 from django.contrib import messages
 from datetime import date, datetime
@@ -86,25 +87,22 @@ def edit(request, id):
     else:
         return redirect('loginuser')
 
+class CreateReservationView(LoginRequiredMixin, CreateView):
+    form_class = ReservationForm
+    success_url = reverse_lazy("home")
 
-def addCustomer(request):
-    if request.user.is_authenticated:
-        if request.method == 'POST':
-            form = ReservationForm(request.POST)
-            if form.is_valid():
-                site = form.cleaned_data["site"]
-                start = form.cleaned_data["start"]
-                end = form.cleaned_data["end"]
-                all_reservations = Customer.objects.filter(site=site)
-                if not is_double_booked(all_reservations, start.isoformat(), end.isoformat()):
-                    customer = form.save()
-                    metric = Metric(site=site, start=start, end=end, customer=customer)
-                    metric.save()
-                    return redirect('home')
-                messages.error(request, 'Unavaliable.')
-                return redirect('home')
-    else:
-        return redirect('loginuser')
+    def form_valid(self, form):
+        site = form.cleaned_data["site"]
+        start = form.cleaned_data["start"]
+        end = form.cleaned_data["end"]
+        all_reservations = Customer.objects.filter(site=site)
+        if not is_double_booked(all_reservations, start.isoformat(), end.isoformat()):
+            self.object = form.save()
+            metric = Metric(site=site, start=start, end=end, customer=self.object)
+            metric.save()
+            return HttpResponseRedirect(self.get_success_url())
+        messages.error(self.request, 'Unavaliable.')
+        return redirect('home')
 
 
 def getAvaliability(request):

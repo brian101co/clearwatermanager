@@ -10,7 +10,7 @@ urlpatterns = [
     path('dashboard/edit/<int:id>', manager_views.edit, name="edit"),
     path('dashboard/reservation/<int:id>', manager_views.ReservationDetailView.as_view(), name="reservation-detail"),
     path('dashboard/metrics/', manager_views.metric, name="metrics"),
-    path('addcustomer/', manager_views.addCustomer, name="addcustomer"),
+    path('addcustomer/', manager_views.CreateReservationView.as_view(), name="addcustomer"),
     path('avaliable/', manager_views.getAvaliability, name="avaliable"),
     path('site/info/<str:site>', site_views.get_site_info, name="site_info"),
     path('api/', include('api.urls')),
