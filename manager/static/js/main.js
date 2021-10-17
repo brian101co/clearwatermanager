@@ -172,11 +172,11 @@ window.onload = () => {
                     .then(response => response.json())
                     .then(data => {
                         form.querySelector('[name="name"]').value = data[0].name;
-                        form.querySelector('[name="lot"]').value = data[0].site;
-                        form.querySelector('[name="phone"]').value = data[0].phoneNum;
+                        form.querySelector('[name="site"]').value = data[0].site;
+                        form.querySelector('[name="phoneNum"]').value = data[0].phoneNum;
                         form.querySelector('[name="info"]').value = data[0].info;
-                        form.querySelector('[name="checkin"]').value = data[0].start.slice(0, -1);
-                        form.querySelector('[name="checkout"]').value = data[0].end.slice(0, -1);
+                        form.querySelector('[name="start"]').value = data[0].start.slice(0, -1);
+                        form.querySelector('[name="end"]').value = data[0].end.slice(0, -1);
                     })
                     .catch(err => console.log(err));
             });

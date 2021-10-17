@@ -6,7 +6,13 @@ from .forms import ReservationForm
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import DetailView, DeleteView, TemplateView, CreateView
+from django.views.generic import (
+    DetailView, 
+    DeleteView, 
+    TemplateView, 
+    CreateView,
+    UpdateView
+)
 from .models import Customer, Metric
 from django.contrib import messages
 from datetime import date, datetime
@@ -59,33 +65,27 @@ class DeleteReservationView(LoginRequiredMixin, DeleteView):
         metric.save()
         return super().delete(request, *args, **kwargs)
 
-def edit(request, id):
-    if request.user.is_authenticated:
-        if request.method == 'POST':
-            name = request.POST.get('name')
-            start = request.POST.get('checkin')
-            end = request.POST.get('checkout')
-            lot = request.POST.get('lot')
-            phoneNum = request.POST.get('phone')
-            info = request.POST.get('info')
+class EditReservationView(LoginRequiredMixin, UpdateView):
+    model = Customer
+    form_class = ReservationForm
+    pk_url_kwarg = "id"
+    success_url = reverse_lazy('home')
 
-            reservation = Customer.objects.get(pk=id)
-
-            reservation.name = name
-            reservation.site = lot
-            reservation.start = start
-            reservation.end = end
-            reservation.phoneNum = phoneNum
-            reservation.info = info
-
-            all_reservations = Customer.objects.exclude(pk=id).filter(site=lot)
-            if not is_double_booked(all_reservations, reservation.start, reservation.end):
-                reservation.save()
-                return redirect('home')
-            messages.error(request, 'Unavaliable.')
-            return redirect('home')
-    else:
-        return redirect('loginuser')
+    def form_valid(self, form):
+        site = form.cleaned_data["site"]
+        start = form.cleaned_data["start"]
+        end = form.cleaned_data["end"]
+        all_reservations = Customer.objects.exclude(pk=self.kwargs["id"]).filter(site=site)
+        if not is_double_booked(all_reservations, start.isoformat(), end.isoformat()):
+            self.object = form.save()
+            metric = Metric.objects.get(customer=self.object)
+            metric.start = start
+            metric.end = end
+            metric.site = site
+            metric.save()
+            return HttpResponseRedirect(self.get_success_url())
+        messages.error(self.request, 'Unavaliable.')
+        return redirect('home')
 
 class CreateReservationView(LoginRequiredMixin, CreateView):
     form_class = ReservationForm
