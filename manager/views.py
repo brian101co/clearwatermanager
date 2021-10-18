@@ -23,6 +23,9 @@ from .helpers import (
 )
 
 
+class MetricTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = "metrics/metrics.html"
+
 class DashboardHomeView(LoginRequiredMixin, TemplateView):
     template_name = "manager/index.html"
 
@@ -138,6 +141,3 @@ def getAvaliability(request):
             return render(request, "manager/openings.html", {"sites": sites, "checkin": checkin, "checkout": checkout})
     else:
         return redirect('loginuser')
-
-def metric(request):  
-    return render(request, "metrics/metrics.html")
