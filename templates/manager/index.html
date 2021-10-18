@@ -60,7 +60,7 @@
   </div>
 </section>
 
-<section id="reservation-table" class="">
+<section id="reservation-table">
   <div class="container">
     <div class="row">
       <div class="col-sm-12">
@@ -69,7 +69,6 @@
           <table id="tb reservation-table" class="table table-striped display">
             <thead>
               <tr>
-                <th scope="col" class="d-none">db-id</th>
                 <th scope="col" class="mobile-hidden">#</th>
                 <th scope="col">Name</th>
                 <th scope="col">Check-in</th>
@@ -81,7 +80,6 @@
             <tbody>
               {% for customer in customers %}
               <tr>
-                <th scope="row" class="d-none">{{ customer.id }}</th>
                 <th scope="row" class="mobile-hidden">{{ forloop.counter }}</th>
                 <td class="name"><button type="button" data-toggle="modal" data-target="#manage-reservation" data-id="{{ customer.id }}" class="btn-delete">{{ customer.name }}</button></td>
                 <td class="checkin">{{ customer.start|date:"M d Y" }}</td>
