@@ -1,0 +1,18 @@
+{% load crispy_forms_tags %}
+
+<div class="modal fade" id="edit-reservation" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="form">
+    <div class="modal-content">
+      <div class="modal-header edit-header">
+        <h5 class="modal-title">Edit Reservation</h5>
+      </div>
+      <div class="modal-body">
+        <form method="POST" class="edit-form" novalidate>
+            {% crispy reservation_form %}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+

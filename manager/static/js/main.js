@@ -85,7 +85,6 @@ window.onload = () => {
                     const siteInfoText = e.currentTarget.querySelector(".content").innerText;
                     const siteNumber = e.currentTarget.querySelector(".content").getAttribute("site");
                     const url = window.location.origin + "/site/info/" + siteNumber;
-                    console.log(JSON.stringify({"info": siteInfoText}))
                     fetch(url, {
                         method: "POST",
                         headers: {
@@ -183,36 +182,36 @@ window.onload = () => {
         }
     }
 
-    class Notification {
-        constructor(obj) {
-            this.config = obj;
-        }
+    // class Notification {
+    //     constructor(obj) {
+    //         this.config = obj;
+    //     }
 
-        getNotifications() {
-            fetch(this.config.url)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.length == 0) {
-                        document.querySelector('.notifications-container').innerHTML += `<div class="alert alert-secondary mt-1" role="alert">
-                                                                                                No campers checking out tomorrow.
-                                                                                        </div>`;
-                    } else {
-                        data.forEach(reservation => {
-                            let time = new Date(reservation.end);
-                            document.querySelector('.notifications-container').innerHTML += `<div class="alert alert-primary mt-1" role="alert">
-                                                                                                <strong>${reservation.name}</strong> | Site: ${reservation.site} | Checkout: ${time.toDateString()}
-                                                                                            </div>`;
-                        });
-                    }
-                })
-                .catch(err => console.log(err));
-        }
-    }
+    //     getNotifications() {
+    //         fetch(this.config.url)
+    //             .then(response => response.json())
+    //             .then(data => {
+    //                 if (data.length == 0) {
+    //                     document.querySelector('.notifications-container').innerHTML += `<div class="alert alert-secondary mt-1" role="alert">
+    //                                                                                             No campers checking out tomorrow.
+    //                                                                                     </div>`;
+    //                 } else {
+    //                     data.forEach(reservation => {
+    //                         let time = new Date(reservation.end);
+    //                         document.querySelector('.notifications-container').innerHTML += `<div class="alert alert-primary mt-1" role="alert">
+    //                                                                                             <strong>${reservation.name}</strong> | Site: ${reservation.site} | Checkout: ${time.toDateString()}
+    //                                                                                         </div>`;
+    //                     });
+    //                 }
+    //             })
+    //             .catch(err => console.log(err));
+    //     }
+    // }
 
     const NewMap = new Map(lotNodes, siteNodes, checkoutNodes, checkinNodes);
-    const Notifications = new Notification({
-        url: window.location.origin + "/api/notifications/",
-    });
+    // const Notifications = new Notification({
+    //     url: window.location.origin + "/api/notifications/",
+    // });
     const InitModal = new Modal({
         deleteElem: names,
         editElem: editBtn,
@@ -220,6 +219,5 @@ window.onload = () => {
     });
 
     NewMap.highlightLots();
-    Notifications.getNotifications();
-
+    // Notifications.getNotifications();
 }

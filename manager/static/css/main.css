@@ -1,11 +1,18 @@
 body {
     font-family: 'Nunito', sans-serif;
-    background-color: whitesmoke;
+}
+
+.navbar {
+    background-color: #0275d8;
+}
+
+.bg-accent {
+    background-color: #F5EE9E !important;
 }
 
 .toolbar {
     display: flex;
-    justify-content: space-between;
+    align-items: center;
 }
 
 .total-reservations {

@@ -1,0 +1,27 @@
+<div class="modal fade" id="check-avaliability" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="form">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Check Avaliablity</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="{% url 'avaliable' %}">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="checkin">Check-in</label>
+            <input type="datetime-local" class="form-control" id="checkin" name="checkin" placeholder="Check-in date">
+          </div>
+          <div class="form-group">
+            <label for="checkout">Check-out</label>
+            <input type="datetime-local" class="form-control" id="checkout" name="checkout" placeholder="Check-out date">
+          </div>
+          <button type="button" class="btn pure-material-button-contained bg-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn pure-material-button-contained bg-primary">Check</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

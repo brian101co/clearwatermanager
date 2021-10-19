@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+<section class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12 col-lg-8 offset-lg-2 my-3">
+            {% include 'partials/_map.html' %}
+        </div>
+        <div class="col-sm-12 my-3">
+            <div>
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endif %}
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                            <div class="alert alert-success" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+                <div class="toolbar flex-wrap">
+                    <button class="btn pure-material-button-contained bg-primary mr-3" data-toggle="modal" data-target="#check-avaliability">Avaliablity</button>
+                    <button type="button" class="btn-plus bg-primary" data-toggle="modal" data-target="#customer-form-modal"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-lg-6 my-3">
+            <h2 class="text-center mb-3">Reservations</h2>
+            <div class="table-responsive">
+            <table id="tb reservation-table" class="table table-striped display">
+                <thead>
+                <tr>
+                    <th scope="col" class="mobile-hidden">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Check-in</th>
+                    <th scope="col">Check-out</th>
+                    <th scope="col">Lot</th>
+                    <th scope="col">Phone Number</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for customer in customers %}
+                <tr>
+                    <th scope="row" class="mobile-hidden">{{ forloop.counter }}</th>
+                    <td class="name"><button type="button" data-toggle="modal" data-target="#manage-reservation" data-id="{{ customer.id }}" class="btn-delete">{{ customer.name }}</button></td>
+                    <td class="checkin">{{ customer.start|date:"M d Y" }}</td>
+                    <td class="checkout">{{ customer.end|date:"M d Y" }}</td>
+                    <td class="site">{{ customer.site }}</td>
+                    <td>{{ customer.phoneNum }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            </div>
+        </div>
+        <div class="col-sm-12 col-lg-6 my-3">
+            <h2 class="text-center mb-3">Longterm Residents</h2>
+            <div class="table-responsive">
+            <table id="tb-2" class="table table-striped display">
+                <thead>
+                <tr>
+                    <th scope="col" class="mobile-hidden">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Check-in</th>
+                    <th scope="col">Check-out</th>
+                    <th scope="col">Lot</th>
+                    <th scope="col">Phone Number</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for resident in longterms %}
+                <tr>
+                    <th scope="row" class="mobile-hidden">{{ forloop.counter }}</th>
+                    <td class="name"><button type="button" data-toggle="modal" data-target="#manage-reservation" data-id="{{ resident.id }}" class="btn-delete">{{ resident.name }}</button></td>
+                    <td class="checkin">{{ resident.start|date:"M d Y" }}</td>
+                    <td class="checkout">{{ resident.end|date:"M d Y" }}</td>
+                    <td class="site">{{ resident.site }}</td>
+                    <td>{{ resident.phoneNum }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% include 'partials/_add_reservation_form.html' with reservation_form=reservation_form %}
+{% include "partials/_manage_reservation_modal.html" %}
+{% include "partials/_edit_reservation_modal.html" %}
+{% include "partials/_site_information_modal.html" %}
+{% include "partials/_availability_modal.html" %}
+
+{% endblock %}
+
+{% block extraJS %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cleave.js/1.6.0/cleave.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cleave.js/1.6.0/addons/cleave-phone.us.js"></script>
+<script src="{% static 'js/main.js' %}"></script>
+<script>
+  var cleave = new Cleave('#edit-reservation [name="phoneNum"]', {
+    phone: true,
+    phoneRegionCode: 'us'
+  });
+  var cleave = new Cleave('#customer-form-modal [name="phoneNum"]', {
+    phone: true,
+    phoneRegionCode: 'us'
+  });
+</script>
+{% endblock %}

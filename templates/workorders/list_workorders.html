@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+<section class="container">
+    <div class="row">
+        <div class="col-sm-12" >
+            <h1 class="mt-3 text-center">Workorders</h1>
+            {% for order in workorders %}
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title"></h5>
+                </div>
+            </div>
+            {% empty %}
+            <h4>Great Job! All work orders are completed!</h4>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

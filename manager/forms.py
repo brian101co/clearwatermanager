@@ -25,9 +25,9 @@ class ReservationForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Field("name", placeholder="Enter name"),
-            Field("site", placeholder="lot"),
             Field("start", placeholder="Checkin Date"),
             Field("end", placeholder="Checkout Date"),
+            Field("site", placeholder="lot"),
             Field("phoneNum", placeholder="Phone Number"),
             Field("info", rows="3"),
             HTML('<button type="button" class="btn pure-material-button-contained bg-secondary mr-2" data-dismiss="modal">Close</button>'),
