@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from .models import WorkOrder
 from .forms import WorkorderForm
 from django.urls import reverse_lazy
@@ -12,11 +12,15 @@ from django.views.generic import (
     UpdateView,
     ListView
 )
-
+def workorder_completed_view(request, id):
+    workorder = WorkOrder.objects.get(pk=id)
+    workorder.completed = True
+    workorder.save()
+    return redirect('workorder-list')
 
 class WorkorderListView(LoginRequiredMixin, ListView):
     context_object_name = "workorders"
-    model = WorkOrder
+    queryset = WorkOrder.objects.filter(completed=False)
     ordering = "created_at"
     template_name = "workorders/list_workorders.html"
 

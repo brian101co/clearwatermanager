@@ -9,6 +9,7 @@ class WorkOrder(models.Model):
     manager = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="managers")
     created_at = models.DateTimeField(default=datetime.now())
     description = models.TextField()
+    completed = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.site}: {self.title}"
