@@ -21,8 +21,9 @@
                     </p>
                     <div class="toolbar">
                         <a href="{% url 'workorder-completed' object.id %}" class="btn bg-success pure-material-button-contained mr-2">Completed</a>
-                        <a href="#" class="btn bg-primary pure-material-button-contained mr-2">Edit</a>
-                        <form action="" method="POST">
+                        <a href="{% url 'workorder-update' object.id %}" class="btn bg-primary pure-material-button-contained mr-2">Edit</a>
+                        <form action="{% url 'workorder-delete' object.id %}" method="POST">
+                            {% csrf_token %}
                             <input type="submit" value="Delete" class="btn bg-danger pure-material-button-contained">
                         </form>
                     </div>

@@ -7,16 +7,28 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import (
     DetailView,
     DeleteView,
-    TemplateView,
     CreateView,
     UpdateView,
     ListView
 )
+
 def workorder_completed_view(request, id):
     workorder = WorkOrder.objects.get(pk=id)
     workorder.completed = True
     workorder.save()
     return redirect('workorder-list')
+
+class WorkorderUpdateView(LoginRequiredMixin, UpdateView):
+    model = WorkOrder
+    form_class = WorkorderForm
+    pk_url_kwarg = 'id'
+    success_url = reverse_lazy('workorder-list')
+    template_name = "workorders/create_workorder.html"
+
+class WorkorderDeleteView(LoginRequiredMixin, DeleteView):
+    model = WorkOrder
+    pk_url_kwarg = 'id'
+    success_url = reverse_lazy('workorder-list')
 
 class WorkorderListView(LoginRequiredMixin, ListView):
     context_object_name = "workorders"
