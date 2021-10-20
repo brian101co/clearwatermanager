@@ -1,8 +1,12 @@
 from django.urls import path
 from .views import (
-    WorkOrderListView
+    WorkorderListView,
+    WorkorderCreateView,
+    WorkorderDetailView
 )
 
 urlpatterns = [
-    path("", WorkOrderListView.as_view(), name="workorder-list"),
+    path("", WorkorderListView.as_view(), name="workorder-list"),
+    path("<int:id>/", WorkorderDetailView.as_view(), name="workorder-detail"),
+    path("create/", WorkorderCreateView.as_view(), name="workorder-create"),
 ]

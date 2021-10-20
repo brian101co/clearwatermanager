@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% load static crispy_forms_tags %}
+
+{% block content %}
+<section class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h1 class="mt-3 text-center">New Workorder</h1>
+            <form action="." method="post">
+                {% crispy form %}
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
