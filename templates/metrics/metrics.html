@@ -5,77 +5,26 @@
 {% block extraCSS %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.4/chartist.min.css" integrity="sha512-V0+DPzYyLzIiMiWCg3nNdY+NyIiK9bED/T1xNBj08CaIUyK3sXRpB26OUCIzujMevxY9TRJFHQIxTwgzb0jVLg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
-    .ct-series-a .ct-line,
-    .ct-series-a .ct-point {
-        stroke:#e37c80;
-    }
-    .ct-series-b .ct-line,
-    .ct-series-b .ct-point {
-        stroke: #0bda51;
-    }
 
-    #chart-2 .ct-series-a .ct-bar {
-        stroke: #e37c80;
-    }
-
-    .ct-legend {
-        position: relative;
-        z-index: 10;
-        display: flex;
-        list-style: none;
-    }
-    
-    .ct-legend li {
-        position: relative;
-        padding-left: 23px;
-        margin-bottom: 3px;
-        display: flex;
-        align-items: center;
-        margin-right: 12px;
-    }
-
-    .ct-legend li::before {
-        width: 12px;
-        height: 12px;
-        position: absolute;
-        left: 0;
-        content: '';
-        border: 3px solid transparent;
-        border-radius: 2px;
-    }
-
-    .ct-legend li.inactive::before {
-        background: transparent;
-    }
-    .ct-series-0::before {
-        background-color: #e37c80;
-    }
-    .ct-series-1::before {
-        background-color: #0bda51;
-    }
-    #chart-2 .ct-series-0::before {
-        background-color: #e37c80;
-    }
 </style>
 {% endblock %}
 
 {% block content %}
-<section class="container">
+<section class="container-fluid">
     <div class="row">
-        <div class="col-sm-12">
-            <h1 class="text-center mt-3">Metrics</h1>
-            <a href="{% url 'home' %}" class="btn btn-primary">Dashboard</a>
-        </div>
         <div class="col-sm-12 col-md-6"> 
-            <div class="chart-container my-3 card shadow-sm p-3">
-                <h5 class="text-center">Reservations per Month</h5>
+            <div class="chart-container my-3 card shadow-sm">
                 <div id="chart-1"></div>
             </div>
         </div>
         <div class="col-sm-12 col-md-6">
-            <div class="chart-container my-3 card shadow-sm p-3">
-                <h5 class="text-center">Cancelations per Month</h5>
+            <div class="chart-container my-3 card shadow-sm">
                 <div id="chart-2"></div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6">
+            <div class="chart-container my-3 card shadow-sm">
+                <div id="chart-3"></div>
             </div>
         </div>
     </div>
@@ -83,107 +32,96 @@
 {% endblock %}
 
 {% block extraJS %} 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.4/chartist.min.js" integrity="sha512-9rxMbTkN9JcgG5euudGbdIbhFZ7KGyAuVomdQDI9qXfPply9BJh0iqA7E/moLCatH2JD4xBGHwV6ezBkCpnjRQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartist-plugin-axistitle@0.0.7/dist/chartist-plugin-axistitle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chartist-plugin-legend/0.6.2/chartist-plugin-legend.min.js" integrity="sha512-J82gmCXFu+eMIvhK2cCa5dIiKYfjFY4AySzCCjG4EcnglcPQTST/nEtaf5X6egYs9vbbXpttR7W+wY3Uiy37UQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.plot.ly/plotly-2.4.2.min.js"></script>
 <script>
+    const options = {
+        responsive: true
+    }
     const year = new Date().getFullYear()
     const url = "{% url 'api_metrics' %}";
     fetch(url + `?year=${year}`)
         .then(response => response.json())
         .then(data => {
-            const series_1 = data.map(record => {
+            const totals_1 = data.map(record => {
                 return record.total;
             });
             fetch(url + `?year=${year - 1}`)
                 .then(response => response.json())
                 .then(data => {
-                    const series_2 = data.map(record => {
+                    const months = data.map(record => {
+                        return record.month;
+                    });
+                    const totals_2 = data.map(record => {
                         return record.total;
                     });
-                    new Chartist.Line('#chart-1', {
-                        labels: data.map((record => {
-                            return record.month;
-                        })),
-                        series: [
-                            series_2,
-                            series_1
-                        ]
-                    }, {
-                        low: 0,
-                        plugins: [
-                            Chartist.plugins.ctAxisTitle({
-                                axisX: {
-                                    axisTitle: 'Months',
-                                    axisClass: 'ct-axis-title',
-                                    offset: {
-                                    x: 0,
-                                    y: 35
-                                    },
-                                    textAnchor: 'middle'
-                                },
-                                axisY: {
-                                    axisTitle: 'Reservations',
-                                    axisClass: 'ct-axis-title',
-                                    offset: {
-                                    x: 0,
-                                    y: 15
-                                    },
-                                    textAnchor: 'middle',
-                                    flipTitle: true
-                                }
-                            }),
-                            Chartist.plugins.legend({
-                                legendNames: [`${year - 1}`, `${year}`],
-                            })
-                        ]
-                    });
+                    const trace1 = {
+                        x: months,
+                        y: totals_1,
+                        mode: 'lines',
+                        name: `${year}`,
+                        line: {
+                            color: "rgb(17, 140, 79)"
+                        }
+                    }
+                    const trace2 = {
+                        x: months,
+                        y: totals_2,
+                        mode: 'lines',
+                        name: `${year - 1}`,
+                        line: {
+                            dash: "dashdot",
+                            color: "rgb(184, 184, 184)"
+                        }
+                    }
+                    Plotly.newPlot('chart-1', [trace1, trace2], {
+                        title: "Reservations per Year",
+                        xaxis: {
+                            title: 'Month'
+                        },
+                        yaxis: {
+                            title: 'Reservations'
+                        },
+                        showlegend: true,
+                        legend: {
+                            orientation: "h",
+                            x: 0.1,
+                            y: 1.15
+                        }
+                    }, options);
                 })
                 .catch(err => console.log(err))
         })
         .catch(err => console.log(err));
 
-    fetch(url + "?year=2021&cancelations=True")
+    fetch(url + `?cancelations=true&year=${year}`)
         .then(response => response.json())
         .then(data => {
-            new Chartist.Bar('#chart-2', {
-                labels: data.map((record => {
-                    return record.month;
-                })),
-                series: [
-                    data.map(record => {
-                        return record.total;
-                    })
-                ]
-            }, {
-                low: 0,
-                plugins: [
-                    Chartist.plugins.ctAxisTitle({
-                        axisX: {
-                            axisTitle: 'Months',
-                            axisClass: 'ct-axis-title',
-                            offset: {
-                            x: 0,
-                            y: 35
-                            },
-                            textAnchor: 'middle'
-                        },
-                        axisY: {
-                            axisTitle: 'Cancelations',
-                            axisClass: 'ct-axis-title',
-                            offset: {
-                            x: 0,
-                            y: 12
-                            },
-                            textAnchor: 'middle',
-                            flipTitle: true
-                        }
-                    }),
-                    Chartist.plugins.legend({
-                        legendNames: [`${year}`],
-                    })
-                ]
-            });
+            const cancelations = [
+                {
+                    x: data.map(record => record.month),
+                    y: data.map(record => record.total),
+                    type: 'bar',
+                    name: `${year}`,
+                    marker: {
+                        color: 'rgb(255, 50, 23)'
+                    }
+                }
+            ];
+            Plotly.newPlot('chart-2', cancelations, {
+                title: "Cancelations per Year",
+                xaxis: {
+                    title: 'Month'
+                },
+                yaxis: {
+                    title: 'Cancelations'
+                },
+                showlegend: true,
+                legend: {
+                    orientation: "h",
+                    x: 0.1,
+                    y: 1.15
+                }
+            }, options);
         })
         .catch(err => console.log(err));
 </script>
