@@ -19,6 +19,7 @@
                     <p class="card-text">
                         {{ object.description }}
                     </p>
+                    {% if not object.completed %}
                     <div class="toolbar">
                         <a href="{% url 'workorder-completed' object.id %}" class="btn bg-success pure-material-button-contained mr-2">Completed</a>
                         <a href="{% url 'workorder-update' object.id %}" class="btn bg-primary pure-material-button-contained mr-2">Edit</a>
@@ -27,6 +28,7 @@
                             <input type="submit" value="Delete" class="btn bg-danger pure-material-button-contained">
                         </form>
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

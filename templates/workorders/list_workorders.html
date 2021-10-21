@@ -16,12 +16,20 @@
             {% for order in workorders %}
             <div class="card shadow-sm mb-3">
                 <div class="card-body d-flex justify-content-between">
-                    <h5 class="card-title m-0"><a href="{% url 'workorder-detail' order.id %}" class="text-dark">{{ order.title }}</a></h5>
+                    {% if order.completed %}
+                        <h5 class="card-title m-0"><a href="{% url 'workorder-completed-detail' order.id %}" class="text-dark">{{ order.title }}</a></h5>
+                    {% else %}
+                        <h5 class="card-title m-0"><a href="{% url 'workorder-detail' order.id %}" class="text-dark">{{ order.title }}</a></h5>
+                    {% endif %} 
                     <span>#{{ order.id }}</span>
                 </div>
             </div>
             {% empty %}
-            <h4 class="text-center">Great Job! All work orders are complete!</h4>
+                {% if order.completed %}
+                    <h4 class="text-center">You haven't completed any workorders.</h4>
+                {% else %}
+                    <h4 class="text-center">Great Job! All work orders are complete!</h4>
+                {% endif %}
             {% endfor %}
         </div>
     </div>
