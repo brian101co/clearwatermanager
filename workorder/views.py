@@ -23,7 +23,7 @@ class WorkorderUpdateView(LoginRequiredMixin, UpdateView):
     form_class = WorkorderForm
     pk_url_kwarg = 'id'
     success_url = reverse_lazy('workorder-list')
-    template_name = "workorders/create_workorder.html"
+    template_name = "workorders/edit_workorder.html"
 
 class WorkorderDeleteView(LoginRequiredMixin, DeleteView):
     model = WorkOrder
