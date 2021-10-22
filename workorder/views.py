@@ -32,9 +32,13 @@ class WorkorderDeleteView(LoginRequiredMixin, DeleteView):
 
 class WorkorderListView(LoginRequiredMixin, ListView):
     context_object_name = "workorders"
-    queryset = WorkOrder.objects.filter(completed=False)
-    ordering = "created_at"
     template_name = "workorders/list_workorders.html"
+
+    def get_queryset(self):
+        site = self.request.GET.get("site", None)
+        if site:
+            return WorkOrder.objects.filter(site__identifier=site, completed=False)
+        return WorkOrder.objects.all().filter(completed=False).order_by("-priority")
 
 class CompletedWorkorderListView(LoginRequiredMixin, ListView):
     context_object_name = "workorders"

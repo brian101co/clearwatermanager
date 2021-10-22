@@ -2,14 +2,29 @@
 
 {% load static %}
 
+{% block extraCSS %}
+<style>
+    .badge {
+        font-size: 1rem;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <section class="container">
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-12 d-flex justify-content-between flex-wrap">
             <div class="toolbar my-3">
                 <a href="{% url 'workorder-create' %}" class="btn btn-primary pure-material-button-contained mr-2">Create</a>
                 <a href="{% url 'workorder-completed' %}" class="btn btn-primary pure-material-button-contained">Completed</a>
             </div>
+            <form action="." method="GET" class="form-inline">
+                <div class="form-group mb-0">
+                    <label for="site" class="sr-only">Search by lot</label>
+                    <input type="text" class="form-control" id="site" name="site" placeholder="Search by lot">
+                </div>
+                <input type="submit" value="Search" class="btn btn-primary pure-material-button-contained ml-2">
+            </form>
         </div>
         <div class="col-sm-12" >
             <h1 class="mt-3 text-center">Workorders</h1>
@@ -17,7 +32,13 @@
             <div class="card shadow-sm mb-3">
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <h5 class="card-title m-0"><a href="{% url 'workorder-detail' order.id %}" class="text-dark">Site {{ order.site }}: {{ order.title }}</a></h5>
-                    <span style="font-size: 1.3rem;">#{{ order.id }}</span>
+                    {% if order.priority == 2 %}
+                        <span class="badge badge-danger">High Urgency</span>
+                    {% elif order.priority == 1 %} 
+                        <span class="badge badge-warning">Moderate Urgency</span>
+                    {% else %}
+                        <span class="badge badge-info">Low Urgency</span>
+                    {% endif %}
                 </div>
             </div>
             {% empty %}
