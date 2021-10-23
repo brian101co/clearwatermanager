@@ -6,6 +6,7 @@
 <section class="container">
     <div class="row">
         <div class="col-sm-12">
+            <a href="{% url 'workorder-list' %}" class="btn btn-primary my-3 d-md-none">Workorders</a>
             <h1 class="mt-3 text-center">Completed Workorders</h1>
             {% for order in workorders %}
             <div class="card shadow-sm mb-3">

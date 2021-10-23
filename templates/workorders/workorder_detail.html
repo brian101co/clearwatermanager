@@ -52,7 +52,7 @@
                     <div class="toolbar mt-5" id="toolbar">
                         <a href="{% url 'workorder-completed' object.id %}" class="btn bg-success pure-material-button-contained mr-2">Completed</a>
                         <a href="{% url 'workorder-update' object.id %}" class="btn bg-primary pure-material-button-contained mr-2">Edit</a>
-                        <button class="btn bg-secondary pure-material-button-contained mr-2" id="print">Print</button>
+                        <button class="btn bg-secondary pure-material-button-contained mr-2 d-none d-md-block" id="print">Print</button>
                         <form action="{% url 'workorder-delete' object.id %}" method="POST">
                             {% csrf_token %}
                             <input type="submit" value="Delete" class="btn bg-danger pure-material-button-contained">
