@@ -1,4 +1,5 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
+from django.utils import timezone
 from .models import WorkOrder
 from .forms import WorkorderForm
 from django.urls import reverse_lazy
@@ -15,6 +16,7 @@ from django.views.generic import (
 def workorder_completed_view(request, id):
     workorder = WorkOrder.objects.get(pk=id)
     workorder.completed = True
+    workorder.completed_at = timezone.now()
     workorder.save()
     return redirect('workorder-list')
 

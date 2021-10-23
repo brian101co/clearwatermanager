@@ -13,9 +13,11 @@ class WorkOrder(models.Model):
     site = models.ForeignKey(Site, on_delete=models.SET_NULL, null=True, related_name="sites")
     manager = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="managers")
     created_at = models.DateTimeField(default=timezone.now())
+    completed_at = models.DateTimeField(null=True)
     description = models.TextField()
     completed = models.BooleanField(default=False)
     priority = models.SmallIntegerField(default=0, choices=PRIORITIES)
+    cost = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
 
     def __str__(self):
         return f"{self.site}: {self.title}"
