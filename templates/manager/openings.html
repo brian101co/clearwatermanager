@@ -26,10 +26,12 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="py-3 px-sm-0 px-md-5">
+                <h5 class="text-center">Select a Site</h5>
                 <ul class="list-group">
                     {% for site in sites %}
                     <li 
                         class="list-group-item" 
+                        style="cursor: pointer;"
                         data-toggle="modal" 
                         data-target="#customer-form-modal"
                         onclick="handleForm(event)">{{ site }}</li>
@@ -51,6 +53,8 @@
 
     function handleForm(ev) {
         document.querySelector('[name="site"]').value = ev.target.innerText.trim();
+        document.querySelector('[name="end"]').value = '{{ end }}'
+        document.querySelector('[name="start"]').value = '{{ start }}'
     }
 
     for (siteNum of openSites) {
