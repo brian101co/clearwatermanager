@@ -11,9 +11,9 @@
                     <header class="d-flex justify-content-between align-items-center mb-1">
                         <h3>{{ object.title }}</h3>
                         <div>
-                            {% if order.priority == 2 %}
+                            {% if object.priority == 2 %}
                                 <span class="badge badge-danger">High Urgency</span>
-                            {% elif order.priority == 1 %} 
+                            {% elif object.priority == 1 %} 
                                 <span class="badge badge-warning">Moderate Urgency</span>
                             {% else %}
                                 <span class="badge badge-info">Low Urgency</span>
