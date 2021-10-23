@@ -124,5 +124,32 @@
             }, options);
         })
         .catch(err => console.log(err));
+
+    fetch(url + `?maintenace_costs=true&year=${year}`)
+        .then(response => response.json())
+        .then(data => {
+            const total_costs_cur_year = data.cost__sum;
+            fetch(url + `?maintenace_costs=true&year=${year - 1}`)
+                .then(response => response.json())
+                .then(obj => {
+                    var data = [{
+                        x: [String(year - 1), String(year)],
+                        y: [obj.cost__sum, total_costs_cur_year],
+                        type: 'bar'
+                    }];
+                    Plotly.newPlot('chart-3', data, {
+                        title: "Maintenance Costs",
+                        xaxis: {
+                            type: "category",
+                            title: "Year"
+                        },
+                        yaxis: {
+                            title: "Costs ($)"
+                        }
+                    }, options);
+                })
+                .catch(err => console.log(err));
+        })
+        .catch(err => console.log(err));
 </script>
 {% endblock %}

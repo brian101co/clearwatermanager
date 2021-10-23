@@ -1,5 +1,6 @@
 from django.shortcuts import redirect
 from manager.models import Customer, Metric
+from workorder.models import WorkOrder
 from django.http import JsonResponse
 from datetime import date, timedelta
 
@@ -25,6 +26,8 @@ def metrics(request):
             return JsonResponse(Metric.objects.current_month(), safe=False)
         elif request.GET.get("cancelations"):
             return JsonResponse(Metric.objects.cancelations_per_month(int(request.GET.get("year"))), safe=False)
+        elif request.GET.get("maintenace_costs"):
+            return JsonResponse(WorkOrder.objects.total_maintaince_cost_for_year(int(request.GET.get("year"))))
         elif request.GET.get("year"):
             return JsonResponse(Metric.objects.reservations_per_month(int(request.GET.get("year"))), safe=False)
         else:
