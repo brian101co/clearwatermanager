@@ -138,6 +138,7 @@ def getAvaliability(request):
             except Exception as e:
                 print(e)
                 return redirect('home')
-            return render(request, "manager/openings.html", {"sites": sites, "checkin": checkin, "checkout": checkout})
+            form = ReservationForm()
+            return render(request, "manager/openings.html", {"sites": sites, "checkin": checkin, "checkout": checkout, "reservation_form": form})
     else:
         return redirect('loginuser')

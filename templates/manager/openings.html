@@ -28,13 +28,19 @@
             <div class="py-3 px-sm-0 px-md-5">
                 <ul class="list-group">
                     {% for site in sites %}
-                    <li class="list-group-item">{{ site }}</li>
+                    <li 
+                        class="list-group-item" 
+                        data-toggle="modal" 
+                        data-target="#customer-form-modal"
+                        onclick="handleForm(event)">{{ site }}</li>
                     {% endfor %}
                 </ul>
             </div>
         </div>
     </div>
 </section>
+
+{% include "partials/_add_reservation_form.html" %}
 {% endblock %}
 
 {% block extraJS %} 
@@ -42,6 +48,10 @@
 <script>
     const openSites = eval(document.querySelector("[data-sites]").dataset.sites);
     const mapSites = document.querySelectorAll("[data-site]");
+
+    function handleForm(ev) {
+        document.querySelector('[name="site"]').value = ev.target.innerText.trim();
+    }
 
     for (siteNum of openSites) {
         try {
