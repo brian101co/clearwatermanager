@@ -16,7 +16,7 @@ class MetricQuerySet(models.QuerySet):
     def reservations_per_month(self, year):
         data = []
         for i in range(13):
-            total_res_per_month = self.filter(start__year=year, start__month=i).count()
+            total_res_per_month = self.filter(canceled=False, start__year=year, start__month=i).count()
             if i == 1:
                 data.append({"month": "Jan", "total": total_res_per_month})
             elif i == 2:
