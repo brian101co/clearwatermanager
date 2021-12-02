@@ -10,6 +10,7 @@ window.onload = () => {
 
     const state = {
         activeSiteId: null,
+        infoModalBadgeElem: null,
     }
 
     function showLoader(className, clearInfo=true) {
@@ -45,6 +46,20 @@ window.onload = () => {
     }
     const csrftoken = getCookie('csrftoken');
 
+    class BadgeManager {
+        static createBadge(type_of_badge, content) {
+             const badgeElem = document.createElement("span");
+             badgeElem.innerText = content;
+             if (type_of_badge == "warning") {
+                badgeElem.classList.add("badge", "badge-warning");
+                return badgeElem;
+             } else if (type_of_badge == "info") {
+                badgeElem.classList.add("badge", "badge-warning");
+                return badgeElem;
+             }
+        }
+    }
+
     class Map {
         constructor(mapLots, reservedLots, checkout, checkin) {
             this.mapLots = mapLots;
@@ -65,10 +80,16 @@ window.onload = () => {
                     fetch(url)
                         .then(response => response.json())
                         .then(data => {
+                            const site = data[0].site_info[0];
+                            const total_workorders = data[0].workorders;
+                            state.infoModalBadgeElem = BadgeManager.createBadge("warning", `${total_workorders} Uncompleted Workorder(s)`);
                             removeLoader(".info-model-body");
-                            this.infoModal.querySelector(".modal-title").innerText = `Site ${data[0].identifier}`;
-                            this.infoModal.querySelector(".content").innerText = data[0].info;
-                            this.infoModal.querySelector(".content").setAttribute("site", data[0].identifier);
+                            if (total_workorders > 0) {
+                                this.infoModal.querySelector(".modal-header").append(state.infoModalBadgeElem);
+                            }
+                            this.infoModal.querySelector(".modal-title").innerText = `Site ${site.identifier}`;
+                            this.infoModal.querySelector(".content").innerText = site.info;
+                            this.infoModal.querySelector(".content").setAttribute("site", site.identifier);
                         })
                         .catch(err => {
                             removeLoader(".info-model-body");
@@ -81,6 +102,9 @@ window.onload = () => {
             });
 
             this.infoModal.querySelector(".modal-body").addEventListener("click", (e) => {
+                if (e.target.hasAttribute("data-dismiss")) {
+                    if (state.infoModalBadgeElem) state.infoModalBadgeElem.remove();
+                }
                 if (e.target.classList.contains("save")) {
                     const siteInfoText = e.currentTarget.querySelector(".content").innerText;
                     const siteNumber = e.currentTarget.querySelector(".content").getAttribute("site");

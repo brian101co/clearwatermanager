@@ -16,7 +16,7 @@ class WorkOrder(models.Model):
         (2, 'High'),
     )
     title = models.CharField(max_length=255)
-    site = models.ForeignKey(Site, on_delete=models.SET_NULL, null=True, related_name="sites")
+    site = models.ForeignKey(Site, on_delete=models.SET_NULL, null=True, related_name="workorders")
     manager = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="managers")
     created_at = models.DateTimeField(default=timezone.now())
     completed_at = models.DateTimeField(null=True)
