@@ -1,7 +1,7 @@
 asgiref==3.3.4
 autopep8==1.4.4
 certifi==2020.4.5.1
-Django==3.2.9
+Django==3.2.15
 django-crispy-forms==1.13.0
 django-debug-toolbar==3.2.2
 pendulum==2.1.2
