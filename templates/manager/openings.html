@@ -34,7 +34,12 @@
                         style="cursor: pointer;"
                         data-toggle="modal" 
                         data-target="#customer-form-modal"
-                        onclick="handleForm(event)">{{ site }}</li>
+                        onclick="handleForm(event)">{{ site }}
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-center">
+                        No availiable sites for the selected dates.
+                    </li>
                     {% endfor %}
                 </ul>
             </div>
@@ -61,7 +66,7 @@
         try {
             document.querySelector(`[data-site="${siteNum}"`).classList.add("active");
         } catch (error) {
-            console.log(error);
+            console.warn(`Site ${siteNum} not found on map.`);
         }
     }
 </script>
