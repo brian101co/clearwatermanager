@@ -64,7 +64,7 @@
 
     for (let siteNum of openSites) {
         try {
-            document.querySelector(`[data-site="${siteNum}"`).classList.add("active");
+            document.querySelector(`[data-site="${siteNum}"]`).classList.add("active");
         } catch (error) {
             console.warn(`Site ${siteNum} not found on map.`);
         }
