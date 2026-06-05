@@ -148,6 +148,6 @@ def getAvaliability(request):
                 "start": request.POST.get('checkin'),
                 "end": request.POST.get('checkout')
             }
-            return render(request, "manager/openings.html", context=context)
+            return render(request, "manager/available_sites.html", context=context)
     else:
         return redirect('loginuser')
