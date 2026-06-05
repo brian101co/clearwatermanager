@@ -60,6 +60,7 @@ class DeleteReservationView(LoginRequiredMixin, DeleteView):
     model = Customer
     pk_url_kwarg = "id"
     success_url = reverse_lazy('home')
+    template_name = "manager/delete_reservation.html"
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
