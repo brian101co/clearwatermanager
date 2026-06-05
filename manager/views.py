@@ -74,6 +74,7 @@ class EditReservationView(LoginRequiredMixin, UpdateView):
     form_class = ReservationForm
     pk_url_kwarg = "id"
     success_url = reverse_lazy('home')
+    template_name = "manager/edit_reservation.html"
 
     def form_valid(self, form):
         site = form.cleaned_data["site"]
@@ -88,7 +89,7 @@ class EditReservationView(LoginRequiredMixin, UpdateView):
             metric.site = site
             metric.save()
             return HttpResponseRedirect(self.get_success_url())
-        messages.error(self.request, 'Unavaliable.')
+        messages.error(self.request, 'Unavailable. That site is already booked for the selected dates.')
         return redirect('home')
 
 class CreateReservationView(LoginRequiredMixin, CreateView):
