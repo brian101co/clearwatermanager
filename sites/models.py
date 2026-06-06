@@ -25,6 +25,8 @@ class Site(models.Model):
     
     # Pricing
     nightly_rate = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    weekly_rate = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    monthly_rate = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
     
     # Notes
     notes = models.TextField(blank=True)
