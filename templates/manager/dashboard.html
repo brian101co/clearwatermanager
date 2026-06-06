@@ -38,7 +38,7 @@
                     </h2>
                     {% for guest in checking_out_soon %}
                     <div class="card shadow-sm mb-2" style="border-left: 4px solid #ffc107;">
-                        <div class="card-body py-2 d-flex justify-content-between align-items-center">
+                        <div class="card-body py-2 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
                             <div>
                                 <strong>{{ guest.name|title }}</strong>
                                 <span class="ml-2">
@@ -48,11 +48,11 @@
                                     Checkout: {{ guest.end|date:"D, M d Y" }} at {{ guest.end|time:"g:i A" }}
                                 </div>
                             </div>
-                            <div>
-                                <a href="tel:{{ guest.phoneNum }}" class="btn btn-sm btn-outline-secondary mr-2">
+                            <div class="d-flex mt-2 mt-md-0">
+                                <a href="tel:{{ guest.phoneNum }}" class="btn btn-sm btn-outline-secondary mr-2 flex-fill flex-md-grow-0">
                                     📞 Call
                                 </a>
-                                <a href="{% url 'reservation-detail' guest.id %}" class="btn btn-sm btn-outline-primary">
+                                <a href="{% url 'reservation-detail' guest.id %}" class="btn btn-sm btn-outline-primary flex-fill flex-md-grow-0">
                                     View
                                 </a>
                             </div>
@@ -69,7 +69,7 @@
                 </h2>
                 {% for guest in checking_in_soon %}
                 <div class="card shadow-sm mb-2" style="border-left: 4px solid #28a745;">
-                    <div class="card-body py-2 d-flex justify-content-between align-items-center">
+                    <div class="card-body py-2 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
                         <div>
                             <strong>{{ guest.name|title }}</strong>
                             <span class="ml-2">
@@ -79,9 +79,9 @@
                                 Checkin: {{ guest.start|date:"D, M d Y" }} at {{ guest.start|time:"g:i A" }}
                             </div>
                         </div>
-                        <div>
-                            <a href="tel:{{ guest.phoneNum }}" class="btn btn-sm btn-outline-secondary mr-2">📞 Call</a>
-                            <a href="{% url 'reservation-detail' guest.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                        <div class="d-flex mt-2 mt-md-0">
+                            <a href="tel:{{ guest.phoneNum }}" class="btn btn-sm btn-outline-secondary mr-2 flex-fill flex-md-grow-0">📞 Call</a>
+                            <a href="{% url 'reservation-detail' guest.id %}" class="btn btn-sm btn-outline-primary flex-fill flex-md-grow-0">View</a>
                         </div>
                     </div>
                 </div>
@@ -95,7 +95,7 @@
                 </h2>
                 {% for resident in expiring_leases %}
                 <div class="card shadow-sm mb-2" style="border-left: 4px solid #dc3545;">
-                    <div class="card-body py-2 d-flex justify-content-between align-items-center">
+                    <div class="card-body py-2 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
                         <div>
                             <strong>{{ resident.name|title }}</strong>
                             <span class="ml-2">
@@ -105,9 +105,9 @@
                                 Lease ends: {{ resident.end|date:"D, M d Y" }}
                             </div>
                         </div>
-                        <div>
-                            <a href="tel:{{ resident.phoneNum }}" class="btn btn-sm btn-outline-secondary mr-2">📞 Call</a>
-                            <a href="{% url 'reservation-detail' resident.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                        <div class="d-flex mt-2 mt-md-0">
+                            <a href="tel:{{ resident.phoneNum }}" class="btn btn-sm btn-outline-secondary mr-2 flex-fill flex-md-grow-0">📞 Call</a>
+                            <a href="{% url 'reservation-detail' resident.id %}" class="btn btn-sm btn-outline-primary flex-fill flex-md-grow-0">View</a>
                         </div>
                     </div>
                 </div>
