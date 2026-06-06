@@ -5,6 +5,8 @@ from django.db.models import Sum
 from django.contrib.auth.models import User
 from datetime import timedelta
 
+import os
+
 
 class WorkorderQuerySet(models.QuerySet):
     def total_maintaince_cost_for_year(self, year):
@@ -46,7 +48,7 @@ class WorkOrder(models.Model):
     priority = models.SmallIntegerField(default=0, choices=PRIORITIES)
     cost = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
     estimated_cost = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
-    image = models.ImageField(upload_to='workorders/static/images', blank=True, null=True)
+    image = models.ImageField(upload_to='workorders/images', blank=True, null=True)
     is_recurring = models.BooleanField(default=False)
     recurring_interval = models.PositiveSmallIntegerField(null=True, blank=True, help_text="Recurring interval in days")
 
@@ -54,3 +56,22 @@ class WorkOrder(models.Model):
 
     def __str__(self):
         return f"{self.site}: {self.title}"
+    
+    def delete(self, *args, **kwargs):
+        # Delete image file from storage if it exists
+        if self.image:
+            if os.path.isfile(self.image.path):
+                os.remove(self.image.path)
+        super().delete(*args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        # If updating an existing record
+        if self.pk:
+            try:
+                old_image = WorkOrder.objects.get(pk=self.pk).image
+                if old_image and old_image != self.image:
+                    if os.path.isfile(old_image.path):
+                        os.remove(old_image.path)
+            except WorkOrder.DoesNotExist:
+                pass
+        super().save(*args, **kwargs)

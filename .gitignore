@@ -1,3 +1,4 @@
+# Current
 *.log
 *.pot
 *.pyc
@@ -9,3 +10,46 @@ local_settings.py
 .env
 .DS_Store
 **/.DS_Store
+media/
+
+# Python
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# Django
+/staticfiles/
+/collected_static/
+*.coverage
+.coverage
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Mac
+.AppleDouble
+.LSOverride
+
+# Jupyter
+.ipynb_checkpoints/
+
+# pytest
+.pytest_cache/
+
+# mypy
+.mypy_cache/
