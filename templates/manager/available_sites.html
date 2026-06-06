@@ -8,17 +8,11 @@
     }
     .site-list-item {
         cursor: pointer;
-        transition: background-color 0.2s ease;
+        transition: background-color 0.2s ease, border-left 0.2s ease;
     }
     .site-list-item:hover {
         background-color: #f0fff0;
         border-left: 4px solid rgb(49, 228, 49);
-    }
-    .dates-banner {
-        background-color: #f8f9fa;
-        border-radius: 8px;
-        padding: 12px 20px;
-        display: inline-block;
     }
 </style>
 {% endblock %}
@@ -78,24 +72,55 @@
                     Select a Site Below
                 {% endif %}
             </h5>
-            <ul class="list-group shadow-sm">
-                {% for site in sites %}
-                <li class="list-group-item site-list-item d-flex justify-content-between align-items-center"
-                    data-toggle="modal" 
-                    data-target="#customer-form-modal"
-                    onclick="handleForm(event)">
-                    <span data-site="{{ site }}">🏕️ Site {{ site }}</span>
-                    <span class="badge badge-success">Available</span>
-                </li>
-                {% empty %}
-                <li class="list-group-item text-center py-4">
-                    <p class="text-danger mb-1">No available sites for the selected dates.</p>
-                    <a href="{% url 'home' %}" class="btn btn-sm btn-primary mt-2">
-                        Try Different Dates
-                    </a>
-                </li>
-                {% endfor %}
-            </ul>
+
+        {% for site in site_objects %}
+        <div class="card shadow-sm mb-2 site-list-item"
+            data-toggle="modal"
+            data-target="#customer-form-modal"
+            onclick="handleForm(event)">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>🏕️ Site {{ site.identifier }}</strong>
+                    <span data-site="{{ site.identifier }}" style="display:none;"></span>
+                    <span class="badge badge-secondary ml-2">{{ site.get_lot_type_display }}</span>
+                    <div class="mt-1">
+                        {% if site.electric_50amp %}
+                            <span class="badge badge-info mr-1">50A</span>
+                        {% elif site.electric_30amp %}
+                            <span class="badge badge-info mr-1">30A</span>
+                        {% endif %}
+                        {% if site.water %}
+                            <span class="badge badge-primary mr-1">💧 Water</span>
+                        {% endif %}
+                        {% if site.sewer %}
+                            <span class="badge badge-dark mr-1">🔧 Sewer</span>
+                        {% endif %}
+                        {% if site.wifi %}
+                            <span class="badge badge-success mr-1">📶 WiFi</span>
+                        {% endif %}
+                        {% if site.max_length_ft %}
+                            <span class="badge badge-light mr-1">{{ site.max_length_ft }}ft max</span>
+                        {% endif %}
+                        {% if site.nightly_rate %}
+                            <span class="badge badge-warning mr-1">${{ site.nightly_rate }}/night</span>
+                        {% endif %}
+                    </div>
+                    {% if site.notes %}
+                    <div class="text-muted small mt-2">
+                        📝 {{ site.notes }}
+                    </div>
+                    {% endif %}
+                </div>
+                <span class="badge badge-success p-2 ml-2">Available</span>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-4">
+            <p class="text-danger">No available sites for the selected dates.</p>
+            <a href="{% url 'home' %}" class="btn btn-primary">Try Different Dates</a>
+        </div>
+        {% endfor %}
+
         </div>
     </div>
 </section>
