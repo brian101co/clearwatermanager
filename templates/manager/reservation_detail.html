@@ -7,7 +7,7 @@
         <div class="col-sm-12 col-lg-8 offset-lg-2">
 
             <!-- Back Button -->
-            <a href="{% url 'home' %}" class="btn btn-secondary mb-4">
+            <a href="{% url 'home' %}" class="btn pure-material-button-contained bg-secondary mb-4">
                 ← Back to Dashboard
             </a>
 
@@ -59,10 +59,10 @@
 
             <!-- Action Buttons -->
             <div class="d-flex justify-content-between">
-                <a href="{% url 'edit' reservation.id %}" class="btn btn-primary">
+                <a href="{% url 'edit' reservation.id %}" class="btn btn-primary pure-material-button-contained">
                     ✏️ Edit Reservation
                 </a>
-                <a href="{% url 'delete-reservation' reservation.id %}" class="btn btn-danger">
+                <a href="{% url 'delete-reservation' reservation.id %}" class="btn pure-material-button-contained bg-danger">
                     🗑️ Delete Reservation
                 </a>
             </div>

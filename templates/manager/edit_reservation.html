@@ -35,10 +35,10 @@
                         {% csrf_token %}
                         {{ form|crispy }}
                         <div class="d-flex justify-content-between mt-4">
-                            <a href="{% url 'home' %}" class="btn btn-secondary">
+                            <a href="{% url 'home' %}" class="btn pure-material-button-contained bg-secondary">
                                 ← Cancel
                             </a>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn pure-material-button-contained bg-primary">
                                 Save Changes
                             </button>
                         </div>
