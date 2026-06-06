@@ -17,6 +17,7 @@ from django.views.generic import (
     UpdateView
 )
 from .models import Customer, Metric
+from sites.models import Site
 from django.contrib import messages
 from datetime import date, datetime, timedelta
 from .helpers import ( 
@@ -26,6 +27,7 @@ from .helpers import (
 
 class MetricTemplateView(LoginRequiredMixin, TemplateView):
     template_name = "metrics/metrics.html"
+
 
 class DashboardHomeView(LoginRequiredMixin, TemplateView):
     template_name = "manager/dashboard.html"
@@ -60,16 +62,19 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
         checkedout.delete()
         return self.render_to_response(context)
 
+
 class DashboardLoginView(LoginView):
     template_name = "manager/dashboard_login.html"
     redirect_authenticated_user = True
     success_url = reverse_lazy('home')
+
 
 class ReservationDetailView(LoginRequiredMixin, DetailView):
     model = Customer
     pk_url_kwarg = "id"
     context_object_name = "reservation"
     template_name = "manager/reservation_detail.html"
+
 
 class DeleteReservationView(LoginRequiredMixin, DeleteView):
     model = Customer
@@ -83,6 +88,7 @@ class DeleteReservationView(LoginRequiredMixin, DeleteView):
         metric.canceled = True
         metric.save()
         return super().delete(request, *args, **kwargs)
+
 
 class EditReservationView(LoginRequiredMixin, UpdateView):
     model = Customer
@@ -106,6 +112,7 @@ class EditReservationView(LoginRequiredMixin, UpdateView):
             return HttpResponseRedirect(self.get_success_url())
         messages.error(self.request, 'Unavailable. That site is already booked for the selected dates.')
         return redirect('home')
+
 
 class CreateReservationView(LoginRequiredMixin, CreateView):
     form_class = ReservationForm
@@ -163,10 +170,15 @@ def getAvailability(request):
                 sites.remove(reservation.site.strip())
             except ValueError:
                 pass  # site already removed or not in list
+    
+    site_objects = Site.objects.filter(
+        identifier__in=sites
+    ).order_by("identifier")
 
     context = {
         "reservation_form": ReservationForm(),
         "sites": sites,
+        "site_objects": site_objects,
         "checkin": checkin,
         "checkout": checkout,
         "start": checkin_str,
