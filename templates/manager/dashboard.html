@@ -216,5 +216,10 @@
     phone: true,
     phoneRegionCode: 'us'
   });
+  
+</script>
+<!-- Pass occupied lots from Django context to JavaScript -->
+<script id="occupied-lots-data" type="application/json">
+    {{ occupied_lots|safe }}
 </script>
 {% endblock %}
