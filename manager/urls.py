@@ -7,7 +7,7 @@ from .views import (
     DeleteReservationView,
     CreateReservationView,
     EditReservationView,
-    getAvaliability
+    getAvailability
 )
 
 urlpatterns = [
@@ -18,5 +18,5 @@ urlpatterns = [
     path('dashboard/reservation/<int:id>', ReservationDetailView.as_view(), name="reservation-detail"),
     path('dashboard/metrics/', MetricTemplateView.as_view(), name="metrics"),
     path('addcustomer/', CreateReservationView.as_view(), name="addcustomer"),
-    path('avaliable/', getAvaliability, name="avaliable"),
+    path('avaliable/', getAvailability, name="avaliable"),
 ]

@@ -108,46 +108,53 @@ class CreateReservationView(LoginRequiredMixin, CreateView):
             return HttpResponseRedirect(self.get_success_url())
         messages.error(self.request, 'Unavaliable.')
         return redirect('home')
+    
 
-
-def getAvaliability(request):
-    if request.user.is_authenticated:
-        if request.method == "POST":
-            sites = ["122", "120", "118", "116", "114", "112", "110", "108", "106", "104", "102", "19", "17", "15", "13", "11",
-                     "9", "7", "5", "6", "8", "10", "12", "14", "10C", "12C", "14C", "16", "18", "20", "22", "24", "26", "28",
-                     "30", "85", "51", "53", "55", "57", "59", "65", "67", "69", "73", "75", "77", "79", "81", "83", "82", "80",
-                     "78", "76", "74", "72", "70", "68", "66", "64", "62", "60", "58", "56", "63"]
-            checkin = datetime.fromisoformat(request.POST.get('checkin')).replace(tzinfo=pytz.UTC)
-            checkout = datetime.fromisoformat(request.POST.get('checkout')).replace(tzinfo=pytz.UTC)
-
-            try:
-                all_reservations = Customer.objects.all()
-                for reservation in all_reservations:
-                    end = reservation.end.replace(tzinfo=pytz.UTC)
-                    start = reservation.start.replace(tzinfo=pytz.UTC)
-                    if checkin >= start and checkin <= end:
-                        try:
-                            sites.remove(reservation.site.strip())
-                        except Exception as e:
-                            print(e)
-                    elif checkin <= start and checkout > start:
-                        try:
-                            sites.remove(reservation.site.strip())
-                        except Exception as e:
-                            print(e)
-            except ValueError as e:
-                print(e)
-            except Exception as e:
-                print(e)
-                return redirect('home')
-            context = {
-                "reservation_form": ReservationForm(),
-                "sites": sites,
-                "checkin": checkin,
-                "checkout": checkout,
-                "start": request.POST.get('checkin'),
-                "end": request.POST.get('checkout')
-            }
-            return render(request, "manager/available_sites.html", context=context)
-    else:
+def getAvailability(request):
+    if not request.user.is_authenticated:
         return redirect('loginuser')
+    
+    if request.method != "POST":
+        return redirect('home')
+
+    sites = ["122", "120", "118", "116", "114", "112", "110", "108", "106", "104", "102", "19", "17", "15", "13", "11",
+            "9", "7", "5", "6", "8", "10", "12", "14", "10C", "12C", "14C", "16", "18", "20", "22", "24", "26", "28",
+            "30", "85", "51", "53", "55", "57", "59", "65", "67", "69", "73", "75", "77", "79", "81", "83", "82", "80",
+            "78", "76", "74", "72", "70", "68", "66", "64", "62", "60", "58", "56", "63"]
+
+    checkin_str = request.POST.get('checkin')
+    checkout_str = request.POST.get('checkout')
+
+    if not checkin_str or not checkout_str:
+        messages.error(request, 'Please provide both checkin and checkout dates.')
+        return redirect('home')
+
+    try:
+        checkin = datetime.fromisoformat(checkin_str).replace(tzinfo=pytz.UTC)
+        checkout = datetime.fromisoformat(checkout_str).replace(tzinfo=pytz.UTC)
+    except ValueError:
+        messages.error(request, 'Invalid date format.')
+        return redirect('home')
+
+    if checkout <= checkin:
+        messages.error(request, 'Checkout must be after checkin.')
+        return redirect('home')
+
+    for reservation in Customer.objects.all():
+        start = reservation.start.replace(tzinfo=pytz.UTC)
+        end = reservation.end.replace(tzinfo=pytz.UTC)
+        if checkin < end and checkout > start:  
+            try:
+                sites.remove(reservation.site.strip())
+            except ValueError:
+                pass  # site already removed or not in list
+
+    context = {
+        "reservation_form": ReservationForm(),
+        "sites": sites,
+        "checkin": checkin,
+        "checkout": checkout,
+        "start": checkin_str,
+        "end": checkout_str,
+    }
+    return render(request, "manager/available_sites.html", context=context)
