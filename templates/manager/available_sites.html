@@ -104,6 +104,12 @@
                         {% if site.nightly_rate %}
                             <span class="badge badge-warning mr-1">${{ site.nightly_rate }}/night</span>
                         {% endif %}
+                        {% if site.weekly_rate %}
+                            <span class="badge badge-warning mr-1">${{ site.weekly_rate }}/week</span>
+                        {% endif %}
+                        {% if site.monthly_rate %}
+                            <span class="badge badge-warning mr-1">${{ site.monthly_rate }}/month</span>
+                        {% endif %}
                     </div>
                     {% if site.notes %}
                     <div class="text-muted small mt-2">

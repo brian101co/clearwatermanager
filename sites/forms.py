@@ -9,7 +9,8 @@ class SiteForm(forms.ModelForm):
         fields = [
             'identifier', 'info', 'lot_type', 'under_maintenance',
             'water', 'electric_30amp', 'electric_50amp', 'sewer',
-            'wifi', 'max_length_ft', 'nightly_rate', 'notes'
+            'wifi', 'max_length_ft', 'nightly_rate', 'weekly_rate',
+            'monthly_rate', 'notes'
         ]
 
     def __init__(self, *args, **kwargs):
@@ -27,6 +28,10 @@ class SiteForm(forms.ModelForm):
         self.fields["max_length_ft"].help_text = "Maximum RV length this lot can accommodate"
         self.fields["nightly_rate"].label = "Nightly Rate"
         self.fields["nightly_rate"].help_text = "Leave blank if rate varies"
+        self.fields["weekly_rate"].label = "Weekly Rate"
+        self.fields["weekly_rate"].help_text = "Weekly rate"
+        self.fields["monthly_rate"].label = "Monthly Rate"
+        self.fields["monthly_rate"].help_text = "Monthly rate"
         self.fields["notes"].label = "Notes"
         
         self.helper = FormHelper()
@@ -49,7 +54,12 @@ class SiteForm(forms.ModelForm):
             # Details
             HTML('<h6 class="text-muted mt-3 mb-2">Details</h6>'),
             Field("max_length_ft", placeholder="e.g. 40"),
-            Field("nightly_rate", placeholder="00.00"),
             Field("under_maintenance"),
             Field("notes"),
+
+            # Pricing
+            HTML('<h6 class="text-muted mt-3 mb-2">Pricing</h6>'),
+            Field("nightly_rate", placeholder="00.00"),
+            Field("weekly_rate", placeholder="00.00"),
+            Field("monthly_rate", placeholder="00.00"),
         )
