@@ -8,7 +8,24 @@
         <div class="col-sm-12 col-lg-8 offset-lg-2 my-3">
             {% include 'partials/_map.html' %}
         </div>
+
         <div class="col-sm-12 my-3">
+
+                    <!-- Map Legend -->
+            <div class="d-flex flex-wrap justify-content-end mt-2 mb-5">
+                <div class="d-flex align-items-center mr-3 mb-1">
+                    <svg width="16" height="16" class="mr-1">
+                        <rect width="16" height="16" rx="3" fill="rgb(165, 189, 155)"/>
+                    </svg>
+                    <small class="text-muted">Available</small>
+                </div>
+                <div class="d-flex align-items-center mr-3 mb-1">
+                    <svg width="16" height="16" class="mr-1">
+                        <rect width="16" height="16" rx="3" fill="rgb(255, 0, 0)"/>
+                    </svg>
+                    <small class="text-muted">Occupied</small>
+                </div>
+            </div>
             
             <div class="mb-3">
                 <div class="progress mt-1" style="height: 8px;">
@@ -47,7 +64,7 @@
     
                 <!-- Notifications -->
                 <div class="notifications-container mt-5">
-                    <h2 class="h5 mb-3">Checking Out Soon
+                    <h2 class="h5 mb-3">Checking Out Tomorrow
                         <span class="badge badge-warning badge-pill ml-2">{{ checking_out_soon|length }}</span>
                     </h2>
                     {% for guest in checking_out_soon %}
@@ -78,7 +95,7 @@
                 </div>
 
                 <!-- Checking In Soon -->
-                <h2 class="h5 mb-3 mt-4">Checking In Soon
+                <h2 class="h5 mb-3 mt-4">Checking In Tomorrow
                     <span class="badge badge-success badge-pill ml-2">{{ checking_in_soon|length }}</span>
                 </h2>
                 {% for guest in checking_in_soon %}
@@ -216,5 +233,10 @@
     phone: true,
     phoneRegionCode: 'us'
   });
+  
+</script>
+<!-- Pass occupied lots from Django context to JavaScript -->
+<script id="occupied-lots-data" type="application/json">
+    {{ occupied_lots|safe }}
 </script>
 {% endblock %}

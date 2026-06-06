@@ -220,6 +220,10 @@ body {
     fill: red;
 }
 
+[data-site] {
+    cursor: pointer;
+}
+
 
 @media(max-width:800px) {
     .map {

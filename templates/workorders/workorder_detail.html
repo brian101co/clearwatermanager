@@ -1,92 +1,149 @@
 {% extends "base.html" %}
-
 {% load static %}
 
 {% block content %}
-<section class="container">
+<section class="container py-4">
+
+    <!-- Back -->
+    <a href="{% url 'workorder-list' %}" class="btn btn-secondary btn-sm mb-3">← Back to Work Orders</a>
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-start flex-wrap mb-4">
+        <div>
+            <h1 class="h3 mb-1">{{ object.title }}</h1>
+            <div class="d-flex flex-wrap gap-1">
+                <!-- Priority Badge -->
+                {% if object.priority == 2 %}
+                    <span class="badge badge-danger p-2 mr-1">● {{ object.get_priority_display }}</span>
+                {% elif object.priority == 1 %}
+                    <span class="badge badge-warning p-2 mr-1">● {{ object.get_priority_display }}</span>
+                {% else %}
+                    <span class="badge badge-success p-2 mr-1">● {{ object.get_priority_display }}</span>
+                {% endif %}
+                <!-- Category Badge -->
+                <span class="badge badge-secondary p-2 mr-1">{{ object.get_category_display }}</span>
+                <!-- Status Badge -->
+                {% if object.completed %}
+                    <span class="badge badge-success p-2">✓ Completed</span>
+                {% else %}
+                    <span class="badge badge-primary p-2">⚙ Open</span>
+                {% endif %}
+                <!-- Recurring Badge -->
+                {% if object.is_recurring %}
+                    <span class="badge badge-info p-2 ml-1">↻ Recurring every {{ object.recurring_interval }} days</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="alert {% if object.completed %}alert-success{% else %}alert-light{% endif %} py-2 mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap small">
+            <span>
+                {% if object.completed %}
+                    ✓ Completed on {{ object.completed_at|date:"D, M d Y" }}
+                {% else %}
+                    ⚙ Open — Created {{ object.created_at|date:"D, M d Y" }}
+                {% endif %}
+            </span>
+        </div>
+    </div>
+
+    <!-- Two Column Layout -->
     <div class="row">
-        <div class="col-sm-12">
-            <div class="card my-3">
-                <div class="card-body" id="workorder">
-                    <header class="d-flex justify-content-between align-items-center mb-1">
-                        <h3>{{ object.title }}</h3>
-                        <div>
-                            {% if object.priority == 2 %}
-                                <span class="badge badge-danger">High Urgency</span>
-                            {% elif object.priority == 1 %} 
-                                <span class="badge badge-warning">Moderate Urgency</span>
-                            {% else %}
-                                <span class="badge badge-info">Low Urgency</span>
-                            {% endif %}
-                            {% if object.completed %}
-                                <span class="badge badge-success">Completed</span>
-                            {% endif %}
-                        </div>
-                    </header>
-                    <ul class="nav nav-tabs mb-3" id="tab" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="details-tab" data-toggle="tab" href="#details" role="tab">Details</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="description-tab" data-toggle="tab" href="#description" role="tab">Description</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content" id="description-content">
-                        <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="detail-tab">
-                            <ul id="details-list">
-                                <li>Ticket Number: {{ object.id }}</li>
-                                <li>Created: {{ object.created_at|date:"M j, Y" }}</li>
-                                <li>Created by: {{ object.manager|title }}</li>
-                                <li>Site: {{ object.site }}</li>
-                                <li>Cost: ${% if object.cost %}{{ object.cost }}{% else %}0.00{% endif %}</li>
-                            </ul>
-                        </div>  
-                        <div class="tab-pane fade" id="description" role="tabpanel" aria-labelledby="description-tab">
-                            <h5>{{ object.title }}</h5>
-                            <p class="card-text">
-                                {{ object.description }}
-                            </p>
-                        </div>  
-                    </div>
-                    {% if not object.completed %}
-                    <div class="toolbar mt-5" id="toolbar">
-                        <a href="{% url 'workorder-completed' object.id %}" class="btn bg-success pure-material-button-contained mr-2">Completed</a>
-                        <a href="{% url 'workorder-update' object.id %}" class="btn bg-primary pure-material-button-contained mr-2">Edit</a>
-                        <button class="btn bg-secondary pure-material-button-contained mr-2 d-none d-md-block" id="print">Print</button>
-                        <form action="{% url 'workorder-delete' object.id %}" method="POST">
-                            {% csrf_token %}
-                            <input type="submit" value="Delete" class="btn bg-danger pure-material-button-contained">
-                        </form>
-                    </div>
+
+        <!-- Left Column — Description -->
+        <div class="col-sm-12 col-lg-7 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">📋 Description</h5>
+                </div>
+                <div class="card-body">
+                    {% if object.description %}
+                        <p class="mb-0">{{ object.description|linebreaks }}</p>
+                    {% else %}
+                        <p class="text-muted mb-0">No description provided.</p>
                     {% endif %}
                 </div>
             </div>
         </div>
-    </div>
-</section>
-{% endblock %}
 
-{% block extraJS %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/print-js/1.6.0/print.js" integrity="sha512-/fgTphwXa3lqAhN+I8gG8AvuaTErm1YxpUjbdCvwfTMyv8UZnFyId7ft5736xQ6CyQN4Nzr21lBuWWA9RTCXCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script>
-    document.getElementById('print').addEventListener("click", function() {
-        const description = document.querySelector("#description .card-text").innerText;
-        const details = document.getElementById("details-list");
-        details.innerHTML += `<li id="desc">Description: ${description}</li>`;
-        printJS({
-            printable: 'workorder',
-            type: 'html',
-            css: [
-                "{% static 'css/main.css' %}",
-                "{% static 'css/bootstrap.min.css' %}"
-            ],
-            ignoreElements: [
-                "toolbar"
-            ],
-            onPrintDialogClose: function(){
-                document.getElementById("desc").remove();
-            }
-        });
-    });
-</script>
+        <!-- Right Column — Details -->
+        <div class="col-sm-12 col-lg-5 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">🔧 Details</h5>
+                </div>
+                <div class="card-body p-0">
+                    <dl class="row mb-0 p-3">
+                        <dt class="col-sm-5 text-muted small">Site</dt>
+                        <dd class="col-sm-7">
+                            <span class="badge badge-secondary">{{ object.site }}</span>
+                        </dd>
+
+                        <dt class="col-sm-5 text-muted small">Created</dt>
+                        <dd class="col-sm-7">{{ object.created_at|date:"M d, Y" }}</dd>
+
+                        <dt class="col-sm-5 text-muted small">Last Updated</dt>
+                        <dd class="col-sm-7">{{ object.updated_at|date:"M d, Y" }}</dd>
+
+                        {% if object.estimated_cost %}
+                        <dt class="col-sm-5 text-muted small">Estimated Cost</dt>
+                        <dd class="col-sm-7 text-success">${{ object.estimated_cost }}</dd>
+                        {% endif %}
+
+                        {% if object.actual_cost %}
+                        <dt class="col-sm-5 text-muted small">Actual Cost</dt>
+                        <dd class="col-sm-7 text-success">${{ object.actual_cost }}</dd>
+                        {% endif %}
+
+                        {% if object.estimated_cost and object.actual_cost %}
+                        <dt class="col-sm-5 text-muted small">Variance</dt>
+                        <dd class="col-sm-7">
+                            {% if object.actual_cost > object.estimated_cost %}
+                                <span class="text-danger">▲ Over budget</span>
+                            {% elif object.actual_cost < object.estimated_cost %}
+                                <span class="text-success">▼ Under budget</span>
+                            {% else %}
+                                <span class="text-muted">On budget</span>
+                            {% endif %}
+                        </dd>
+                        {% endif %}
+
+                        {% if object.is_recurring %}
+                        <dt class="col-sm-5 text-muted small">Recurring</dt>
+                        <dd class="col-sm-7">Every {{ object.recurring_interval }} days</dd>
+                        {% endif %}
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Photo -->
+    {% if object.image %}
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">📷 Photo</h5>
+        </div>
+        <div class="card-body text-center">
+            <img src="{{ object.image.url }}" class="img-fluid rounded" alt="Work order photo" style="max-height: 400px;">
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Action Buttons -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap mt-2">
+        <div>
+            <a href="{% url 'workorder-update' object.id %}" class="btn btn-primary mr-2">✏️ Edit</a>
+            {% if not object.completed %}
+                <a href="{% url 'workorder-completed' object.id %}" class="btn btn-success">✓ Mark Complete</a>
+            {% else %}
+                <span class="btn btn-success disabled">✓ Completed</span>
+            {% endif %}
+        </div>
+        <a href="{% url 'workorder-delete' object.id %}" class="btn btn-danger">🗑 Delete</a>
+    </div>
+
+</section>
 {% endblock %}

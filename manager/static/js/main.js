@@ -1,12 +1,9 @@
 window.onload = () => {
     const lotNodes = document.querySelectorAll("[data-site]");
-    const siteNodes = document.querySelectorAll(".site");
-    const checkoutNodes = document.querySelectorAll(".checkout");
-    const checkinNodes = document.querySelectorAll(".checkin");
     const editBtn = document.querySelector('.edit');
-    const currentTime = Date.now();
     const names = document.querySelectorAll('.name');
     const mobileEditBtnElems = document.querySelectorAll(".mobile-edit");
+    const occupiedLots = JSON.parse(document.getElementById("occupied-lots-data").textContent);
 
     const state = {
         activeSiteId: null,
@@ -63,10 +60,6 @@ window.onload = () => {
     class Map {
         constructor(mapLots, reservedLots, checkout, checkin) {
             this.mapLots = mapLots;
-            this.reservedLots = reservedLots;
-            this.checkoutTimes = checkout;
-            this.checkinTimes = checkin;
-            this.activelots = [];
             this.infoModal = document.querySelector("#site-info");
             this.setEventListeners();
         }
@@ -127,51 +120,20 @@ window.onload = () => {
             });
         }
 
-        buildReservedLots() {
-            // Building an Array of active lots based on current reservations in the reservation table
-            for (let i = 0; i < this.reservedLots.length; i++) {
-                let obj = {};
-                obj.site = this.reservedLots[i].innerText;
-                obj.checkout = this.checkoutTimes[i].innerText;
-                obj.checkin = this.checkinTimes[i].innerText;
-                this.activelots.push(obj);
-            }
-        }
-
         highlightLots() {
-            this.buildReservedLots();
-            // Looping through each lot on the map
             this.mapLots.forEach(lot => {
-                // Lot Number
-                let lotNum = lot.getAttribute("data-site");
-                // Checking if lot number is in the active lots array to see if it needs to be highlighted
-                let filterdActiveLots = this.activelots.filter(elem => elem.site == lotNum);
-
-                let search;
-                if (filterdActiveLots.length == 1) {
-                    search = this.activelots.find(element => {
-                        return element.site == lotNum;
-                    });
-                } else {
-                    filterdActiveLots.forEach(lot => {
-                        if (dateFns.isAfter(lot.checkout, currentTime)) {
-                            if (dateFns.isBefore(lot.checkin, currentTime)) {
-                                document.querySelector(`[data-site="${lot.site}"]`).setAttribute("id", "active");
-                            }
-                        }
-                    });
+                const siteNum = lot.getAttribute("data-site");
+                const reservation = occupiedLots.find(r => r.site === siteNum);
+                if (reservation) {
+                    lot.setAttribute("id", "active");
+                    const titleElem = document.createElementNS("http://www.w3.org/2000/svg", "title");
+                    titleElem.textContent = `${reservation.name} — Checkout: ${new Date(reservation.end).toDateString()}`;
+                    lot.appendChild(titleElem);
                 }
-
-                if (search) {
-                    if (dateFns.isAfter(search.checkout, currentTime)) {
-                        if (dateFns.isBefore(search.checkin, currentTime)) {
-                            document.querySelector(`[data-site="${search.site}"]`).setAttribute("id", "active");
-                        }
-                    }
-                }
-            });
+            })
         }
     }
+
 
     class Modal {
         constructor(obj) {
@@ -206,7 +168,7 @@ window.onload = () => {
         }
     }
 
-    const NewMap = new Map(lotNodes, siteNodes, checkoutNodes, checkinNodes);
+    const NewMap = new Map(lotNodes);
     const InitModal = new Modal({
         deleteElem: names,
         editElem: editBtn,
