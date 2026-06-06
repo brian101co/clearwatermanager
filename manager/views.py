@@ -185,3 +185,13 @@ def getAvailability(request):
         "end": checkout_str,
     }
     return render(request, "manager/available_sites.html", context=context)
+
+
+def handler500(request):
+    messages.error(request, 'Something went wrong. Please try again.')
+    return redirect('home')
+
+
+def handler404(request, exception):
+    messages.error(request, 'Page not found.')
+    return redirect('home')

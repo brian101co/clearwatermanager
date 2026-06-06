@@ -15,10 +15,12 @@ urlpatterns = [
     path('site/info/<str:site>', site_views.get_site_info, name="site_info"),
 ]
 
-urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
+handler404 = 'manager.views.handler404'
+handler500 = 'manager.views.handler500'
 
 if DEBUG:
     import debug_toolbar
     urlpatterns += [
         path('__debug__/', include(debug_toolbar.urls)),
     ]
+    urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
