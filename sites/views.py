@@ -42,6 +42,11 @@ class DeleteSiteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('home')
     template_name = "sites/delete_site.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["workorders"] = self.object.workorders.filter(completed=False)
+        return context
+
     def delete(self, request, *args, **kwargs):
         messages.success(request, f'Site {self.get_object().identifier} has been deleted.')
         return super().delete(request, *args, **kwargs)

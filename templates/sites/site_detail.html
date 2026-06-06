@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="container py-4">
+
+    <!-- Back -->
+    <a href="{% url 'site-list' %}" class="btn btn-secondary btn-sm mb-3">← Back to Sites</a>
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+        <div>
+            <h1 class="h3 mb-1">Site {{ site.identifier }}</h1>
+            <div>
+                <span class="badge badge-secondary mr-1">{{ site.get_lot_type_display }}</span>
+                {% if site.under_maintenance %}
+                    <span class="badge badge-warning mr-1">⚠ Under Maintenance</span>
+                {% else %}
+                    <span class="badge badge-success mr-1">✓ Available</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="mt-2 mt-sm-0">
+            <a href="{% url 'site-edit' site.id %}" class="btn btn-primary mr-2">✏️ Edit</a>
+            <a href="{% url 'site-delete' site.id %}" class="btn btn-danger">🗑 Delete</a>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <!-- Left Column — Amenities & Details -->
+        <div class="col-sm-12 col-lg-5 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">🔌 Amenities</h5>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            30 AMP
+                            {% if site.electric_30amp %}
+                                <span class="badge badge-success">✓ Yes</span>
+                            {% else %}
+                                <span class="badge badge-light text-muted">No</span>
+                            {% endif %}
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            50 AMP
+                            {% if site.electric_50amp %}
+                                <span class="badge badge-success">✓ Yes</span>
+                            {% else %}
+                                <span class="badge badge-light text-muted">No</span>
+                            {% endif %}
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Water Hookup
+                            {% if site.water %}
+                                <span class="badge badge-success">✓ Yes</span>
+                            {% else %}
+                                <span class="badge badge-light text-muted">No</span>
+                            {% endif %}
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Sewer Hookup
+                            {% if site.sewer %}
+                                <span class="badge badge-success">✓ Yes</span>
+                            {% else %}
+                                <span class="badge badge-light text-muted">No</span>
+                            {% endif %}
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            WiFi
+                            {% if site.wifi %}
+                                <span class="badge badge-success">✓ Yes</span>
+                            {% else %}
+                                <span class="badge badge-light text-muted">No</span>
+                            {% endif %}
+                        </li>
+                        {% if site.max_length_ft %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Max Length
+                            <span class="badge badge-secondary">{{ site.max_length_ft }} ft</span>
+                        </li>
+                        {% endif %}
+                        {% if site.nightly_rate %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Nightly Rate
+                            <span class="badge badge-secondary">${{ site.nightly_rate }}</span>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column — Info & Notes -->
+        <div class="col-sm-12 col-lg-7 mb-4">
+
+            <!-- Info Card -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-header">
+                    <h5 class="mb-0">📋 Information</h5>
+                </div>
+                <div class="card-body">
+                    {% if site.info %}
+                        <p class="mb-0">{{ site.info|linebreaks }}</p>
+                    {% else %}
+                        <p class="text-muted mb-0">No information provided.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Notes Card -->
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">📝 Notes</h5>
+                </div>
+                <div class="card-body">
+                    {% if site.notes %}
+                        <p class="mb-0">{{ site.notes|linebreaks }}</p>
+                    {% else %}
+                        <p class="text-muted mb-0">No notes.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Work Orders -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">🔧 Open Work Orders</h5>
+            <span class="badge badge-secondary badge-pill">{{ workorders|length }}</span>
+        </div>
+        <div class="card-body p-0">
+            {% for order in workorders %}
+            <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="{% url 'workorder-detail' order.id %}" class="text-dark font-weight-bold">
+                        {{ order.title }}
+                    </a>
+                    <div class="text-muted small mt-1">
+                        {{ order.get_category_display }} · Opened {{ order.created_at|date:"M d, Y" }}
+                    </div>
+                </div>
+                {% if order.priority == 2 %}
+                    <span class="badge badge-danger p-2">● {{ order.get_priority_display }}</span>
+                {% elif order.priority == 1 %}
+                    <span class="badge badge-warning p-2">● {{ order.get_priority_display }}</span>
+                {% else %}
+                    <span class="badge badge-success p-2">● {{ order.get_priority_display }}</span>
+                {% endif %}
+            </div>
+            {% empty %}
+            <div class="card-body">
+                <p class="text-muted mb-0">No open work orders for this site. 🎉</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% if workorders %}
+        <div class="card-footer">
+            <a href="{% url 'workorder-create' %}" class="btn btn-sm btn-outline-primary">+ Add Work Order</a>
+        </div>
+        {% endif %}
+    </div>
+
+</section>
+{% endblock %}

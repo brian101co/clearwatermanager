@@ -30,6 +30,7 @@ class SiteForm(forms.ModelForm):
         self.fields["notes"].label = "Notes"
         
         self.helper = FormHelper()
+        self.helper.form_tag = False 
         self.helper.layout = Layout(
             # Basic Info
             HTML('<h6 class="text-muted mt-3 mb-2">Basic Information</h6>'),
@@ -51,6 +52,4 @@ class SiteForm(forms.ModelForm):
             Field("nightly_rate", placeholder="00.00"),
             Field("under_maintenance"),
             Field("notes"),
-
-            Submit("submit", "Submit", css_class="btn pure-material-button-contained")
         )
