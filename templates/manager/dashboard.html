@@ -9,6 +9,20 @@
             {% include 'partials/_map.html' %}
         </div>
         <div class="col-sm-12 my-3">
+            
+            <div class="mb-3">
+                <div class="progress mt-1" style="height: 8px;">
+                    <div class="progress-bar bg-primary" 
+                        role="progressbar" 
+                        style="width: {{ occupancy_rate }}%"
+                        aria-valuenow="{{ occupancy_rate }}" 
+                        aria-valuemin="0" 
+                        aria-valuemax="100">
+                    </div>
+                </div>
+                <small class="text-muted">{{ occupancy_rate }}% occupied today</small>
+            </div>
+
             <div>
                 {% if messages %}
                     {% for message in messages %}
@@ -26,7 +40,7 @@
                 {% endif %}
 
                 <div class="toolbar flex-wrap">
-                    <button class="btn pure-material-button-contained bg-primary mr-3" data-toggle="modal" data-target="#check-avaliability">Availiablity</button>
+                    <button class="btn pure-material-button-contained bg-primary mr-3" data-toggle="modal" data-target="#check-avaliability">Availability</button>
                     <button class="btn pure-material-button-contained bg-primary mr-3" onclick="location.reload()">Update Map</button>
                     <button type="button" class="btn-plus bg-primary" data-toggle="modal" data-target="#customer-form-modal"><i class="fas fa-plus"></i></button>
                 </div>

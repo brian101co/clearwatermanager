@@ -41,6 +41,12 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
         context["checking_out_soon"] = customers.filter(end__date=tomorrow.date(), is_long_term=False)
         context["checking_in_soon"] = customers.filter(start__date=tomorrow.date(), is_long_term=False)
         context["expiring_leases"] = customers.filter(end__date__lte=thirty_days.date(), is_long_term=True)
+
+        # Calculating Occupancy Rate
+        total_lots = 65
+        occupied_today = Customer.objects.filter(start__date__lte=today, end__date__gte=today).count()
+        occupancy_rate = round((occupied_today / total_lots) * 100)
+        context["occupancy_rate"] = occupancy_rate
         return context
 
     def get(self, request, *args, **kwargs):
