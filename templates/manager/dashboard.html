@@ -9,6 +9,20 @@
             {% include 'partials/_map.html' %}
         </div>
         <div class="col-sm-12 my-3">
+            
+            <div class="mb-3">
+                <div class="progress mt-1" style="height: 8px;">
+                    <div class="progress-bar bg-primary" 
+                        role="progressbar" 
+                        style="width: {{ occupancy_rate }}%"
+                        aria-valuenow="{{ occupancy_rate }}" 
+                        aria-valuemin="0" 
+                        aria-valuemax="100">
+                    </div>
+                </div>
+                <small class="text-muted">{{ occupancy_rate }}% occupied today</small>
+            </div>
+
             <div>
                 {% if messages %}
                     {% for message in messages %}
@@ -26,14 +40,94 @@
                 {% endif %}
 
                 <div class="toolbar flex-wrap">
-                    <button class="btn pure-material-button-contained bg-primary mr-3" data-toggle="modal" data-target="#check-avaliability">Availiablity</button>
+                    <button class="btn pure-material-button-contained bg-primary mr-3" data-toggle="modal" data-target="#check-avaliability">Availability</button>
                     <button class="btn pure-material-button-contained bg-primary mr-3" onclick="location.reload()">Update Map</button>
                     <button type="button" class="btn-plus bg-primary" data-toggle="modal" data-target="#customer-form-modal"><i class="fas fa-plus"></i></button>
                 </div>
+    
                 <!-- Notifications -->
-                <div class="notifications-container mt-4">
-                    <h2 class="title-secondary">Checking Out Soon</h2>
+                <div class="notifications-container mt-5">
+                    <h2 class="h5 mb-3">Checking Out Soon
+                        <span class="badge badge-warning badge-pill ml-2">{{ checking_out_soon|length }}</span>
+                    </h2>
+                    {% for guest in checking_out_soon %}
+                    <div class="card shadow-sm mb-2" style="border-left: 4px solid #ffc107;">
+                        <div class="card-body py-2 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                            <div>
+                                <strong>{{ guest.name|title }}</strong>
+                                <span class="ml-2">
+                                    <span class="badge badge-secondary">Site {{ guest.site }}</span>
+                                </span>
+                                <div class="text-muted small mt-1">
+                                    Checkout: {{ guest.end|date:"D, M d Y" }} at {{ guest.end|time:"g:i A" }}
+                                </div>
+                            </div>
+                            <div class="d-flex mt-2 mt-md-0">
+                                <a href="tel:{{ guest.phoneNum }}" class="btn btn-sm btn-outline-secondary mr-2 flex-fill flex-md-grow-0">
+                                    📞 Call
+                                </a>
+                                <a href="{% url 'reservation-detail' guest.id %}" class="btn btn-sm btn-outline-primary flex-fill flex-md-grow-0">
+                                    View
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted small">No checkouts tomorrow.</p>
+                    {% endfor %}
                 </div>
+
+                <!-- Checking In Soon -->
+                <h2 class="h5 mb-3 mt-4">Checking In Soon
+                    <span class="badge badge-success badge-pill ml-2">{{ checking_in_soon|length }}</span>
+                </h2>
+                {% for guest in checking_in_soon %}
+                <div class="card shadow-sm mb-2" style="border-left: 4px solid #28a745;">
+                    <div class="card-body py-2 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                        <div>
+                            <strong>{{ guest.name|title }}</strong>
+                            <span class="ml-2">
+                                <span class="badge badge-secondary">Site {{ guest.site }}</span>
+                            </span>
+                            <div class="text-muted small mt-1">
+                                Checkin: {{ guest.start|date:"D, M d Y" }} at {{ guest.start|time:"g:i A" }}
+                            </div>
+                        </div>
+                        <div class="d-flex mt-2 mt-md-0">
+                            <a href="tel:{{ guest.phoneNum }}" class="btn btn-sm btn-outline-secondary mr-2 flex-fill flex-md-grow-0">📞 Call</a>
+                            <a href="{% url 'reservation-detail' guest.id %}" class="btn btn-sm btn-outline-primary flex-fill flex-md-grow-0">View</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted small">No checkins tomorrow.</p>
+                {% endfor %}
+
+                <!-- Expiring Leases -->
+                <h2 class="h5 mb-3 mt-4">Expiring Leases
+                    <span class="badge badge-danger badge-pill ml-2">{{ expiring_leases|length }}</span>
+                </h2>
+                {% for resident in expiring_leases %}
+                <div class="card shadow-sm mb-2" style="border-left: 4px solid #dc3545;">
+                    <div class="card-body py-2 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                        <div>
+                            <strong>{{ resident.name|title }}</strong>
+                            <span class="ml-2">
+                                <span class="badge badge-secondary">Site {{ resident.site }}</span>
+                            </span>
+                            <div class="text-muted small mt-1">
+                                Lease ends: {{ resident.end|date:"D, M d Y" }}
+                            </div>
+                        </div>
+                        <div class="d-flex mt-2 mt-md-0">
+                            <a href="tel:{{ resident.phoneNum }}" class="btn btn-sm btn-outline-secondary mr-2 flex-fill flex-md-grow-0">📞 Call</a>
+                            <a href="{% url 'reservation-detail' resident.id %}" class="btn btn-sm btn-outline-primary flex-fill flex-md-grow-0">View</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted small">No leases expiring in the next 30 days.</p>
+                {% endfor %}
             </div>
         </div>
         <div class="col-sm-12 col-lg-6 my-3">
