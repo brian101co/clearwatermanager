@@ -2,6 +2,7 @@ from django.shortcuts import redirect
 from django.utils import timezone
 from .models import WorkOrder
 from .forms import WorkorderForm
+from django.contrib import messages
 from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -31,6 +32,11 @@ class WorkorderDeleteView(LoginRequiredMixin, DeleteView):
     model = WorkOrder
     pk_url_kwarg = 'id'
     success_url = reverse_lazy('workorder-list')
+    template_name = "workorders/delete_workorder.html"
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, f'Workorder "{self.get_object().title}" has been deleted.')
+        return super().delete(request, *args, **kwargs)
 
 class WorkorderListView(LoginRequiredMixin, ListView):
     context_object_name = "workorders"
