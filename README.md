@@ -19,7 +19,7 @@ Each notification card includes a direct call button and a link to the full rese
 A live occupancy progress bar shows the percentage of lots currently occupied, giving managers an instant read on park capacity at a glance.
 
 ## Interactive Park Map
-The interactive SVG park map shows managers which sites are currently available (green) or occupied (red) at a glance. Hovering over an occupied lot displays a tooltip showing the guest name and checkout date. Selecting a site on the map opens a modal displaying site information including amenities, unit size capacity and any relevant notes. A color legend is displayed below the map for quick reference.
+The interactive SVG park map shows managers which sites are currently available (green) or occupied (red) at a glance. Hovering over an occupied lot displays a tooltip showing the guest name and checkout date. Selecting a site on the map opens a modal displaying site information. A color legend is displayed below the map for quick reference.
 
 ## Site Management
 The site management system allows managers to view, create, edit and delete park sites. Each site tracks amenities including water hookups, 30/50 amp electric, sewer, and WiFi availability, as well as lot type, maximum RV length, nightly rate, and maintenance status. Open work orders are displayed directly on each site detail page for a complete picture of site status.
