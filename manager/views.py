@@ -32,12 +32,15 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         today = timezone.now()
         tomorrow = today + timedelta(days=1)
+        thirty_days = today + timedelta(days=30)
         customers = Customer.objects.filter(end__gte=today).order_by('start')
         context["reservation_form"] = ReservationForm()
         context["customers"] = customers.filter(is_long_term=False)
         context["longterms"] = customers.filter(is_long_term=True)
         context["totalReservations"] = customers.count()
         context["checking_out_soon"] = customers.filter(end__date=tomorrow.date(), is_long_term=False)
+        context["checking_in_soon"] = customers.filter(start__date=tomorrow.date(), is_long_term=False)
+        context["expiring_leases"] = customers.filter(end__date__lte=thirty_days.date(), is_long_term=True)
         return context
 
     def get(self, request, *args, **kwargs):
