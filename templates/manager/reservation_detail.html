@@ -1,33 +1,72 @@
 {% extends "base.html" %}
-
 {% load static %}
 
 {% block content %}
-<section class="container">
+<section class="container py-4">
     <div class="row">
-        <div class="col-sm-12" style="height: 100vh;">
-            <div class="p-2">
-                <h1>{{ reservation.name|title }}'s Reservation</h1>
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Details</h5>
-                        <ul>
-                            <li>Site: {{ reservation.site }}</li>
-                            <li>Checkin: {{ reservation.start|date:"M d Y" }}</li>
-                            <li>Checkout: {{ reservation.end|date:"M d Y" }}</li>
-                            <li>Phone Number: <a href="tel:{{ reservation.phoneNum }}">{{ reservation.phoneNum }}</a></li>
-                        </ul>
-                        <h5>Additional Information</h5>
-                        <p>
-                            {% if reservation.info %}
-                            {{ reservation.info|linebreaks }}
-                            {% else %}
-                            No additional information
-                            {% endif %}
-                        </p>
-                    </div>
+        <div class="col-sm-12 col-lg-8 offset-lg-2">
+
+            <!-- Back Button -->
+            <a href="{% url 'home' %}" class="btn btn-secondary mb-4">
+                ← Back to Dashboard
+            </a>
+
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h2 mb-0">{{ reservation.name|title }}</h1>
+                <span class="badge badge-success badge-pill">Site {{ reservation.site }}</span>
+            </div>
+
+            <!-- Details Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">📋 Reservation Details</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Check-in</dt>
+                        <dd class="col-sm-8">{{ reservation.start|date:"l, M d Y" }}</dd>
+
+                        <dt class="col-sm-4">Check-out</dt>
+                        <dd class="col-sm-8">{{ reservation.end|date:"l, M d Y" }}</dd>
+
+                        <dt class="col-sm-4">Duration</dt>
+                        <dd class="col-sm-8">{{ reservation.start|timesince:reservation.end }}</dd>
+
+                        <dt class="col-sm-4">Phone</dt>
+                        <dd class="col-sm-8">
+                            <a href="tel:{{ reservation.phoneNum }}">
+                                📞 {{ reservation.phoneNum }}
+                            </a>
+                        </dd>
+                    </dl>
                 </div>
             </div>
+
+            <!-- Additional Info Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">📝 Additional Information</h5>
+                </div>
+                <div class="card-body">
+                    {% if reservation.info %}
+                        {{ reservation.info|linebreaks }}
+                    {% else %}
+                        <p class="text-muted mb-0">No additional information provided.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'edit' reservation.id %}" class="btn btn-primary">
+                    ✏️ Edit Reservation
+                </a>
+                <a href="{% url 'delete-reservation' reservation.id %}" class="btn btn-danger">
+                    🗑️ Delete Reservation
+                </a>
+            </div>
+
         </div>
     </div>
 </section>

@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extraCSS %} 
+<style>
+    .active {
+        fill: rgb(49, 228, 49) !important;
+    }
+    .site-list-item {
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+    .site-list-item:hover {
+        background-color: #f0fff0;
+        border-left: 4px solid rgb(49, 228, 49);
+    }
+    .dates-banner {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 12px 20px;
+        display: inline-block;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Header Section -->
+<section class="container py-4">
+    <div class="row">
+        <div class="col-sm-12 text-center mb-3">
+            <a href="{% url 'home' %}" class="btn btn-secondary btn-sm float-left">
+                ← Back
+            </a>
+            <h1 class="h2">Available Sites</h1>
+
+            <!-- Dates Banner -->
+            <div class="dates-banner mt-2">
+                <span class="mr-4">
+                    🔴 <strong>Check-in:</strong> {{ checkin|date:"l, M d Y" }}
+                </span>
+                <span>
+                    🟢 <strong>Check-out:</strong> {{ checkout|date:"l, M d Y" }}
+                </span>
+            </div>
+
+            <!-- Site Count Badge -->
+            <div class="mt-3">
+                {% if sites %}
+                    <span class="badge badge-success badge-pill p-2">
+                        {{ sites|length }} site{{ sites|length|pluralize }} available
+                    </span>
+                {% else %}
+                    <span class="badge badge-danger badge-pill p-2">
+                        No sites available
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Map Section -->
+<section class="container">
+    <div class="row">
+        <div class="col col-lg-8 offset-lg-2 py-3 px-sm-0 px-md-5">
+            {% include "partials/_map.html" %}
+        </div>
+    </div>
+</section>
+
+<!-- Site Selection Section -->
+<section class="container pb-5">
+    <div class="row">
+        <div class="col-sm-12 col-lg-6 offset-lg-3">
+            <h5 class="text-center mb-3">
+                {% if sites %}
+                    Select a Site Below
+                {% endif %}
+            </h5>
+            <ul class="list-group shadow-sm">
+                {% for site in sites %}
+                <li class="list-group-item site-list-item d-flex justify-content-between align-items-center"
+                    data-toggle="modal" 
+                    data-target="#customer-form-modal"
+                    onclick="handleForm(event)">
+                    <span data-site="{{ site }}">🏕️ Site {{ site }}</span>
+                    <span class="badge badge-success">Available</span>
+                </li>
+                {% empty %}
+                <li class="list-group-item text-center py-4">
+                    <p class="text-danger mb-1">No available sites for the selected dates.</p>
+                    <a href="{% url 'home' %}" class="btn btn-sm btn-primary mt-2">
+                        Try Different Dates
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</section>
+
+{% include "partials/_add_reservation_form.html" %}
+{% endblock %}
+
+{% block extraJS %} 
+<script data-sites="{{ sites }}"></script>
+<script>
+    const openSites = eval(document.querySelector("[data-sites]").dataset.sites);
+    const mapSites = document.querySelectorAll("[data-site]");
+
+    function handleForm(ev) {
+        document.querySelector('[name="site"]').value = ev.currentTarget.querySelector('[data-site]').dataset.site
+        document.querySelector('[name="end"]').value = '{{ end }}'
+        document.querySelector('[name="start"]').value = '{{ start }}'
+    }
+
+    for (let siteNum of openSites) {
+        try {
+            document.querySelector(`[data-site="${siteNum}"]`).classList.add("active");
+        } catch (error) {
+            console.warn(`Site ${siteNum} not found on map.`);
+        }
+    }
+</script>
+{% endblock %}
