@@ -15,6 +15,8 @@ urlpatterns = [
     path('site/info/<str:site>', site_views.get_site_info, name="site_info"),
 ]
 
+handler400 = 'manager.views.handler400'
+handler403 = 'manager.views.handler403'
 handler404 = 'manager.views.handler404'
 handler500 = 'manager.views.handler500'
 

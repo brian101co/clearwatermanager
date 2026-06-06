@@ -195,3 +195,13 @@ def handler500(request):
 def handler404(request, exception):
     messages.error(request, 'Page not found.')
     return redirect('home')
+
+
+def handler403(request, exception):
+    messages.error(request, 'You do not have permission to access that page.')
+    return redirect('home')
+
+
+def handler400(request, exception):
+    messages.error(request, 'Bad request. Please try again.')
+    return redirect('home')
