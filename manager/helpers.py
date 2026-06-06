@@ -1,26 +1,28 @@
-import pendulum
-from datetime import timedelta
+import pytz
+
+from datetime import datetime
+
 
 def is_double_booked(reservations, checkin, checkout):
     """ Returns True if double booked and False if not. """
-    checkin_dt = pendulum.parse(checkin, tz="UTC")
-    checkout_dt = pendulum.parse(checkout, tz="UTC")
-    if reservations:
-        for reservation in reservations:
-            if checkin_dt >= reservation.start and checkin_dt <= reservation.end:
-                return True
-            elif checkin_dt <= reservation.start and checkout_dt > reservation.start:
-                return True    
-        return False
+    checkin_dt = datetime.fromisoformat(checkin).replace(tzinfo=pytz.UTC)
+    checkout_dt = datetime.fromisoformat(checkout).replace(tzinfo=pytz.UTC)
+
+    for reservation in reservations:
+        if checkin_dt < reservation.end and checkout_dt > reservation.start:
+            return True
+
     return False
 
 
+
 def get_reservation_type(checkin, checkout):
-    """ Returns whether the reservations is daily (1), weekly (2), or monthly (3) """
-    checkin_dt = pendulum.parse(checkin, tz="UTC")
-    checkout_dt = pendulum.parse(checkout, tz="UTC")
-    weeks = checkin_dt.diff(checkout_dt).in_weeks()
-    months = checkin_dt.diff(checkout_dt).in_months()
+    """ Returns whether the reservation is daily (1), weekly (2), or monthly (3) """
+    checkin_dt = datetime.fromisoformat(checkin).replace(tzinfo=pytz.UTC)
+    checkout_dt = datetime.fromisoformat(checkout).replace(tzinfo=pytz.UTC)
+    delta = checkout_dt - checkin_dt
+    months = delta.days / 30
+    weeks = delta.days / 7
     if months >= 1:
         return 3
     elif weeks >= 1:
