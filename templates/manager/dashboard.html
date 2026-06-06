@@ -30,9 +30,37 @@
                     <button class="btn pure-material-button-contained bg-primary mr-3" onclick="location.reload()">Update Map</button>
                     <button type="button" class="btn-plus bg-primary" data-toggle="modal" data-target="#customer-form-modal"><i class="fas fa-plus"></i></button>
                 </div>
+    
                 <!-- Notifications -->
-                <div class="notifications-container mt-4">
-                    <h2 class="title-secondary">Checking Out Soon</h2>
+                <div class="notifications-container mt-5">
+                    <h2 class="h5 mb-3">Checking Out Soon
+                        <span class="badge badge-warning badge-pill ml-2">{{ checking_out_soon|length }}</span>
+                    </h2>
+                    {% for guest in checking_out_soon %}
+                    <div class="card shadow-sm mb-2" style="border-left: 4px solid #ffc107;">
+                        <div class="card-body py-2 d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ guest.name|title }}</strong>
+                                <span class="ml-2">
+                                    <span class="badge badge-secondary">Site {{ guest.site }}</span>
+                                </span>
+                                <div class="text-muted small mt-1">
+                                    Checkout: {{ guest.end|date:"D, M d Y" }} at {{ guest.end|time:"g:i A" }}
+                                </div>
+                            </div>
+                            <div>
+                                <a href="tel:{{ guest.phoneNum }}" class="btn btn-sm mr-2">
+                                    📞 Call
+                                </a>
+                                <a href="{% url 'reservation-detail' guest.id %}" class="btn btn-sm">
+                                    View
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted small">No checkouts tomorrow.</p>
+                    {% endfor %}
                 </div>
             </div>
         </div>

@@ -7,6 +7,7 @@ class Customer(models.Model):
     end = models.DateTimeField()
     phoneNum = models.CharField(max_length=25)
     info = models.TextField(blank=True)
+    is_long_term = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

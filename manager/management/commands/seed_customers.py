@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from datetime import timedelta
-from manager.models import Customer
+from manager.models import Customer, Metric  # update 'manager' to your app name if different
 
 
 class Command(BaseCommand):
@@ -9,8 +9,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         # Clear existing data
+        Metric.objects.all().delete()
         Customer.objects.all().delete()
-        self.stdout.write('Cleared existing customers...')
+        self.stdout.write('Cleared existing customers and metrics...')
 
         now = timezone.now()
 
@@ -22,7 +23,8 @@ class Command(BaseCommand):
                 "start": now - timedelta(days=2),
                 "end": now + timedelta(days=3),
                 "phoneNum": "601-555-0101",
-                "info": "Has a large dog. Needs pull-through site."
+                "info": "Has a large dog. Needs pull-through site.",
+                "is_long_term": False,
             },
             {
                 "name": "Mary Johnson",
@@ -30,7 +32,8 @@ class Command(BaseCommand):
                 "start": now - timedelta(days=1),
                 "end": now + timedelta(days=5),
                 "phoneNum": "601-555-0102",
-                "info": ""
+                "info": "",
+                "is_long_term": False,
             },
             {
                 "name": "Bob Williams",
@@ -38,7 +41,8 @@ class Command(BaseCommand):
                 "start": now,
                 "end": now + timedelta(days=7),
                 "phoneNum": "601-555-0103",
-                "info": "Requests quiet hours after 9pm."
+                "info": "Requests quiet hours after 9pm.",
+                "is_long_term": False,
             },
 
             # --- Checking out soon (within 1-2 days) ---
@@ -48,7 +52,8 @@ class Command(BaseCommand):
                 "start": now - timedelta(days=5),
                 "end": now + timedelta(days=1),
                 "phoneNum": "601-555-0104",
-                "info": ""
+                "info": "",
+                "is_long_term": False,
             },
             {
                 "name": "Tom Martinez",
@@ -56,7 +61,8 @@ class Command(BaseCommand):
                 "start": now - timedelta(days=3),
                 "end": now + timedelta(hours=12),
                 "phoneNum": "601-555-0105",
-                "info": "May extend stay, confirm checkout."
+                "info": "May extend stay, confirm checkout.",
+                "is_long_term": False,
             },
 
             # --- Checking in soon (arriving in 1-2 days) ---
@@ -66,7 +72,8 @@ class Command(BaseCommand):
                 "start": now + timedelta(days=1),
                 "end": now + timedelta(days=6),
                 "phoneNum": "601-555-0106",
-                "info": ""
+                "info": "",
+                "is_long_term": False,
             },
             {
                 "name": "James Wilson",
@@ -74,7 +81,8 @@ class Command(BaseCommand):
                 "start": now + timedelta(days=2),
                 "end": now + timedelta(days=9),
                 "phoneNum": "601-555-0107",
-                "info": "Travelling with elderly parent, needs accessible lot."
+                "info": "Travelling with elderly parent, needs accessible lot.",
+                "is_long_term": False,
             },
 
             # --- Future reservations ---
@@ -84,7 +92,8 @@ class Command(BaseCommand):
                 "start": now + timedelta(days=7),
                 "end": now + timedelta(days=14),
                 "phoneNum": "601-555-0108",
-                "info": ""
+                "info": "",
+                "is_long_term": False,
             },
             {
                 "name": "Charles Taylor",
@@ -92,7 +101,8 @@ class Command(BaseCommand):
                 "start": now + timedelta(days=10),
                 "end": now + timedelta(days=17),
                 "phoneNum": "601-555-0109",
-                "info": "First time visitor, may need help with hookups."
+                "info": "First time visitor, may need help with hookups.",
+                "is_long_term": False,
             },
             {
                 "name": "Barbara Thomas",
@@ -100,7 +110,8 @@ class Command(BaseCommand):
                 "start": now + timedelta(days=14),
                 "end": now + timedelta(days=21),
                 "phoneNum": "601-555-0110",
-                "info": ""
+                "info": "",
+                "is_long_term": False,
             },
 
             # --- Overlap test cases for availability view ---
@@ -110,7 +121,8 @@ class Command(BaseCommand):
                 "start": now + timedelta(days=3),
                 "end": now + timedelta(days=8),
                 "phoneNum": "601-555-0111",
-                "info": "Test: overlaps middle of a requested range."
+                "info": "Test: overlaps middle of a requested range.",
+                "is_long_term": False,
             },
             {
                 "name": "Overlap Test B",
@@ -118,7 +130,8 @@ class Command(BaseCommand):
                 "start": now + timedelta(days=1),
                 "end": now + timedelta(days=15),
                 "phoneNum": "601-555-0112",
-                "info": "Test: entirely contains a requested range."
+                "info": "Test: entirely contains a requested range.",
+                "is_long_term": False,
             },
             {
                 "name": "Overlap Test C",
@@ -126,7 +139,8 @@ class Command(BaseCommand):
                 "start": now - timedelta(days=1),
                 "end": now + timedelta(days=4),
                 "phoneNum": "601-555-0113",
-                "info": "Test: starts before and ends during a requested range."
+                "info": "Test: starts before and ends during a requested range.",
+                "is_long_term": False,
             },
 
             # --- Cabin sites ---
@@ -136,7 +150,8 @@ class Command(BaseCommand):
                 "start": now - timedelta(days=1),
                 "end": now + timedelta(days=4),
                 "phoneNum": "601-555-0114",
-                "info": "Cabin reservation."
+                "info": "Cabin reservation.",
+                "is_long_term": False,
             },
             {
                 "name": "Steven White",
@@ -144,7 +159,8 @@ class Command(BaseCommand):
                 "start": now + timedelta(days=5),
                 "end": now + timedelta(days=10),
                 "phoneNum": "601-555-0115",
-                "info": "Cabin reservation."
+                "info": "Cabin reservation.",
+                "is_long_term": False,
             },
 
             # --- Longterm residents ---
@@ -154,7 +170,8 @@ class Command(BaseCommand):
                 "start": now - timedelta(days=60),
                 "end": now + timedelta(days=300),
                 "phoneNum": "601-555-0116",
-                "info": "Longterm resident. Monthly billing."
+                "info": "Longterm resident. Monthly billing.",
+                "is_long_term": True,
             },
             {
                 "name": "Donald Clark",
@@ -162,15 +179,24 @@ class Command(BaseCommand):
                 "start": now - timedelta(days=90),
                 "end": now + timedelta(days=270),
                 "phoneNum": "601-555-0117",
-                "info": "Longterm resident. Has two vehicles."
+                "info": "Longterm resident. Has two vehicles.",
+                "is_long_term": True,
             },
         ]
 
+        created_count = 0
         for data in customers:
-            Customer.objects.create(**data)
+            customer = Customer.objects.create(**data)
+            Metric.objects.create(
+                customer=customer,
+                site=customer.site,
+                start=customer.start,
+                end=customer.end,
+            )
+            created_count += 1
 
         self.stdout.write(self.style.SUCCESS(
-            f'Successfully seeded {len(customers)} customers!'
+            f'Successfully seeded {created_count} customers with associated metrics!'
         ))
         self.stdout.write(self.style.WARNING(
             'Tip: To test availability, search dates between '

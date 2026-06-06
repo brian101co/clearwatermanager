@@ -2,6 +2,7 @@ import pytz
 
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
+from django.utils import timezone
 from .forms import ReservationForm
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView
@@ -15,10 +16,8 @@ from django.views.generic import (
 )
 from .models import Customer, Metric
 from django.contrib import messages
-from datetime import date, datetime
-from .helpers import (
-    get_short_term_reservations, 
-    get_long_term_reservations, 
+from datetime import date, datetime, timedelta
+from .helpers import ( 
     is_double_booked
 )
 
@@ -31,11 +30,14 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        customers = Customer.objects.all().order_by('start')
+        today = timezone.now()
+        tomorrow = today + timedelta(days=1)
+        customers = Customer.objects.filter(end__gte=today).order_by('start')
         context["reservation_form"] = ReservationForm()
-        context["customers"] = get_short_term_reservations(customers)
-        context["longterms"] = get_long_term_reservations(customers)
-        context["totalReservations"] = Customer.objects.all().count()
+        context["customers"] = customers.filter(is_long_term=False)
+        context["longterms"] = customers.filter(is_long_term=True)
+        context["totalReservations"] = customers.count()
+        context["checking_out_soon"] = customers.filter(end__date=tomorrow.date(), is_long_term=False)
         return context
 
     def get(self, request, *args, **kwargs):

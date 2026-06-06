@@ -8,9 +8,9 @@ class ReservationForm(forms.ModelForm):
         model = Customer
         fields = "__all__"
         widgets = {
-            'start': forms.DateInput(attrs={'type': 'datetime-local'}),
-            'end': forms.DateInput(attrs={'type': 'datetime-local'}),
-            'phoneNum': forms.TextInput(attrs={'type': 'tel'})
+            'start': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'end': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'phoneNum': forms.TextInput(attrs={'type': 'tel'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -29,6 +29,19 @@ class ReservationForm(forms.ModelForm):
             Field("end", placeholder="Checkout Date"),
             Field("site", placeholder="lot"),
             Field("phoneNum", placeholder="Phone Number"),
+            HTML('''
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input type="checkbox" 
+                                name="is_long_term" 
+                                class="form-check-input" 
+                                id="id_is_long_term">
+                            <label class="form-check-label" for="id_is_long_term">
+                                Long Term Resident
+                            </label>
+                        </div>
+                    </div>
+                '''),
             Field("info", rows="3"),
             HTML('<button type="button" class="btn pure-material-button-contained bg-secondary mr-2" data-dismiss="modal">Close</button>'),
             Submit("submit", "Submit", css_class="btn pure-material-button-contained")

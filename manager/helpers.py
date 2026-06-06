@@ -26,27 +26,3 @@ def get_reservation_type(checkin, checkout):
     elif weeks >= 1:
         return 2
     return 1
-
-def get_long_term_reservations(customer_list):
-    """ Returns a list of (longterm) reservations greater than 180 days """
-    filtered_customers = []
-    for customer in customer_list:
-        delta = customer.end - customer.start
-        longterm = timedelta(days=180)
-
-        if delta > longterm:
-            filtered_customers.append(customer)
-
-    return filtered_customers
-
-def get_short_term_reservations(customer_list):
-    """ Returns a list of (short-term) reservations less than 180 days """
-    filtered_customers = []
-    for customer in customer_list:
-        delta = customer.end - customer.start
-        longterm = timedelta(days=180)
-
-        if delta < longterm:
-            filtered_customers.append(customer)
-
-    return filtered_customers
