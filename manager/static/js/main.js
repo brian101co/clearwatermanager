@@ -123,8 +123,12 @@ window.onload = () => {
         highlightLots() {
             this.mapLots.forEach(lot => {
                 const siteNum = lot.getAttribute("data-site");
-                if (occupiedLots.includes(siteNum)) {
+                const reservation = occupiedLots.find(r => r.site === siteNum);
+                if (reservation) {
                     lot.setAttribute("id", "active");
+                    const titleElem = document.createElementNS("http://www.w3.org/2000/svg", "title");
+                    titleElem.textContent = `${reservation.name} — Checkout: ${new Date(reservation.end).toDateString()}`;
+                    lot.appendChild(titleElem);
                 }
             })
         }

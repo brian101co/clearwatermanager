@@ -46,7 +46,7 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
 
         # Calculating Occupancy Rate
         total_lots = 65
-        occupied_lots = Customer.objects.filter(start__date__lte=today, end__date__gte=today).values_list("site", flat=True)
+        occupied_lots = Customer.objects.filter(start__date__lte=today, end__date__gte=today).values("site", "name", "end")
         occupied_today = Customer.objects.filter(start__date__lte=today, end__date__gte=today).count()
         occupancy_rate = round((occupied_today / total_lots) * 100)
         context["occupancy_rate"] = occupancy_rate
