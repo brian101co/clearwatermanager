@@ -1,11 +1,11 @@
 from django import forms
-from .models import Customer
+from .models import Reservation
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field, HTML, Submit
 
 class ReservationForm(forms.ModelForm):
     class Meta:
-        model = Customer
+        model = Reservation
         fields = "__all__"
         widgets = {
             'start': forms.DateTimeInput(attrs={'type': 'datetime-local'}),

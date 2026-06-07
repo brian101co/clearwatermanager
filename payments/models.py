@@ -1,5 +1,5 @@
 from django.db import models
-from manager.models import Customer
+from manager.models import Reservation
 from django.utils import timezone
 
 class Payment(models.Model):
@@ -15,7 +15,7 @@ class Payment(models.Model):
         ('other', 'Other'),
     )
 
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='payments')
+    customer = models.ForeignKey(Reservation, on_delete=models.CASCADE, related_name='payments')
     amount_due = models.DecimalField(max_digits=8, decimal_places=2)
     amount_paid = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='unpaid')
