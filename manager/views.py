@@ -73,6 +73,18 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
             status__in=['unpaid', 'partial']
         ).count()
 
+        context["checking_out_today"] = Reservation.objects.filter(
+            end__date=today.date(),
+            is_long_term=False,
+            confirmed_checkout=False,
+        )
+
+        context["overdue_checkouts"] = Reservation.objects.filter(
+            end__lt=today.date(),
+            is_long_term=False,
+            confirmed_checkout=False,
+        )
+
         return context
 
     def get(self, request, *args, **kwargs):
