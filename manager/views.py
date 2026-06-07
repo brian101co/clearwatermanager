@@ -42,7 +42,8 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
         search = self.request.GET.get('q', '')
 
         customers = Reservation.objects.filter(
-            end__gte=today
+            end__gte=today,
+            confirmed_checkout=False,
         ).order_by('start')
 
         # Apply search filter
