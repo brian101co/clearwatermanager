@@ -109,6 +109,12 @@ def metrics(request):
             'previous_total': previous_total,
             'trend': trend
         })
+    
+    elif request.GET.get("reservation_types"):
+        return JsonResponse(
+            Metric.objects.reservations_by_type(),
+            safe=False
+        )
 
     # Fallback
     else:
