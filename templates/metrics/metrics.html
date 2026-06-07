@@ -1,155 +1,232 @@
 {% extends "base.html" %}
-
 {% load static %}
 
-{% block extraCSS %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.4/chartist.min.css" integrity="sha512-V0+DPzYyLzIiMiWCg3nNdY+NyIiK9bED/T1xNBj08CaIUyK3sXRpB26OUCIzujMevxY9TRJFHQIxTwgzb0jVLg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<style>
-
-</style>
-{% endblock %}
-
 {% block content %}
-<section class="container-fluid">
-    <div class="row">
-        <div class="col-sm-12 col-md-6"> 
-            <div class="chart-container my-3 card shadow-sm">
-                <div id="chart-1"></div>
+<section class="container-fluid py-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4 px-3">
+        <div>
+            <a href="{% url 'home' %}" class="btn btn-secondary btn-sm mb-2">← Back to Dashboard</a>
+            <h1 class="h3 mb-0">📊 Metrics</h1>
+        </div>
+        <!-- Year Selector -->
+        <div class="d-flex align-items-center mt-2 mt-sm-0">
+            <label for="year-select" class="text-muted small mr-2 mb-0">Year:</label>
+            <select id="year-select" class="form-control w-auto">
+                {% for y in available_years %}
+                    <option value="{{ y }}" {% if y == current_year %}selected{% endif %}>{{ y }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="row px-2 mb-4" id="summary-stats">
+        <div class="col-6 col-md-3 mb-2">
+            <div class="card shadow-sm text-center py-3">
+                <div class="text-muted small mb-1">Total Reservations</div>
+                <h3 class="mb-0 font-weight-bold" id="stat-reservations">—</h3>
             </div>
         </div>
-        <div class="col-sm-12 col-md-6">
-            <div class="chart-container my-3 card shadow-sm">
-                <div id="chart-2"></div>
+        <div class="col-6 col-md-3 mb-2">
+            <div class="card shadow-sm text-center py-3">
+                <div class="text-muted small mb-1">Cancellations</div>
+                <h3 class="mb-0 font-weight-bold text-danger" id="stat-cancellations">—</h3>
             </div>
         </div>
-        <div class="col-sm-12 col-md-6">
-            <div class="chart-container my-3 card shadow-sm">
-                <div id="chart-3"></div>
+        <div class="col-6 col-md-3 mb-2">
+            <div class="card shadow-sm text-center py-3">
+                <div class="text-muted small mb-1">Cancellation Rate</div>
+                <h3 class="mb-0 font-weight-bold text-warning" id="stat-cancellation-rate">—</h3>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 mb-2">
+            <div class="card shadow-sm text-center py-3">
+                <div class="text-muted small mb-1">Maintenance Costs</div>
+                <h3 class="mb-0 font-weight-bold text-danger" id="stat-maintenance">—</h3>
             </div>
         </div>
     </div>
+
+    <!-- Charts -->
+    <div class="row px-2">
+
+        <!-- Chart 1 — Reservations per Month -->
+        <div class="col-sm-12 col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">📅 Reservations per Month</h5>
+                </div>
+                <div id="chart-1" class="p-2" style="height: 350px;"></div>
+            </div>
+        </div>
+
+        <!-- Chart 2 — Cancellations per Month -->
+        <div class="col-sm-12 col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">❌ Cancellations per Month</h5>
+                </div>
+                <div id="chart-2" class="p-2" style="height: 350px;"></div>
+            </div>
+        </div>
+
+        <!-- Chart 3 — Maintenance Costs -->
+        <div class="col-sm-12 col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">🔧 Maintenance Costs</h5>
+                </div>
+                <div id="chart-3" class="p-2" style="height: 350px;"></div>
+            </div>
+        </div>
+
+        <!-- Chart 4 — Most Popular Sites -->
+        <div class="col-sm-12 col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">🏕️ Most Popular Sites</h5>
+                </div>
+                <div id="chart-4" class="p-2" style="height: 350px;"></div>
+            </div>
+        </div>
+
+    </div>
+
 </section>
 {% endblock %}
 
-{% block extraJS %} 
+{% block extraJS %}
 <script src="https://cdn.plot.ly/plotly-2.4.2.min.js"></script>
 <script>
-    const options = {
-        responsive: true
-    }
-    const year = new Date().getFullYear()
     const url = "{% url 'api_metrics' %}";
-    fetch(url + `?year=${year}`)
-        .then(response => response.json())
-        .then(data => {
-            const totals_1 = data.map(record => {
-                return record.total;
-            });
-            fetch(url + `?year=${year - 1}`)
-                .then(response => response.json())
-                .then(data => {
-                    const months = data.map(record => {
-                        return record.month;
-                    });
-                    const totals_2 = data.map(record => {
-                        return record.total;
-                    });
-                    const trace1 = {
-                        x: months,
-                        y: totals_1,
-                        mode: 'lines',
-                        name: `${year}`,
-                        line: {
-                            color: "rgb(17, 140, 79)"
-                        }
-                    }
-                    const trace2 = {
-                        x: months,
-                        y: totals_2,
-                        mode: 'lines',
-                        name: `${year - 1}`,
-                        line: {
-                            dash: "dashdot",
-                            color: "rgb(184, 184, 184)"
-                        }
-                    }
-                    Plotly.newPlot('chart-1', [trace1, trace2], {
-                        title: "Reservations per Year",
-                        xaxis: {
-                            title: 'Month'
-                        },
-                        yaxis: {
-                            title: 'Reservations'
-                        },
-                        showlegend: true,
-                        legend: {
-                            orientation: "h",
-                            x: 0.1,
-                            y: 1.15
-                        }
-                    }, options);
-                })
-                .catch(err => console.log(err))
-        })
-        .catch(err => console.log(err));
+    const plotlyOptions = { responsive: true };
+    const legendConfig = {
+        showlegend: true,
+        legend: { orientation: "h", x: 0.1, y: 1.15 }
+    };
+    const greenColor = "rgb(17, 140, 79)";
+    const greyColor = "rgb(184, 184, 184)";
+    const redColor = "rgb(255, 50, 23)";
 
-    fetch(url + `?cancelations=true&year=${year}`)
-        .then(response => response.json())
-        .then(data => {
-            const cancelations = [
+    function loadMetrics(year) {
+        const prevYear = year - 1;
+
+        // Summary Stats
+        Promise.all([
+            fetch(url + `?reservations=true&year=${year}`).then(r => r.json()),
+            fetch(url + `?cancellations=true&year=${year}`).then(r => r.json()),
+            fetch(url + `?cancellation_rate=true&year=${year}`).then(r => r.json()),
+            fetch(url + `?maintenance_costs=true&year=${year}`).then(r => r.json()),
+        ]).then(([reservations, cancellations, cancellationRate, maintenanceCosts]) => {
+            // Total reservations
+            const totalReservations = reservations.reduce((sum, r) => sum + r.total, 0);
+            document.getElementById('stat-reservations').innerText = totalReservations;
+
+            // Total cancellations
+            const totalCancellations = cancellations.reduce((sum, r) => sum + r.total, 0);
+            document.getElementById('stat-cancellations').innerText = totalCancellations;
+            console.log('Cancellation rate response:', cancellationRate);
+
+            // Cancellation rate
+            document.getElementById('stat-cancellation-rate').innerText = `${cancellationRate.rate}%`;
+
+            // Maintenance costs
+            const cost = maintenanceCosts.cost__sum;
+            document.getElementById('stat-maintenance').innerText = cost ? `$${parseFloat(cost).toFixed(2)}` : '$0.00';
+
+        }).catch(err => console.error('Summary stats error:', err));
+
+        // Chart 1 — Reservations per Month (year over year)
+        Promise.all([
+            fetch(url + `?reservations=true&year=${year}`).then(r => r.json()),
+            fetch(url + `?reservations=true&year=${prevYear}`).then(r => r.json()),
+        ]).then(([currentYear, lastYear]) => {
+            const months = currentYear.map(r => r.month);
+            Plotly.newPlot('chart-1', [
                 {
-                    x: data.map(record => record.month),
-                    y: data.map(record => record.total),
+                    x: months,
+                    y: currentYear.map(r => r.total),
+                    mode: 'lines',
+                    name: `${year}`,
+                    line: { color: greenColor }
+                },
+                {
+                    x: months,
+                    y: lastYear.map(r => r.total),
+                    mode: 'lines',
+                    name: `${prevYear}`,
+                    line: { dash: "dashdot", color: greyColor }
+                }
+            ], {
+                ...legendConfig,
+                height: 350,
+                xaxis: { title: 'Month' },
+                yaxis: { title: 'Reservations' }
+            }, plotlyOptions);
+        }).catch(err => console.error('Chart 1 error:', err));
+
+        // Chart 2 — Cancellations per Month
+        fetch(url + `?cancellations=true&year=${year}`)
+            .then(r => r.json())
+            .then(data => {
+                Plotly.newPlot('chart-2', [{
+                    x: data.map(r => r.month),
+                    y: data.map(r => r.total),
                     type: 'bar',
                     name: `${year}`,
-                    marker: {
-                        color: 'rgb(255, 50, 23)'
-                    }
-                }
-            ];
-            Plotly.newPlot('chart-2', cancelations, {
-                title: "Cancelations per Year",
-                xaxis: {
-                    title: 'Month'
-                },
-                yaxis: {
-                    title: 'Cancelations'
-                },
-                showlegend: true,
-                legend: {
-                    orientation: "h",
-                    x: 0.1,
-                    y: 1.15
-                }
-            }, options);
-        })
-        .catch(err => console.log(err));
+                    marker: { color: redColor }
+                }], {
+                    ...legendConfig,
+                    height: 350,
+                    xaxis: { title: 'Month' },
+                    yaxis: { title: 'Cancellations', dtick: 1, rangemode: 'nonnegative'}
+                }, plotlyOptions);
+            }).catch(err => console.error('Chart 2 error:', err));
 
-    fetch(url + `?maintenace_costs=true&year=${year}`)
-        .then(response => response.json())
-        .then(data => {
-            const total_costs_cur_year = data.cost__sum;
-            fetch(url + `?maintenace_costs=true&year=${year - 1}`)
-                .then(response => response.json())
-                .then(obj => {
-                    var data = [{
-                        x: [String(year - 1), String(year)],
-                        y: [obj.cost__sum, total_costs_cur_year],
-                        type: 'bar'
-                    }];
-                    Plotly.newPlot('chart-3', data, {
-                        title: "Maintenance Costs",
-                        xaxis: {
-                            type: "category",
-                            title: "Year"
-                        },
-                        yaxis: {
-                            title: "Costs ($)"
-                        }
-                    }, options);
-                })
-                .catch(err => console.log(err));
-        })
-        .catch(err => console.log(err));
+        // Chart 3 — Maintenance Costs (year over year)
+        Promise.all([
+            fetch(url + `?maintenance_costs=true&year=${year}`).then(r => r.json()),
+            fetch(url + `?maintenance_costs=true&year=${prevYear}`).then(r => r.json()),
+        ]).then(([currentCosts, lastCosts]) => {
+            Plotly.newPlot('chart-3', [{
+                x: [String(prevYear), String(year)],
+                y: [lastCosts.cost__sum || 0, currentCosts.cost__sum || 0],
+                type: 'bar',
+                marker: { color: [greyColor, greenColor] }
+            }], {
+                height: 350,
+                xaxis: { type: "category", title: "Year" },
+                yaxis: { title: "Costs ($)" }
+            }, plotlyOptions);
+        }).catch(err => console.error('Chart 3 error:', err));
+
+        // Chart 4 — Most Popular Sites (not year dependent)
+        fetch(url + `?popular_sites=true`)
+            .then(r => r.json())
+            .then(data => {
+                Plotly.newPlot('chart-4', [{
+                    x: data.map(r => `Site ${r.site}`),
+                    y: data.map(r => r.total),
+                    type: 'bar',
+                    marker: { color: greenColor }
+                }], {
+                    height: 350,
+                    xaxis: { title: 'Site' },
+                    yaxis: { title: 'Total Reservations' }
+                }, plotlyOptions);
+            }).catch(err => console.error('Chart 4 error:', err));
+    }
+
+    // Initial load
+    let currentYear = new Date().getFullYear();
+    loadMetrics(currentYear);
+
+    // Year selector
+    document.getElementById('year-select').addEventListener('change', function() {
+        currentYear = parseInt(this.value);
+        loadMetrics(currentYear);
+    });
 </script>
 {% endblock %}
