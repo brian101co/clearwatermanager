@@ -1,6 +1,6 @@
 from django.db import models
 
-class Customer(models.Model):
+class Reservation(models.Model):
     name = models.CharField(max_length=255)
     site = models.CharField(max_length=4)
     start = models.DateTimeField()

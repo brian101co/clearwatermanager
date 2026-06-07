@@ -16,7 +16,7 @@ from django.views.generic import (
     CreateView,
     UpdateView
 )
-from .models import Customer
+from .models import Reservation
 from metrics.models import Metric
 from sites.models import Site
 from payments.models import Payment
@@ -35,7 +35,7 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
         today = timezone.now()
         tomorrow = today + timedelta(days=1)
         thirty_days = today + timedelta(days=30)
-        customers = Customer.objects.filter(end__gte=today).order_by('start')
+        customers = Reservation.objects.filter(end__gte=today).order_by('start')
         context["reservation_form"] = ReservationForm()
         context["customers"] = customers.filter(is_long_term=False)
         context["longterms"] = customers.filter(is_long_term=True)
@@ -46,8 +46,8 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
 
         # Calculating Occupancy Rate
         total_lots = 65
-        occupied_lots = Customer.objects.filter(start__date__lte=today, end__date__gte=today).values("site", "name", "end")
-        occupied_today = Customer.objects.filter(start__date__lte=today, end__date__gte=today).count()
+        occupied_lots = Reservation.objects.filter(start__date__lte=today, end__date__gte=today).values("site", "name", "end")
+        occupied_today = Reservation.objects.filter(start__date__lte=today, end__date__gte=today).count()
         occupancy_rate = round((occupied_today / total_lots) * 100)
         context["occupancy_rate"] = occupancy_rate
         context["occupied_lots"] = json.dumps(list(occupied_lots), cls=DjangoJSONEncoder)
@@ -61,7 +61,7 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         today = date.today()
-        checkedout = Customer.objects.filter(end__lt=today).all()
+        checkedout = Reservation.objects.filter(end__lt=today).all()
         checkedout.delete()
         return self.render_to_response(context)
 
@@ -73,14 +73,14 @@ class DashboardLoginView(LoginView):
 
 
 class ReservationDetailView(LoginRequiredMixin, DetailView):
-    model = Customer
+    model = Reservation
     pk_url_kwarg = "id"
     context_object_name = "reservation"
     template_name = "manager/reservation_detail.html"
 
 
 class DeleteReservationView(LoginRequiredMixin, DeleteView):
-    model = Customer
+    model = Reservation
     pk_url_kwarg = "id"
     success_url = reverse_lazy('home')
     template_name = "manager/delete_reservation.html"
@@ -94,7 +94,7 @@ class DeleteReservationView(LoginRequiredMixin, DeleteView):
 
 
 class EditReservationView(LoginRequiredMixin, UpdateView):
-    model = Customer
+    model = Reservation
     form_class = ReservationForm
     pk_url_kwarg = "id"
     success_url = reverse_lazy('home')
@@ -104,7 +104,7 @@ class EditReservationView(LoginRequiredMixin, UpdateView):
         site = form.cleaned_data["site"]
         start = form.cleaned_data["start"]
         end = form.cleaned_data["end"]
-        all_reservations = Customer.objects.exclude(pk=self.kwargs["id"]).filter(site=site)
+        all_reservations = Reservation.objects.exclude(pk=self.kwargs["id"]).filter(site=site)
         if not is_double_booked(all_reservations, start.isoformat(), end.isoformat()):
             self.object = form.save()
             metric = Metric.objects.get(customer=self.object)
@@ -125,7 +125,7 @@ class CreateReservationView(LoginRequiredMixin, CreateView):
         site = form.cleaned_data["site"]
         start = form.cleaned_data["start"]
         end = form.cleaned_data["end"]
-        all_reservations = Customer.objects.filter(site=site)
+        all_reservations = Reservation.objects.filter(site=site)
         if not is_double_booked(all_reservations, start.isoformat(), end.isoformat()):
             self.object = form.save()
             metric = Metric(site=site, start=start, end=end, customer=self.object)
@@ -165,7 +165,7 @@ def getAvailability(request):
         messages.error(request, 'Checkout must be after checkin.')
         return redirect('home')
 
-    for reservation in Customer.objects.all():
+    for reservation in Reservation.objects.all():
         start = reservation.start.replace(tzinfo=pytz.UTC)
         end = reservation.end.replace(tzinfo=pytz.UTC)
         if checkin < end and checkout > start:  

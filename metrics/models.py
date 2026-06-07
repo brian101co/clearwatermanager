@@ -1,5 +1,5 @@
 from django.db import models
-from manager.models import Customer
+from manager.models import Reservation
 
 MONTHS = {
     1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr",
@@ -69,7 +69,7 @@ class Metric(models.Model):
     start = models.DateTimeField()
     end = models.DateTimeField()
     canceled = models.BooleanField(default=False)
-    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
+    customer = models.ForeignKey(Reservation, on_delete=models.SET_NULL, null=True)
     res_type = models.PositiveSmallIntegerField(choices=(
         (1, "Daily"),
         (2, "Weekly"),

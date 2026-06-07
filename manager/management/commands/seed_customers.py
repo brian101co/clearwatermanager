@@ -1,7 +1,8 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from datetime import timedelta
-from manager.models import Customer, Metric  # update 'manager' to your app name if different
+from manager.models import Reservation
+from metrics.models import Metric  # update 'manager' to your app name if different
 
 
 class Command(BaseCommand):
@@ -10,7 +11,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         # Clear existing data
         Metric.objects.all().delete()
-        Customer.objects.all().delete()
+        Reservation.objects.all().delete()
         self.stdout.write('Cleared existing customers and metrics...')
 
         now = timezone.now()
@@ -186,7 +187,7 @@ class Command(BaseCommand):
 
         created_count = 0
         for data in customers:
-            customer = Customer.objects.create(**data)
+            customer = Reservation.objects.create(**data)
             Metric.objects.create(
                 customer=customer,
                 site=customer.site,
