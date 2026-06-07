@@ -77,9 +77,6 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-        today = date.today()
-        checkedout = Reservation.objects.filter(end__lt=today).all()
-        checkedout.delete()
         return self.render_to_response(context)
 
 
