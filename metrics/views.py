@@ -90,6 +90,25 @@ def metrics(request):
             list(Metric.objects.reservations_per_year()),
             safe=False
         )
+    
+    elif request.GET.get("comparison"):
+        if not year:
+            return JsonResponse({'error': 'Year required'}, status=400)
+        current = Metric.objects.reservations_per_month(year)
+        previous = Metric.objects.reservations_per_month(year - 1)
+        current_total = sum(r['total'] for r in current)
+        previous_total = sum(r['total'] for r in previous)
+        
+        if previous_total > 0:
+            trend = round(((current_total - previous_total) / previous_total) * 100)
+        else:
+            trend = 0
+        
+        return JsonResponse({
+            'current_total': current_total,
+            'previous_total': previous_total,
+            'trend': trend
+        })
 
     # Fallback
     else:
