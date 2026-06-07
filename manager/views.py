@@ -150,7 +150,7 @@ class EditReservationView(LoginRequiredMixin, UpdateView):
         site = form.cleaned_data["site"]
         start = form.cleaned_data["start"]
         end = form.cleaned_data["end"]
-        all_reservations = Reservation.objects.exclude(pk=self.kwargs["id"]).filter(site=site)
+        all_reservations = Reservation.objects.exclude(pk=self.kwargs["id"]).filter(site=site, confirmed_checkout=False,)
         if not is_double_booked(all_reservations, start.isoformat(), end.isoformat()):
             self.object = form.save()
             metric = Metric.objects.get(customer=self.object)
@@ -171,7 +171,7 @@ class CreateReservationView(LoginRequiredMixin, CreateView):
         site = form.cleaned_data["site"]
         start = form.cleaned_data["start"]
         end = form.cleaned_data["end"]
-        all_reservations = Reservation.objects.filter(site=site)
+        all_reservations = Reservation.objects.filter(site=site, confirmed_checkout=False,)
         if not is_double_booked(all_reservations, start.isoformat(), end.isoformat()):
             self.object = form.save()
             metric = Metric(site=site, start=start, end=end, customer=self.object)
@@ -209,7 +209,7 @@ def getAvailability(request):
         messages.error(request, 'Checkout must be after checkin.')
         return redirect('home')
 
-    for reservation in Reservation.objects.all():
+    for reservation in Reservation.objects.filter(confirmed_checkout=False).all():
         start = reservation.start.replace(tzinfo=pytz.UTC)
         end = reservation.end.replace(tzinfo=pytz.UTC)
         if checkin < end and checkout > start:  
