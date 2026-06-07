@@ -154,9 +154,15 @@
                                 <a href="tel:{{ guest.phoneNum }}" class="btn btn-sm btn-outline-secondary mr-2 flex-fill flex-md-grow-0">
                                     📞 Call
                                 </a>
-                                <a href="{% url 'reservation-detail' guest.id %}" class="btn btn-sm btn-outline-primary flex-fill flex-md-grow-0">
+                                <a href="{% url 'reservation-detail' guest.id %}" class="btn btn-sm btn-outline-primary flex-fill flex-md-grow-0 mr-2">
                                     View
                                 </a>
+                                <form method="POST" action="{% url 'reservation-checkout' guest.id %}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-success flex-fill flex-md-grow-0">
+                                        ✓ Checkout
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
