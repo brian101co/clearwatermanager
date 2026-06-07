@@ -2,7 +2,8 @@ import pytz
 import json
 
 from django.core.serializers.json import DjangoJSONEncoder
-from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.utils import timezone
 from .forms import ReservationForm
@@ -98,6 +99,24 @@ class DashboardLoginView(LoginView):
     success_url = reverse_lazy('home')
 
 
+@login_required
+def checkout_reservation(request, id):
+    if request.method != "POST":
+        return redirect('home')
+    
+    reservation = get_object_or_404(Reservation, id=id)
+    reservation.confirmed_checkout = True
+    
+    try:
+        reservation.save()
+        messages.success(request, f'{reservation.name} checked out.')
+        return redirect('home')
+    except Exception as e:
+        messages.error(request, f'An error has occurred. Please try again.')
+        print(e) 
+        return redirect('home')
+
+
 class ReservationDetailView(LoginRequiredMixin, DetailView):
     model = Reservation
     pk_url_kwarg = "id"
@@ -161,10 +180,8 @@ class CreateReservationView(LoginRequiredMixin, CreateView):
         return redirect('home')
     
 
-def getAvailability(request):
-    if not request.user.is_authenticated:
-        return redirect('loginuser')
-    
+@login_required
+def getAvailability(request):    
     if request.method != "POST":
         return redirect('home')
 
