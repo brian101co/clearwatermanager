@@ -18,6 +18,7 @@ from django.views.generic import (
 )
 from .models import Customer, Metric
 from sites.models import Site
+from payments.models import Payment
 from django.contrib import messages
 from datetime import date, datetime, timedelta
 from .helpers import ( 
@@ -53,6 +54,11 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
         occupancy_rate = round((occupied_today / total_lots) * 100)
         context["occupancy_rate"] = occupancy_rate
         context["occupied_lots"] = json.dumps(list(occupied_lots), cls=DjangoJSONEncoder)
+
+        context["unpaid_payments"] = Payment.objects.filter(
+            status__in=['unpaid', 'partial']
+        ).count()
+
         return context
 
     def get(self, request, *args, **kwargs):
