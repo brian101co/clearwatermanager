@@ -22,29 +22,33 @@
     </div>
 
     <!-- Summary Stats -->
-    <div class="row px-2 mb-4" id="summary-stats">
+    <div class="row px-2 mb-4">
         <div class="col-6 col-md-3 mb-2">
             <div class="card shadow-sm text-center py-3">
                 <div class="text-muted small mb-1">Total Reservations</div>
                 <h3 class="mb-0 font-weight-bold" id="stat-reservations">—</h3>
+                <small class="text-muted" id="trend-reservations">—</small>
             </div>
         </div>
         <div class="col-6 col-md-3 mb-2">
             <div class="card shadow-sm text-center py-3">
                 <div class="text-muted small mb-1">Cancellations</div>
                 <h3 class="mb-0 font-weight-bold text-danger" id="stat-cancellations">—</h3>
+                <small class="text-muted" id="trend-cancellations">—</small>
             </div>
         </div>
         <div class="col-6 col-md-3 mb-2">
             <div class="card shadow-sm text-center py-3">
                 <div class="text-muted small mb-1">Cancellation Rate</div>
                 <h3 class="mb-0 font-weight-bold text-warning" id="stat-cancellation-rate">—</h3>
+                <small class="text-muted" id="trend-cancellation-rate">—</small>
             </div>
         </div>
         <div class="col-6 col-md-3 mb-2">
             <div class="card shadow-sm text-center py-3">
                 <div class="text-muted small mb-1">Maintenance Costs</div>
                 <h3 class="mb-0 font-weight-bold text-danger" id="stat-maintenance">—</h3>
+                <small class="text-muted" id="trend-maintenance">—</small>
             </div>
         </div>
     </div>
@@ -113,28 +117,57 @@
     function loadMetrics(year) {
         const prevYear = year - 1;
 
-        // Summary Stats
+        function setTrend(elementId, current, previous) {
+            const el = document.getElementById(elementId);
+            if (!el || previous === 0) {
+                el.innerText = '—';
+                return;
+            }
+            const trend = Math.round(((current - previous) / previous) * 100);
+            const icon = trend > 0 ? '↑' : trend < 0 ? '↓' : '→';
+            const cls = trend > 0 ? 'text-success' : trend < 0 ? 'text-danger' : 'text-muted';
+            el.innerHTML = `<span class="${cls}">${icon} ${Math.abs(trend)}% vs ${year - 1}</span>`;
+        }
+
+        // In Promise.all for summary stats
         Promise.all([
             fetch(url + `?reservations=true&year=${year}`).then(r => r.json()),
+            fetch(url + `?reservations=true&year=${year - 1}`).then(r => r.json()),
             fetch(url + `?cancellations=true&year=${year}`).then(r => r.json()),
+            fetch(url + `?cancellations=true&year=${year - 1}`).then(r => r.json()),
             fetch(url + `?cancellation_rate=true&year=${year}`).then(r => r.json()),
             fetch(url + `?maintenance_costs=true&year=${year}`).then(r => r.json()),
-        ]).then(([reservations, cancellations, cancellationRate, maintenanceCosts]) => {
-            // Total reservations
-            const totalReservations = reservations.reduce((sum, r) => sum + r.total, 0);
-            document.getElementById('stat-reservations').innerText = totalReservations;
+            fetch(url + `?maintenance_costs=true&year=${year - 1}`).then(r => r.json()),
+        ]).then(([
+            currentRes, previousRes,
+            currentCanc, previousCanc,
+            cancRate,
+            currentMaint, previousMaint
+        ]) => {
+            // Totals
+            const totalRes = currentRes.reduce((sum, r) => sum + r.total, 0);
+            const totalPrevRes = previousRes.reduce((sum, r) => sum + r.total, 0);
+            const totalCanc = currentCanc.reduce((sum, r) => sum + r.total, 0);
+            const totalPrevCanc = previousCanc.reduce((sum, r) => sum + r.total, 0);
 
-            // Total cancellations
-            const totalCancellations = cancellations.reduce((sum, r) => sum + r.total, 0);
-            document.getElementById('stat-cancellations').innerText = totalCancellations;
-            console.log('Cancellation rate response:', cancellationRate);
+            // Update stats
+            document.getElementById('stat-reservations').innerText = totalRes;
+            document.getElementById('stat-cancellations').innerText = totalCanc;
+            document.getElementById('stat-cancellation-rate').innerText = `${cancRate.rate}%`;
+            const cost = currentMaint.cost__sum || 0;
+            document.getElementById('stat-maintenance').innerText = `$${parseFloat(cost).toFixed(2)}`;
 
-            // Cancellation rate
-            document.getElementById('stat-cancellation-rate').innerText = `${cancellationRate.rate}%`;
+            // Update trends
+            setTrend('trend-reservations', totalRes, totalPrevRes);
+            setTrend('trend-cancellations', totalCanc, totalPrevCanc);
+            setTrend('trend-maintenance', 
+                currentMaint.cost__sum || 0, 
+                previousMaint.cost__sum || 0
+            );
 
-            // Maintenance costs
-            const cost = maintenanceCosts.cost__sum;
-            document.getElementById('stat-maintenance').innerText = cost ? `$${parseFloat(cost).toFixed(2)}` : '$0.00';
+            // Cancellation rate trend
+            const rateEl = document.getElementById('trend-cancellation-rate');
+            rateEl.innerText = cancRate.rate === 0 ? '✓ No cancellations' : '';
 
         }).catch(err => console.error('Summary stats error:', err));
 
@@ -181,7 +214,7 @@
                     ...legendConfig,
                     height: 350,
                     xaxis: { title: 'Month' },
-                    yaxis: { title: 'Cancellations', dtick: 1, rangemode: 'nonnegative'}
+                    yaxis: { title: 'Cancellations', rangemode: 'nonnegative'}
                 }, plotlyOptions);
             }).catch(err => console.error('Chart 2 error:', err));
 
