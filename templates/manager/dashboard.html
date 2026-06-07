@@ -90,7 +90,12 @@
                         <div class="d-flex mt-2 mt-md-0">
                             <a href="tel:{{ guest.phoneNum }}" class="btn btn-sm btn-outline-secondary mr-2 flex-fill flex-md-grow-0">📞 Call</a>
                             <a href="{% url 'reservation-detail' guest.id %}" class="btn btn-sm btn-outline-primary mr-2 flex-fill flex-md-grow-0">View</a>
-                            <a href="{% url 'reservation-detail' guest.id %}" class="btn btn-sm btn-danger flex-fill flex-md-grow-0">✓ Checkout</a>
+                            <form method="POST" action="{% url 'reservation-checkout' guest.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-success flex-fill flex-md-grow-0">
+                                    ✓ Checkout
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -115,7 +120,12 @@
                         <div class="d-flex mt-2 mt-md-0">
                             <a href="tel:{{ guest.phoneNum }}" class="btn btn-sm btn-outline-secondary mr-2 flex-fill flex-md-grow-0">📞 Call</a>
                             <a href="{% url 'reservation-detail' guest.id %}" class="btn btn-sm btn-outline-primary mr-2 flex-fill flex-md-grow-0">View</a>
-                            <a href="{% url 'reservation-detail' guest.id %}" class="btn btn-sm btn-success flex-fill flex-md-grow-0">✓ Checkout</a>
+                            <form method="POST" action="{% url 'reservation-checkout' guest.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-success flex-fill flex-md-grow-0">
+                                    ✓ Checkout
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>

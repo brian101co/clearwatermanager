@@ -145,8 +145,8 @@ window.onload = () => {
             this.config.deleteElem.forEach(name => {
                 name.addEventListener("click", (event) => {
                     state.activeSiteId = event.target.dataset.id;
-                    document.querySelector('.delete-form').setAttribute("action", `delete/${state.activeSiteId}`);
-                    document.querySelector('#reservation-detail').setAttribute("href", `reservation/${state.activeSiteId}`)
+                    document.querySelector('.delete-form').setAttribute("action", `/reservation/${state.activeSiteId}/delete`);
+                    document.querySelector('#reservation-detail').setAttribute("href", `/reservation/${state.activeSiteId}`)
                 });
             });
             this.config.editElem.addEventListener("click", (event) => {
