@@ -24,28 +24,28 @@
     <!-- Summary Stats -->
     <div class="row px-2 mb-4">
         <div class="col-6 col-md-3 mb-2">
-            <div class="card shadow-sm text-center py-3">
+            <div class="card shadow-sm text-center py-3 h-100">
                 <div class="text-muted small mb-1">Total Reservations</div>
                 <h3 class="mb-0 font-weight-bold" id="stat-reservations">—</h3>
                 <small class="text-muted" id="trend-reservations">—</small>
             </div>
         </div>
         <div class="col-6 col-md-3 mb-2">
-            <div class="card shadow-sm text-center py-3">
+            <div class="card shadow-sm text-center py-3 h-100">
                 <div class="text-muted small mb-1">Cancellations</div>
                 <h3 class="mb-0 font-weight-bold text-danger" id="stat-cancellations">—</h3>
                 <small class="text-muted" id="trend-cancellations">—</small>
             </div>
         </div>
         <div class="col-6 col-md-3 mb-2">
-            <div class="card shadow-sm text-center py-3">
+            <div class="card shadow-sm text-center py-3 h-100">
                 <div class="text-muted small mb-1">Cancellation Rate</div>
                 <h3 class="mb-0 font-weight-bold text-warning" id="stat-cancellation-rate">—</h3>
                 <small class="text-muted" id="trend-cancellation-rate">—</small>
             </div>
         </div>
         <div class="col-6 col-md-3 mb-2">
-            <div class="card shadow-sm text-center py-3">
+            <div class="card shadow-sm text-center py-3 h-100">
                 <div class="text-muted small mb-1">Maintenance Costs</div>
                 <h3 class="mb-0 font-weight-bold text-danger" id="stat-maintenance">—</h3>
                 <small class="text-muted" id="trend-maintenance">—</small>
@@ -117,7 +117,7 @@
     function loadMetrics(year) {
         const prevYear = year - 1;
 
-        function setTrend(elementId, current, previous) {
+        function setTrend(elementId, current, previous, inverted = false) {
             const el = document.getElementById(elementId);
             if (!el || previous === 0) {
                 el.innerText = '—';
@@ -125,7 +125,17 @@
             }
             const trend = Math.round(((current - previous) / previous) * 100);
             const icon = trend > 0 ? '↑' : trend < 0 ? '↓' : '→';
-            const cls = trend > 0 ? 'text-success' : trend < 0 ? 'text-danger' : 'text-muted';
+            
+            // Inverted = lower is better (cancellations, maintenance costs)
+            let cls;
+            if (trend === 0) {
+                cls = 'text-muted';
+            } else if (inverted) {
+                cls = trend > 0 ? 'text-danger' : 'text-success';
+            } else {
+                cls = trend > 0 ? 'text-success' : 'text-danger';
+            }
+            
             el.innerHTML = `<span class="${cls}">${icon} ${Math.abs(trend)}% vs ${year - 1}</span>`;
         }
 
@@ -159,10 +169,11 @@
 
             // Update trends
             setTrend('trend-reservations', totalRes, totalPrevRes);
-            setTrend('trend-cancellations', totalCanc, totalPrevCanc);
+            setTrend('trend-cancellations', totalCanc, totalPrevCanc, true);
             setTrend('trend-maintenance', 
                 currentMaint.cost__sum || 0, 
-                previousMaint.cost__sum || 0
+                previousMaint.cost__sum || 0,
+                true
             );
 
             // Cancellation rate trend
