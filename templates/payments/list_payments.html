@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="container py-4">
+
+    <!-- Back -->
+    <a href="{% url 'home' %}" class="btn btn-secondary btn-sm mb-3">← Back to Dashboard</a>
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+        <h1 class="h3 mb-0">
+            Payments
+            <span class="badge badge-secondary badge-pill ml-2">{{ payments|length }}</span>
+        </h1>
+        <a href="{% url 'payment-create' %}" class="btn btn-primary mt-2 mt-sm-0">+ Add Payment</a>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="row mb-4">
+        <div class="col-sm-12 col-md-4 mb-2">
+            <div class="card shadow-sm border-left-danger">
+                <div class="card-body py-2 d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-muted small">Unpaid</div>
+                        <strong class="text-danger">{{ unpaid_count }}</strong>
+                    </div>
+                    <span class="badge badge-danger badge-pill">💰</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-4 mb-2">
+            <div class="card shadow-sm border-left-warning">
+                <div class="card-body py-2 d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-muted small">Partial</div>
+                        <strong class="text-warning">{{ partial_count }}</strong>
+                    </div>
+                    <span class="badge badge-warning badge-pill">💰</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-4 mb-2">
+            <div class="card shadow-sm border-left-success">
+                <div class="card-body py-2 d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-muted small">Paid</div>
+                        <strong class="text-success">{{ paid_count }}</strong>
+                    </div>
+                    <span class="badge badge-success badge-pill">✓</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <ul class="nav nav-tabs mb-3">
+        <li class="nav-item">
+            <a class="nav-link {% if not request.GET.status %}active{% endif %}" 
+               href="{% url 'payment-list' %}">All</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.GET.status == 'unpaid' %}active{% endif %}" 
+               href="?status=unpaid">Unpaid</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.GET.status == 'partial' %}active{% endif %}" 
+               href="?status=partial">Partial</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.GET.status == 'paid' %}active{% endif %}" 
+               href="?status=paid">Paid</a>
+        </li>
+    </ul>
+
+    <!-- Payments List -->
+    {% for payment in payments %}
+    <div class="card shadow-sm mb-2">
+        <div class="card-body py-3 d-flex justify-content-between align-items-center flex-wrap">
+
+            <!-- Left — Payment Info -->
+            <div>
+                <a href="{% url 'payment-detail' payment.id %}" class="text-dark font-weight-bold">
+                    {{ payment.customer.name|title }}
+                </a>
+                <span class="badge badge-secondary ml-2">Site {{ payment.customer.site }}</span>
+                <div class="text-muted small mt-1">
+                    Due: <strong class="text-dark">${{ payment.amount_due }}</strong>
+                    · Paid: <strong class="text-success">${{ payment.amount_paid }}</strong>
+                    · Balance: <strong class="text-danger">${{ payment.balance_due }}</strong>
+                    {% if payment.method %}
+                        · {{ payment.get_method_display }}
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Right — Status & Actions -->
+            <div class="d-flex align-items-center mt-2 mt-md-0">
+                {% if payment.status == 'paid' %}
+                    <span class="badge badge-success p-2 mr-2">✓ Paid</span>
+                {% elif payment.status == 'partial' %}
+                    <span class="badge badge-warning p-2 mr-2">⚡ Partial</span>
+                {% else %}
+                    <span class="badge badge-danger p-2 mr-2">💰 Unpaid</span>
+                {% endif %}
+                <a href="{% url 'payment-edit' payment.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+            </div>
+
+        </div>
+    </div>
+    {% empty %}
+    <div class="text-center py-5">
+        <h4 class="text-muted">No payments found.</h4>
+        <a href="{% url 'payment-create' %}" class="btn btn-primary mt-2">+ Add First Payment</a>
+    </div>
+    {% endfor %}
+
+</section>
+{% endblock %}

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'manager',
     'sites',
+    'payments',
     'workorder',
     'crispy_forms',
     "debug_toolbar",

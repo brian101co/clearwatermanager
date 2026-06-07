@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="container py-4">
+
+    <!-- Back -->
+    <a href="{% url 'payment-detail' object.id %}" class="btn btn-secondary btn-sm mb-3">← Back to Payment</a>
+
+    <!-- Header -->
+    <div class="mb-4">
+        <h1 class="h3 mb-1">Delete Payment</h1>
+        <div>
+            <span class="badge badge-secondary">{{ object.customer.name|title }}</span>
+            <span class="badge badge-secondary ml-1">Site {{ object.customer.site }}</span>
+            {% if object.status == 'paid' %}
+                <span class="badge badge-success ml-1">✓ Paid</span>
+            {% elif object.status == 'partial' %}
+                <span class="badge badge-warning ml-1">⚡ Partial</span>
+            {% else %}
+                <span class="badge badge-danger ml-1">💰 Unpaid</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 col-lg-6 offset-lg-3">
+
+            <!-- Warning Card -->
+            <div class="card shadow-sm border-danger mb-4">
+                <div class="card-body">
+                    <h5 class="text-danger mb-3">⚠ Are you sure you want to delete this payment?</h5>
+                    <p class="text-muted mb-3">This action cannot be undone. The following payment record will be permanently deleted:</p>
+
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">Guest</span>
+                            <strong>{{ object.customer.name|title }}</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">Site</span>
+                            <span class="badge badge-secondary">{{ object.customer.site }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">Amount Due</span>
+                            <strong>${{ object.amount_due }}</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">Amount Paid</span>
+                            <strong class="text-success">${{ object.amount_paid }}</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">Balance Due</span>
+                            <strong class="text-danger">${{ object.balance_due }}</strong>
+                        </li>
+                        {% if object.method %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">Payment Method</span>
+                            <strong>{{ object.get_method_display }}</strong>
+                        </li>
+                        {% endif %}
+                    </ul>
+
+                    <!-- Confirm Delete Form -->
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between mt-3">
+                            <a href="{% url 'payment-detail' object.id %}" class="btn btn-secondary">← Cancel</a>
+                            <button type="submit" class="btn btn-danger">🗑 Delete Payment</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</section>
+{% endblock %}

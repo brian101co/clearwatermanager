@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="container py-4">
+
+    <!-- Back -->
+    <a href="{% url 'payment-list' %}" class="btn btn-secondary btn-sm mb-3">← Back to Payments</a>
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+        <div>
+            <h1 class="h3 mb-1">{{ payment.customer.name|title }}</h1>
+            <div>
+                <span class="badge badge-secondary mr-1">Site {{ payment.customer.site }}</span>
+                {% if payment.status == 'paid' %}
+                    <span class="badge badge-success p-2">✓ Paid</span>
+                {% elif payment.status == 'partial' %}
+                    <span class="badge badge-warning p-2">⚡ Partial</span>
+                {% else %}
+                    <span class="badge badge-danger p-2">💰 Unpaid</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="mt-2 mt-sm-0">
+            <a href="{% url 'payment-edit' payment.id %}" class="btn btn-primary mr-2">✏️ Edit</a>
+            <a href="{% url 'payment-delete' payment.id %}" class="btn btn-danger">🗑 Delete</a>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <!-- Left Column — Payment Summary -->
+        <div class="col-sm-12 col-lg-5 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">💰 Payment Summary</h5>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">Amount Due</span>
+                            <strong>${{ payment.amount_due }}</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">Amount Paid</span>
+                            <strong class="text-success">${{ payment.amount_paid }}</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">Balance Due</span>
+                            <strong class="{% if payment.balance_due > 0 %}text-danger{% else %}text-success{% endif %}">
+                                ${{ payment.balance_due }}
+                            </strong>
+                        </li>
+                        {% if payment.method %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">Payment Method</span>
+                            <strong>{{ payment.get_method_display }}</strong>
+                        </li>
+                        {% endif %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">Created</span>
+                            <strong>{{ payment.created_at|date:"M d, Y" }}</strong>
+                        </li>
+                        {% if payment.paid_at %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">Paid On</span>
+                            <strong>{{ payment.paid_at|date:"M d, Y" }}</strong>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column — Reservation Info & Notes -->
+        <div class="col-sm-12 col-lg-7 mb-4">
+
+            <!-- Reservation Info -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-header">
+                    <h5 class="mb-0">📋 Reservation Info</h5>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">Guest</span>
+                            <a href="{% url 'reservation-detail' payment.customer.id %}" class="text-dark font-weight-bold">
+                                {{ payment.customer.name|title }}
+                            </a>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">Site</span>
+                            <span class="badge badge-secondary">{{ payment.customer.site }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">Check-in</span>
+                            <strong>{{ payment.customer.start|date:"M d, Y" }}</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">Check-out</span>
+                            <strong>{{ payment.customer.end|date:"M d, Y" }}</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">Phone</span>
+                            <a href="tel:{{ payment.customer.phoneNum }}">📞 {{ payment.customer.phoneNum }}</a>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">Type</span>
+                            {% if payment.customer.is_long_term %}
+                                <span class="badge badge-info">Long Term</span>
+                            {% else %}
+                                <span class="badge badge-secondary">Short Term</span>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">📝 Notes</h5>
+                </div>
+                <div class="card-body">
+                    {% if payment.notes %}
+                        <p class="mb-0">{{ payment.notes|linebreaks }}</p>
+                    {% else %}
+                        <p class="text-muted mb-0">No notes.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</section>
+{% endblock %}

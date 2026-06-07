@@ -61,6 +61,14 @@
                     <button class="btn pure-material-button-contained bg-primary mr-3" onclick="location.reload()">Update Map</button>
                     <button type="button" class="btn-plus bg-primary" data-toggle="modal" data-target="#customer-form-modal"><i class="fas fa-plus"></i></button>
                 </div>
+
+                <!-- Payments Badge -->
+                {% if unpaid_payments %}
+                <div class="alert alert-warning py-2 mt-3">
+                    💰 <strong>{{ unpaid_payments }}</strong> unpaid or partial payment{{ unpaid_payments|pluralize }}
+                    <a href="{% url 'payment-list' %}" class="ml-2">View →</a>
+                </div>
+                {% endif %}
     
                 <!-- Notifications -->
                 <div class="notifications-container mt-5">

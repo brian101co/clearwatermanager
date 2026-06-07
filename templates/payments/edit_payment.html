@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load static crispy_forms_tags %}
+
+{% block content %}
+<section class="container py-4">
+
+    <!-- Back -->
+    <a href="{% url 'payment-detail' object.id %}" class="btn btn-secondary btn-sm mb-3">← Back to Payment</a>
+
+    <!-- Header -->
+    <div class="mb-4">
+        <h1 class="h3 mb-1">Edit Payment</h1>
+        <div>
+            <span class="badge badge-secondary">{{ object.customer.name|title }}</span>
+            <span class="badge badge-secondary ml-1">Site {{ object.customer.site }}</span>
+            {% if object.status == 'paid' %}
+                <span class="badge badge-success ml-1">✓ Paid</span>
+            {% elif object.status == 'partial' %}
+                <span class="badge badge-warning ml-1">⚡ Partial</span>
+            {% else %}
+                <span class="badge badge-danger ml-1">💰 Unpaid</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                <div class="alert alert-danger" role="alert">{{ message }}</div>
+            {% endif %}
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                <div class="alert alert-success" role="alert">{{ message }}</div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    <!-- Form -->
+    <div class="row">
+        <div class="col-sm-12 col-lg-8 offset-lg-2">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <div class="mt-3 d-flex justify-content-between">
+                            <div>
+                                <button type="submit" class="btn btn-primary mr-2">Save Changes</button>
+                                <a href="{% url 'payment-detail' object.id %}" class="btn btn-secondary">Cancel</a>
+                            </div>
+                            <a href="{% url 'payment-delete' object.id %}" class="btn btn-danger">🗑 Delete</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+{% endblock %}
