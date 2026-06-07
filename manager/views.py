@@ -21,6 +21,7 @@ from metrics.models import Metric
 from sites.models import Site
 from payments.models import Payment
 from django.contrib import messages
+from django.db.models import Q
 from datetime import date, datetime, timedelta
 from .helpers import ( 
     is_double_booked
@@ -35,7 +36,23 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
         today = timezone.now()
         tomorrow = today + timedelta(days=1)
         thirty_days = today + timedelta(days=30)
-        customers = Reservation.objects.filter(end__gte=today).order_by('start')
+
+        # Search query
+        search = self.request.GET.get('q', '')
+
+        customers = Reservation.objects.filter(
+            end__gte=today
+        ).order_by('start')
+
+        # Apply search filter
+        if search:
+            customers = customers.filter(
+                Q(name__icontains=search) |
+                Q(site__icontains=search) |
+                Q(phoneNum__icontains=search)
+            )
+
+        context["search"] = search
         context["reservation_form"] = ReservationForm()
         context["customers"] = customers.filter(is_long_term=False)
         context["longterms"] = customers.filter(is_long_term=True)

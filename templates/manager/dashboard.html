@@ -155,6 +155,34 @@
                 {% endfor %}
             </div>
         </div>
+
+        <div class="col-sm-12 my-3">
+            <!-- Search Bar -->
+            <form method="GET" class="form-inline mb-3">
+                <div class="input-group">
+                    <input type="text" 
+                        class="form-control" 
+                        name="q" 
+                        placeholder="Search by name, site or phone..."
+                        value="{{ search }}">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </div>
+                {% if search %}
+                    <a href="{% url 'home' %}" class="btn btn-link ml-2">✕ Clear</a>
+                {% endif %}
+            </form>
+
+            <!-- Active search indicator -->
+            {% if search %}
+            <div class="alert alert-light py-2 mb-3 d-flex justify-content-between align-items-center">
+                <span class="small">Showing results for <strong>{{ search }}</strong></span>
+                <a href="{% url 'home' %}" class="small text-dark font-weight-bold">✕ Clear</a>
+            </div>
+            {% endif %}
+        </div>
+
         <div class="col-sm-12 col-lg-6 my-3">
             <h2 class="text-center mb-3">Reservations</h2>
             <div class="table-responsive">
@@ -188,6 +216,7 @@
             </table>
             </div>
         </div>
+    
         <div class="col-sm-12 col-lg-6 my-3">
             <h2 class="text-center mb-3">Longterm Residents</h2>
             <div class="table-responsive">
