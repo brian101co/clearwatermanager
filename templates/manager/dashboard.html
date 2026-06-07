@@ -71,7 +71,70 @@
                 {% endif %}
     
                 <!-- Notifications -->
-                <div class="notifications-container mt-5">
+
+                <!-- Overdue Checkouts -->
+                <h2 class="h5 mb-3 mt-4">Overdue Checkouts
+                    <span class="badge badge-danger badge-pill ml-2">{{ overdue_checkouts|length }}</span>
+                </h2>
+                {% for guest in overdue_checkouts %}
+                <div class="card shadow-sm mb-2" style="border-left: 4px solid #dc3545;">
+                    <div class="card-body py-2 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                        <div>
+                            <strong>{{ guest.name|title }}</strong>
+                            <span class="badge badge-secondary ml-2">Site {{ guest.site }}</span>
+                            <span class="badge badge-danger ml-1">⚠ Overdue</span>
+                            <div class="text-muted small mt-1">
+                                Was due: {{ guest.end|date:"D, M d Y" }} at {{ guest.end|time:"g:i A" }}
+                            </div>
+                        </div>
+                        <div class="d-flex mt-2 mt-md-0">
+                            <a href="tel:{{ guest.phoneNum }}" class="btn btn-sm btn-outline-secondary mr-2 flex-fill flex-md-grow-0">📞 Call</a>
+                            <a href="{% url 'reservation-detail' guest.id %}" class="btn btn-sm btn-outline-primary mr-2 flex-fill flex-md-grow-0">View</a>
+                            <form method="POST" action="{% url 'reservation-checkout' guest.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-success flex-fill flex-md-grow-0">
+                                    ✓ Checkout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted small">No overdue checkouts. 🎉</p>
+                {% endfor %}
+
+                <!-- Checking Out Today -->
+                <h2 class="h5 mb-3 mt-4">Checking Out Today
+                    <span class="badge badge-warning badge-pill ml-2">{{ checking_out_today|length }}</span>
+                </h2>
+                {% for guest in checking_out_today %}
+                <div class="card shadow-sm mb-2" style="border-left: 4px solid #fd7e14;">
+                    <div class="card-body py-2 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                        <div>
+                            <strong>{{ guest.name|title }}</strong>
+                            <span class="badge badge-secondary ml-2">Site {{ guest.site }}</span>
+                            <div class="text-muted small mt-1">
+                                Checkout: {{ guest.end|date:"D, M d Y" }} at {{ guest.end|time:"g:i A" }}
+                            </div>
+                        </div>
+                        <div class="d-flex mt-2 mt-md-0">
+                            <a href="tel:{{ guest.phoneNum }}" class="btn btn-sm btn-outline-secondary mr-2 flex-fill flex-md-grow-0">📞 Call</a>
+                            <a href="{% url 'reservation-detail' guest.id %}" class="btn btn-sm btn-outline-primary mr-2 flex-fill flex-md-grow-0">View</a>
+                            <form method="POST" action="{% url 'reservation-checkout' guest.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-success flex-fill flex-md-grow-0">
+                                    ✓ Checkout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted small">No checkouts today.</p>
+                {% endfor %}
+
+                <!-- Checking Out Tomorrow -->
+                <div class="notifications-container mt-4">
                     <h2 class="h5 mb-3">Checking Out Tomorrow
                         <span class="badge badge-warning badge-pill ml-2">{{ checking_out_soon|length }}</span>
                     </h2>
@@ -91,9 +154,15 @@
                                 <a href="tel:{{ guest.phoneNum }}" class="btn btn-sm btn-outline-secondary mr-2 flex-fill flex-md-grow-0">
                                     📞 Call
                                 </a>
-                                <a href="{% url 'reservation-detail' guest.id %}" class="btn btn-sm btn-outline-primary flex-fill flex-md-grow-0">
+                                <a href="{% url 'reservation-detail' guest.id %}" class="btn btn-sm btn-outline-primary flex-fill flex-md-grow-0 mr-2">
                                     View
                                 </a>
+                                <form method="POST" action="{% url 'reservation-checkout' guest.id %}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-success flex-fill flex-md-grow-0">
+                                        ✓ Checkout
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -102,7 +171,7 @@
                     {% endfor %}
                 </div>
 
-                <!-- Checking In Soon -->
+                <!-- Checking In Tomorrow -->
                 <h2 class="h5 mb-3 mt-4">Checking In Tomorrow
                     <span class="badge badge-success badge-pill ml-2">{{ checking_in_soon|length }}</span>
                 </h2>

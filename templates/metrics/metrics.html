@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+
 {% load static %}
 
 {% block content %}
@@ -18,6 +19,14 @@
                     <option value="{{ y }}" {% if y == current_year %}selected{% endif %}>{{ y }}</option>
                 {% endfor %}
             </select>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-sm-12">
+            <small class="text-muted d-block mt-1">
+                * Cancellation data prior to June 2026 may include checkouts
+            </small>
         </div>
     </div>
 
@@ -62,7 +71,7 @@
                 <div class="card-header">
                     <h5 class="mb-0">📅 Reservations per Month</h5>
                 </div>
-                <div id="chart-1" class="p-2" style="height: 350px;"></div>
+                <div id="chart-1" class="p-2" ></div>
             </div>
         </div>
 
@@ -72,7 +81,7 @@
                 <div class="card-header">
                     <h5 class="mb-0">❌ Cancellations per Month</h5>
                 </div>
-                <div id="chart-2" class="p-2" style="height: 350px;"></div>
+                <div id="chart-2" class="p-2" ></div>
             </div>
         </div>
 
@@ -82,7 +91,7 @@
                 <div class="card-header">
                     <h5 class="mb-0">🔧 Maintenance Costs</h5>
                 </div>
-                <div id="chart-3" class="p-2" style="height: 350px;"></div>
+                <div id="chart-3" class="p-2" ></div>
             </div>
         </div>
 
@@ -92,7 +101,17 @@
                 <div class="card-header">
                     <h5 class="mb-0">🏕️ Most Popular Sites</h5>
                 </div>
-                <div id="chart-4" class="p-2" style="height: 350px;"></div>
+                <div id="chart-4" class="p-2" ></div>
+            </div>
+        </div>
+
+        <!-- Chart 5 — Long Term vs Short Term -->
+        <div class="col-sm-12 col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">🏡 Long Term vs Short Term</h5>
+                </div>
+                <div id="chart-5" class="p-2" ></div>
             </div>
         </div>
 
@@ -109,6 +128,10 @@
     const legendConfig = {
         showlegend: true,
         legend: { orientation: "h", x: 0.1, y: 1.15 }
+    };
+    const plotlyLayout = {
+        margin: { l: 40, r: 20, t: 30, b: 40 },
+        height: 350,
     };
     const greenColor = "rgb(17, 140, 79)";
     const greyColor = "rgb(184, 184, 184)";
@@ -205,7 +228,7 @@
                 }
             ], {
                 ...legendConfig,
-                height: 350,
+                ...plotlyLayout,
                 xaxis: { title: 'Month' },
                 yaxis: { title: 'Reservations' }
             }, plotlyOptions);
@@ -223,7 +246,7 @@
                     marker: { color: redColor }
                 }], {
                     ...legendConfig,
-                    height: 350,
+                    ...plotlyLayout,
                     xaxis: { title: 'Month' },
                     yaxis: { title: 'Cancellations', rangemode: 'nonnegative'}
                 }, plotlyOptions);
@@ -240,7 +263,7 @@
                 type: 'bar',
                 marker: { color: [greyColor, greenColor] }
             }], {
-                height: 350,
+                ...plotlyLayout,
                 xaxis: { type: "category", title: "Year" },
                 yaxis: { title: "Costs ($)" }
             }, plotlyOptions);
@@ -256,11 +279,39 @@
                     type: 'bar',
                     marker: { color: greenColor }
                 }], {
-                    height: 350,
+                    ...plotlyLayout,
                     xaxis: { title: 'Site' },
                     yaxis: { title: 'Total Reservations' }
                 }, plotlyOptions);
             }).catch(err => console.error('Chart 4 error:', err));
+
+            // Chart 5 — Long Term vs Short Term
+            fetch(url + `?reservation_types=true`)
+                .then(r => r.json())
+                .then(data => {
+                    Plotly.newPlot('chart-5', [{
+                        values: [data.long_term, data.short_term],
+                        labels: ['Long Term', 'Short Term'],
+                        type: 'pie',
+                        hole: 0.4,  // donut style
+                        marker: {
+                            colors: [greenColor, greyColor]
+                        },
+                        textinfo: 'label+percent',
+                        hoverinfo: 'label+value+percent'
+                    }], {
+                        ...plotlyLayout,
+                        showlegend: true,
+                        legend: { orientation: "h", x: 0.2, y: -0.1 },
+                        annotations: [{
+                            text: `${data.total}<br>Total`,
+                            x: 0.5,
+                            y: 0.5,
+                            font: { size: 14 },
+                            showarrow: false
+                        }]
+                    }, plotlyOptions);
+                }).catch(err => console.error('Chart 5 error:', err));
     }
 
     // Initial load

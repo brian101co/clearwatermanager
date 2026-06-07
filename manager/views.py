@@ -2,7 +2,8 @@ import pytz
 import json
 
 from django.core.serializers.json import DjangoJSONEncoder
-from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.utils import timezone
 from .forms import ReservationForm
@@ -41,7 +42,8 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
         search = self.request.GET.get('q', '')
 
         customers = Reservation.objects.filter(
-            end__gte=today
+            end__gte=today,
+            confirmed_checkout=False,
         ).order_by('start')
 
         # Apply search filter
@@ -73,13 +75,22 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
             status__in=['unpaid', 'partial']
         ).count()
 
+        context["checking_out_today"] = Reservation.objects.filter(
+            end__date=today.date(),
+            is_long_term=False,
+            confirmed_checkout=False,
+        )
+
+        context["overdue_checkouts"] = Reservation.objects.filter(
+            end__lt=today.date(),
+            is_long_term=False,
+            confirmed_checkout=False,
+        )
+
         return context
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-        today = date.today()
-        checkedout = Reservation.objects.filter(end__lt=today).all()
-        checkedout.delete()
         return self.render_to_response(context)
 
 
@@ -87,6 +98,24 @@ class DashboardLoginView(LoginView):
     template_name = "manager/dashboard_login.html"
     redirect_authenticated_user = True
     success_url = reverse_lazy('home')
+
+
+@login_required
+def checkout_reservation(request, id):
+    if request.method != "POST":
+        return redirect('home')
+    
+    reservation = get_object_or_404(Reservation, id=id)
+    reservation.confirmed_checkout = True
+    
+    try:
+        reservation.save()
+        messages.success(request, f'{reservation.name} checked out.')
+        return redirect('home')
+    except Exception as e:
+        messages.error(request, f'An error has occurred. Please try again.')
+        print(e) 
+        return redirect('home')
 
 
 class ReservationDetailView(LoginRequiredMixin, DetailView):
@@ -121,7 +150,7 @@ class EditReservationView(LoginRequiredMixin, UpdateView):
         site = form.cleaned_data["site"]
         start = form.cleaned_data["start"]
         end = form.cleaned_data["end"]
-        all_reservations = Reservation.objects.exclude(pk=self.kwargs["id"]).filter(site=site)
+        all_reservations = Reservation.objects.exclude(pk=self.kwargs["id"]).filter(site=site, confirmed_checkout=False,)
         if not is_double_booked(all_reservations, start.isoformat(), end.isoformat()):
             self.object = form.save()
             metric = Metric.objects.get(customer=self.object)
@@ -142,7 +171,7 @@ class CreateReservationView(LoginRequiredMixin, CreateView):
         site = form.cleaned_data["site"]
         start = form.cleaned_data["start"]
         end = form.cleaned_data["end"]
-        all_reservations = Reservation.objects.filter(site=site)
+        all_reservations = Reservation.objects.filter(site=site, confirmed_checkout=False,)
         if not is_double_booked(all_reservations, start.isoformat(), end.isoformat()):
             self.object = form.save()
             metric = Metric(site=site, start=start, end=end, customer=self.object)
@@ -152,10 +181,8 @@ class CreateReservationView(LoginRequiredMixin, CreateView):
         return redirect('home')
     
 
-def getAvailability(request):
-    if not request.user.is_authenticated:
-        return redirect('loginuser')
-    
+@login_required
+def getAvailability(request):    
     if request.method != "POST":
         return redirect('home')
 
@@ -182,7 +209,7 @@ def getAvailability(request):
         messages.error(request, 'Checkout must be after checkin.')
         return redirect('home')
 
-    for reservation in Reservation.objects.all():
+    for reservation in Reservation.objects.filter(confirmed_checkout=False).all():
         start = reservation.start.replace(tzinfo=pytz.UTC)
         end = reservation.end.replace(tzinfo=pytz.UTC)
         if checkin < end and checkout > start:  

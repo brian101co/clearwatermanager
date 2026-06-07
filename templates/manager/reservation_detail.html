@@ -62,6 +62,12 @@
                 <a href="{% url 'edit' reservation.id %}" class="btn btn-primary pure-material-button-contained">
                     ✏️ Edit Reservation
                 </a>
+                <form method="POST" action="{% url 'reservation-checkout' reservation.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn bg-success pure-material-button-contained flex-fill flex-md-grow-0">
+                        ✓ Checkout
+                    </button>
+                </form>
                 <a href="{% url 'delete-reservation' reservation.id %}" class="btn pure-material-button-contained bg-danger">
                     🗑️ Delete Reservation
                 </a>
