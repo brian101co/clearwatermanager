@@ -11,6 +11,7 @@ urlpatterns = [
     path('workorders/', include("workorder.urls")),
     path('sites/', include("sites.urls")),
     path('payments/', include("payments.urls")),
+    path('metrics/', include("metrics.urls")),
     path('api/', include('api.urls')),
     path('admin/', admin.site.urls),
     path('site/info/<str:site>', site_views.get_site_info, name="site_info"),

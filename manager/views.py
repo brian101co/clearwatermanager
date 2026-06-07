@@ -16,7 +16,8 @@ from django.views.generic import (
     CreateView,
     UpdateView
 )
-from .models import Customer, Metric
+from .models import Customer
+from metrics.models import Metric
 from sites.models import Site
 from payments.models import Payment
 from django.contrib import messages
@@ -24,10 +25,6 @@ from datetime import date, datetime, timedelta
 from .helpers import ( 
     is_double_booked
 )
-
-
-class MetricTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = "metrics/metrics.html"
 
 
 class DashboardHomeView(LoginRequiredMixin, TemplateView):

@@ -1,5 +1,6 @@
 from django.shortcuts import redirect
-from manager.models import Customer, Metric
+from manager.models import Customer
+from metrics.models import Metric
 from workorder.models import WorkOrder
 from django.http import JsonResponse
 from datetime import date, timedelta
