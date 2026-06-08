@@ -2,6 +2,16 @@
 
 {% load static %}
 
+{% block extraCSS %}
+<style>
+.js-plotly-plot, 
+.js-plotly-plot .main-svg {
+  height: 100% !important;
+  width: 100% !important;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <section class="container-fluid py-4">
 
@@ -71,7 +81,7 @@
                 <div class="card-header">
                     <h5 class="mb-0">📅 Reservations per Month</h5>
                 </div>
-                <div id="chart-1" class="p-2" style="height: 350px;"></div>
+                <div id="chart-1" class="p-2 chart-container"></div>
             </div>
         </div>
 
@@ -81,7 +91,7 @@
                 <div class="card-header">
                     <h5 class="mb-0">❌ Cancellations per Month</h5>
                 </div>
-                <div id="chart-2" class="p-2" style="height: 350px;"></div>
+                <div id="chart-2" class="p-2 chart-container"></div>
             </div>
         </div>
 
@@ -91,7 +101,7 @@
                 <div class="card-header">
                     <h5 class="mb-0">🔧 Maintenance Costs</h5>
                 </div>
-                <div id="chart-3" class="p-2" style="height: 350px;"></div>
+                <div id="chart-3" class="p-2 chart-container"></div>
             </div>
         </div>
 
@@ -101,7 +111,7 @@
                 <div class="card-header">
                     <h5 class="mb-0">🏕️ Most Popular Sites</h5>
                 </div>
-                <div id="chart-4" class="p-2" style="height: 350px;"></div>
+                <div id="chart-4" class="p-2 chart-container"></div>
             </div>
         </div>
 
@@ -111,7 +121,7 @@
                 <div class="card-header">
                     <h5 class="mb-0">🏡 Long Term vs Short Term</h5>
                 </div>
-                <div id="chart-5" class="p-2" style="height: 350px;"></div>
+                <div id="chart-5" class="p-2 chart-container"></div>
             </div>
         </div>
 
@@ -131,7 +141,9 @@
     };
     const plotlyLayout = {
         margin: { l: 40, r: 20, t: 30, b: 40 },
-        height: 350,
+        autosize: true,
+        automargin: true,
+        height: 400,
     };
     const greenColor = "rgb(17, 140, 79)";
     const greyColor = "rgb(184, 184, 184)";
