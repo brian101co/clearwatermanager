@@ -59,7 +59,7 @@ class ReservationListView(LoginRequiredMixin, ListView):
         elif filter_by == 'upcoming':
             queryset = queryset.filter(start__gt=today)
         elif filter_by == 'longterm':
-            queryset = queryset.filter(is_long_term=True)
+            queryset = queryset.filter(is_long_term=True, confirmed_checkout=False)
         elif filter_by == 'checkedout':
             queryset = queryset.filter(confirmed_checkout=True)
 
