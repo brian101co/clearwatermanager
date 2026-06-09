@@ -16,7 +16,7 @@ from datetime import timedelta
 
 
 class DashboardHomeView(LoginRequiredMixin, TemplateView):
-    template_name = "manager/dashboard.html"
+    template_name = "dashboard/dashboard.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -80,6 +80,6 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
 
 
 class DashboardLoginView(LoginView):
-    template_name = "manager/dashboard_login.html"
+    template_name = "dashboard/dashboard_login.html"
     redirect_authenticated_user = True
     success_url = reverse_lazy('home')

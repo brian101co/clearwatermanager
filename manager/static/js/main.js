@@ -1,8 +1,5 @@
 window.onload = () => {
     const lotNodes = document.querySelectorAll("[data-site]");
-    const editBtn = document.querySelector('.edit');
-    const names = document.querySelectorAll('.name');
-    const mobileEditBtnElems = document.querySelectorAll(".mobile-edit");
     const occupiedLots = JSON.parse(document.getElementById("occupied-lots-data").textContent);
 
     const state = {
@@ -58,7 +55,7 @@ window.onload = () => {
     }
 
     class Map {
-        constructor(mapLots, reservedLots, checkout, checkin) {
+        constructor(mapLots) {
             this.mapLots = mapLots;
             this.infoModal = document.querySelector("#site-info");
             this.setEventListeners();
@@ -134,46 +131,6 @@ window.onload = () => {
         }
     }
 
-
-    class Modal {
-        constructor(obj) {
-            this.config = obj;
-            this.setEventListeners();
-        }
-
-        setEventListeners() {
-            this.config.deleteElem.forEach(name => {
-                name.addEventListener("click", (event) => {
-                    state.activeSiteId = event.target.dataset.id;
-                    document.querySelector('.delete-form').setAttribute("action", `/reservation/${state.activeSiteId}/delete`);
-                    document.querySelector('#reservation-detail').setAttribute("href", `/reservation/${state.activeSiteId}`)
-                });
-            });
-            this.config.editElem.addEventListener("click", (event) => {
-                const form = document.querySelector('.edit-form');
-                const url = window.location.origin + "/api/reservation/" + state.activeSiteId;
-                form.setAttribute("action", `edit/${state.activeSiteId}`);
-                fetch(url)
-                    .then(response => response.json())
-                    .then(data => {
-                        form.querySelector('[name="name"]').value = data[0].name;
-                        form.querySelector('[name="site"]').value = data[0].site;
-                        form.querySelector('[name="phoneNum"]').value = data[0].phoneNum;
-                        form.querySelector('[name="info"]').value = data[0].info;
-                        form.querySelector('[name="start"]').value = data[0].start.slice(0, -1);
-                        form.querySelector('[name="end"]').value = data[0].end.slice(0, -1);
-                    })
-                    .catch(err => console.log(err));
-            });
-        }
-    }
-
     const NewMap = new Map(lotNodes);
-    const InitModal = new Modal({
-        deleteElem: names,
-        editElem: editBtn,
-        mobileEditBtnElems: mobileEditBtnElems,
-    });
-
     NewMap.highlightLots();
 }

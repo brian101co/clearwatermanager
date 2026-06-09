@@ -10,13 +10,16 @@ from django.views.generic import (
     DetailView, 
     DeleteView, 
     CreateView,
-    UpdateView
+    UpdateView,
+    ListView
 )
 from .models import Reservation
 from metrics.models import Metric
 from sites.models import Site
 from django.contrib import messages
 from datetime import datetime
+from django.utils import timezone
+from django.db.models import Q
 from .helpers import ( 
     is_double_booked
 )
@@ -38,20 +41,54 @@ def checkout_reservation(request, id):
         messages.error(request, f'An error has occurred. Please try again.')
         print(e) 
         return redirect('home')
+    
+
+class ReservationListView(LoginRequiredMixin, ListView):
+    model = Reservation
+    context_object_name = "reservations"
+    template_name = "reservations/list_reservations.html"
+
+    def get_queryset(self):
+        today = timezone.now()
+        queryset = Reservation.objects.all().order_by('start')
+        filter_by = self.request.GET.get('filter')
+        search = self.request.GET.get('q', '')
+
+        if filter_by == 'active':
+            queryset = queryset.filter(start__lte=today, end__gte=today, confirmed_checkout=False)
+        elif filter_by == 'upcoming':
+            queryset = queryset.filter(start__gt=today)
+        elif filter_by == 'longterm':
+            queryset = queryset.filter(is_long_term=True)
+        elif filter_by == 'checkedout':
+            queryset = queryset.filter(confirmed_checkout=True)
+
+        if search:
+            queryset = queryset.filter(
+                Q(name__icontains=search) |
+                Q(site__icontains=search) |
+                Q(phoneNum__icontains=search)
+            )
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search'] = self.request.GET.get('q', '')
+        return context
 
 
 class ReservationDetailView(LoginRequiredMixin, DetailView):
     model = Reservation
     pk_url_kwarg = "id"
     context_object_name = "reservation"
-    template_name = "manager/reservation_detail.html"
+    template_name = "reservations/reservation_detail.html"
 
 
 class DeleteReservationView(LoginRequiredMixin, DeleteView):
     model = Reservation
     pk_url_kwarg = "id"
     success_url = reverse_lazy('home')
-    template_name = "manager/delete_reservation.html"
+    template_name = "reservations/delete_reservation.html"
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -66,7 +103,7 @@ class EditReservationView(LoginRequiredMixin, UpdateView):
     form_class = ReservationForm
     pk_url_kwarg = "id"
     success_url = reverse_lazy('home')
-    template_name = "manager/edit_reservation.html"
+    template_name = "reservations/edit_reservation.html"
 
     def form_valid(self, form):
         site = form.cleaned_data["site"]
@@ -88,6 +125,7 @@ class EditReservationView(LoginRequiredMixin, UpdateView):
 class CreateReservationView(LoginRequiredMixin, CreateView):
     form_class = ReservationForm
     success_url = reverse_lazy("home")
+    template_name = 'reservations/new_reservation.html'
 
     def form_valid(self, form):
         site = form.cleaned_data["site"]
@@ -153,7 +191,7 @@ def getAvailability(request):
         "start": checkin_str,
         "end": checkout_str,
     }
-    return render(request, "manager/available_sites.html", context=context)
+    return render(request, "reservations/available_sites.html", context=context)
 
 
 def handler500(request):

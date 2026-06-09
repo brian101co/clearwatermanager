@@ -6,7 +6,7 @@ from django.conf.urls.static import static
 from .settings import DEBUG, MEDIA_URL, MEDIA_ROOT
 
 urlpatterns = [
-    path('', include("manager.urls")),
+    path('', include("dashboard.urls")),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('workorders/', include("workorder.urls")),
     path('sites/', include("sites.urls")),

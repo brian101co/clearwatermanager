@@ -68,8 +68,12 @@
             <!-- Toolbar -->
             <div class="toolbar flex-wrap">
                 <button class="btn pure-material-button-contained bg-primary mr-3" data-toggle="modal" data-target="#check-avaliability">Availability</button>
-                <button class="btn pure-material-button-contained bg-primary mr-3" onclick="location.reload()">Update Map</button>
-                <button type="button" class="btn-plus bg-primary" data-toggle="modal" data-target="#customer-form-modal"><i class="fas fa-plus"></i></button>
+                    <a href="{% url 'list-reservation' %}" class="btn pure-material-button-contained bg-primary mr-3">
+                        Reservations
+                    </a>
+                <a href="{% url 'new-reservation' %}" class="btn pure-material-button-contained bg-primary mt-3 mt-md-0">
+                    <i class="fas fa-plus"></i> Add Reservation
+                </a>
             </div>
 
             <!-- Payments Badge -->
@@ -84,6 +88,7 @@
         <!-- Notifications -->
         <!-- Overdue Checkouts -->
         <div class="col-sm-12 col-lg-8 offset-lg-2">
+            <h2 class="h5 text-muted mt-5 mb-2">📅 Short Term</h2>
             <h2 class="h5 mb-3 mt-4">Overdue Checkouts
                 <span class="badge badge-danger badge-pill ml-2">{{ overdue_checkouts|length }}</span>
             </h2>
@@ -215,7 +220,8 @@
             {% endfor %}
         </div>
 
-        <div class="col-sm-12 col-lg-8 offset-lg-2">
+        <div class="col-sm-12 col-lg-8 offset-lg-2 my-5">
+            <h2 class="h5 text-muted mb-2">🏡 Long Term</h2>
             <!-- Expiring Leases -->
             <h2 class="h5 mb-3 mt-4">Expiring Leases
                 <span class="badge badge-danger badge-pill ml-2">{{ expiring_leases|length }}</span>
@@ -242,122 +248,17 @@
             <p class="text-muted small">No leases expiring in the next 30 days.</p>
             {% endfor %}
         </div>
-
-        <div class="col-sm-12 col-lg-8 offset-lg-2 my-3">
-            <!-- Search Bar -->
-            <form method="GET" class="form-inline mb-3">
-                <div class="input-group">
-                    <input type="text" 
-                        class="form-control" 
-                        name="q" 
-                        placeholder="Search by name, site or phone..."
-                        value="{{ search }}">
-                    <div class="input-group-append">
-                        <button type="submit" class="btn btn-primary">Search</button>
-                    </div>
-                </div>
-                {% if search %}
-                    <a href="{% url 'home' %}" class="btn btn-link ml-2">✕ Clear</a>
-                {% endif %}
-            </form>
-
-            <!-- Active search indicator -->
-            {% if search %}
-            <div class="alert alert-light py-2 mb-3 d-flex justify-content-between align-items-center">
-                <span class="small">Showing results for <strong>{{ search }}</strong></span>
-                <a href="{% url 'home' %}" class="small text-dark font-weight-bold">✕ Clear</a>
-            </div>
-            {% endif %}
-        </div>
-
-        <div class="col-sm-12 col-lg-4 offset-lg-2 my-3 my-lg-2">
-            <h2 class="text-center mb-3">Reservations</h2>
-            <div class="table-responsive">
-            <table id="tb reservation-table" class="table table-striped display">
-                <thead>
-                <tr>
-                    <th scope="col" class="mobile-hidden">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Check-in</th>
-                    <th scope="col">Check-out</th>
-                    <th scope="col">Lot</th>
-                    <th scope="col">Phone Number</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for customer in customers %}
-                <tr>
-                    <th scope="row" class="mobile-hidden">{{ forloop.counter }}</th>
-                    <td class="name"><button type="button" data-toggle="modal" data-target="#manage-reservation" data-id="{{ customer.id }}" class="btn-delete">{{ customer.name }}</button></td>
-                    <td class="checkin">{{ customer.start|date:"M d Y" }}</td>
-                    <td class="checkout">{{ customer.end|date:"M d Y" }}</td>
-                    <td class="site">{{ customer.site }}</td>
-                    <td>{{ customer.phoneNum }}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="6" class="text-center">No reservations found.</td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            </div>
-        </div>
-    
-        <div class="col-sm-12 col-lg-4 my-3 my-lg-2">
-            <h2 class="text-center mb-3">Longterm Residents</h2>
-            <div class="table-responsive">
-            <table id="tb-2" class="table table-striped display">
-                <thead>
-                <tr>
-                    <th scope="col" class="mobile-hidden">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Check-in</th>
-                    <th scope="col">Check-out</th>
-                    <th scope="col">Lot</th>
-                    <th scope="col">Phone Number</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for resident in longterms %}
-                <tr>
-                    <th scope="row" class="mobile-hidden">{{ forloop.counter }}</th>
-                    <td class="name"><button type="button" data-toggle="modal" data-target="#manage-reservation" data-id="{{ resident.id }}" class="btn-delete">{{ resident.name }}</button></td>
-                    <td class="checkin">{{ resident.start|date:"M d Y" }}</td>
-                    <td class="checkout">{{ resident.end|date:"M d Y" }}</td>
-                    <td class="site">{{ resident.site }}</td>
-                    <td>{{ resident.phoneNum }}</td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            </div>
-        </div>
+        
     </div>
 </section>
 
-{% include "partials/_manage_reservation_modal.html" %}
 {% include "partials/_site_information_modal.html" %}
 {% include "partials/_availability_modal.html" %}
 
 {% endblock %}
 
 {% block extraJS %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cleave.js/1.6.0/cleave.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cleave.js/1.6.0/addons/cleave-phone.us.js"></script>
 <script src="{% static 'js/main.js' %}"></script>
-<script>
-  var cleaveEdit = new Cleave('#edit-reservation [name="phoneNum"]', {
-    phone: true,
-    phoneRegionCode: 'us'
-  });
-  var cleaveAdd = new Cleave('#customer-form-modal [name="phoneNum"]', {
-    phone: true,
-    phoneRegionCode: 'us'
-  });
-  
-</script>
-<!-- Pass occupied lots from Django context to JavaScript -->
 <script id="occupied-lots-data" type="application/json">
     {{ occupied_lots|safe }}
 </script>
