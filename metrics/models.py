@@ -1,5 +1,5 @@
 from django.db import models
-from manager.models import Reservation
+from reservations.models import Reservation
 
 MONTHS = {
     1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr",

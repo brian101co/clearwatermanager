@@ -10,11 +10,10 @@
         </button>
       </div>
       <div class="modal-body">
-        <form method="POST" action="{% url 'addcustomer' %}" novalidate>
+        <form method="POST" action="{% url 'new-reservation' %}" novalidate>
             {% crispy reservation_form %}
         </form>
       </div>
     </div>
   </div>
 </div>
-

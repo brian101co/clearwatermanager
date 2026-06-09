@@ -1,103 +1,28 @@
 import pytz
-import json
 
-from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
-from django.utils import timezone
 from .forms import ReservationForm
 from django.urls import reverse_lazy
-from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import (
     DetailView, 
     DeleteView, 
-    TemplateView, 
     CreateView,
-    UpdateView
+    UpdateView,
+    ListView
 )
 from .models import Reservation
 from metrics.models import Metric
 from sites.models import Site
-from payments.models import Payment
 from django.contrib import messages
+from datetime import datetime
+from django.utils import timezone
 from django.db.models import Q
-from datetime import date, datetime, timedelta
 from .helpers import ( 
     is_double_booked
 )
-
-
-class DashboardHomeView(LoginRequiredMixin, TemplateView):
-    template_name = "manager/dashboard.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        today = timezone.now()
-        tomorrow = today + timedelta(days=1)
-        thirty_days = today + timedelta(days=30)
-
-        # Search query
-        search = self.request.GET.get('q', '')
-
-        customers = Reservation.objects.filter(
-            end__gte=today,
-            confirmed_checkout=False,
-        ).order_by('start')
-
-        # Apply search filter
-        if search:
-            customers = customers.filter(
-                Q(name__icontains=search) |
-                Q(site__icontains=search) |
-                Q(phoneNum__icontains=search)
-            )
-
-        context["search"] = search
-        context["reservation_form"] = ReservationForm()
-        context["customers"] = customers.filter(is_long_term=False)
-        context["longterms"] = customers.filter(is_long_term=True)
-        context["totalReservations"] = customers.count()
-        context["checking_out_soon"] = customers.filter(end__date=tomorrow.date(), is_long_term=False)
-        context["checking_in_soon"] = customers.filter(start__date=tomorrow.date(), is_long_term=False)
-        context["expiring_leases"] = customers.filter(end__date__lte=thirty_days.date(), is_long_term=True)
-
-        # Calculating Occupancy Rate
-        total_lots = 65
-        occupied_lots = Reservation.objects.filter(start__date__lte=today, end__date__gte=today).values("site", "name", "end")
-        occupied_today = Reservation.objects.filter(start__date__lte=today, end__date__gte=today).count()
-        occupancy_rate = round((occupied_today / total_lots) * 100)
-        context["occupancy_rate"] = occupancy_rate
-        context["occupied_lots"] = json.dumps(list(occupied_lots), cls=DjangoJSONEncoder)
-
-        context["unpaid_payments"] = Payment.objects.filter(
-            status__in=['unpaid', 'partial']
-        ).count()
-
-        context["checking_out_today"] = Reservation.objects.filter(
-            end__date=today.date(),
-            is_long_term=False,
-            confirmed_checkout=False,
-        )
-
-        context["overdue_checkouts"] = Reservation.objects.filter(
-            end__lt=today.date(),
-            is_long_term=False,
-            confirmed_checkout=False,
-        )
-
-        return context
-
-    def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        return self.render_to_response(context)
-
-
-class DashboardLoginView(LoginView):
-    template_name = "manager/dashboard_login.html"
-    redirect_authenticated_user = True
-    success_url = reverse_lazy('home')
 
 
 @login_required
@@ -116,20 +41,54 @@ def checkout_reservation(request, id):
         messages.error(request, f'An error has occurred. Please try again.')
         print(e) 
         return redirect('home')
+    
+
+class ReservationListView(LoginRequiredMixin, ListView):
+    model = Reservation
+    context_object_name = "reservations"
+    template_name = "reservations/list_reservations.html"
+
+    def get_queryset(self):
+        today = timezone.now()
+        queryset = Reservation.objects.all().order_by('start')
+        filter_by = self.request.GET.get('filter')
+        search = self.request.GET.get('q', '')
+
+        if filter_by == 'active':
+            queryset = queryset.filter(start__lte=today, end__gte=today, confirmed_checkout=False)
+        elif filter_by == 'upcoming':
+            queryset = queryset.filter(start__gt=today)
+        elif filter_by == 'longterm':
+            queryset = queryset.filter(is_long_term=True)
+        elif filter_by == 'checkedout':
+            queryset = queryset.filter(confirmed_checkout=True)
+
+        if search:
+            queryset = queryset.filter(
+                Q(name__icontains=search) |
+                Q(site__icontains=search) |
+                Q(phoneNum__icontains=search)
+            )
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search'] = self.request.GET.get('q', '')
+        return context
 
 
 class ReservationDetailView(LoginRequiredMixin, DetailView):
     model = Reservation
     pk_url_kwarg = "id"
     context_object_name = "reservation"
-    template_name = "manager/reservation_detail.html"
+    template_name = "reservations/reservation_detail.html"
 
 
 class DeleteReservationView(LoginRequiredMixin, DeleteView):
     model = Reservation
     pk_url_kwarg = "id"
     success_url = reverse_lazy('home')
-    template_name = "manager/delete_reservation.html"
+    template_name = "reservations/delete_reservation.html"
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -144,7 +103,7 @@ class EditReservationView(LoginRequiredMixin, UpdateView):
     form_class = ReservationForm
     pk_url_kwarg = "id"
     success_url = reverse_lazy('home')
-    template_name = "manager/edit_reservation.html"
+    template_name = "reservations/edit_reservation.html"
 
     def form_valid(self, form):
         site = form.cleaned_data["site"]
@@ -166,6 +125,7 @@ class EditReservationView(LoginRequiredMixin, UpdateView):
 class CreateReservationView(LoginRequiredMixin, CreateView):
     form_class = ReservationForm
     success_url = reverse_lazy("home")
+    template_name = 'reservations/new_reservation.html'
 
     def form_valid(self, form):
         site = form.cleaned_data["site"]
@@ -231,7 +191,7 @@ def getAvailability(request):
         "start": checkin_str,
         "end": checkout_str,
     }
-    return render(request, "manager/available_sites.html", context=context)
+    return render(request, "reservations/available_sites.html", context=context)
 
 
 def handler500(request):

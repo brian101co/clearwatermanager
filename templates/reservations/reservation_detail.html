@@ -59,7 +59,7 @@
 
             <!-- Action Buttons -->
             <div class="d-flex justify-content-between">
-                <a href="{% url 'edit' reservation.id %}" class="btn btn-primary pure-material-button-contained">
+                <a href="{% url 'edit-reservation' reservation.id %}" class="btn btn-primary pure-material-button-contained">
                     ✏️ Edit Reservation
                 </a>
                 <form method="POST" action="{% url 'reservation-checkout' reservation.id %}" style="display: inline;">
