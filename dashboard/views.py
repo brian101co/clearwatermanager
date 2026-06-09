@@ -56,7 +56,8 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
         total_lots = 65
         occupied_lots = Reservation.objects.filter(
             start__date__lte=today_date,
-            end__date__gte=today_date
+            end__date__gte=today_date,
+            confirmed_checkout=False,
         ).values("site", "name", "end")
 
         context["occupancy_rate"] = round((occupied_lots.count() / total_lots) * 100)
