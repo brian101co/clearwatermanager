@@ -100,7 +100,7 @@ class Migration(migrations.Migration):
     atomic = False
 
     dependencies = [
-        ('manager', '0020_reservation_confirmed_checkout'),
+       
     ]
 
     operations = [
