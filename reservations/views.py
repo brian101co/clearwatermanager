@@ -14,11 +14,13 @@ from django.views.generic import (
     ListView
 )
 from .models import Reservation
+from payments.models import Payment
 from metrics.models import Metric
 from sites.models import Site
 from django.contrib import messages
 from datetime import datetime
 from django.utils import timezone
+from decimal import Decimal
 from django.db.models import Q
 from .helpers import ( 
     is_double_booked
@@ -57,7 +59,7 @@ class ReservationListView(LoginRequiredMixin, ListView):
         if filter_by == 'active':
             queryset = queryset.filter(start__lte=today, end__gte=today, confirmed_checkout=False)
         elif filter_by == 'upcoming':
-            queryset = queryset.filter(start__gt=today)
+            queryset = queryset.filter(start__gt=today, confirmed_checkout=False)
         elif filter_by == 'longterm':
             queryset = queryset.filter(is_long_term=True, confirmed_checkout=False)
         elif filter_by == 'checkedout':
@@ -83,6 +85,55 @@ class ReservationDetailView(LoginRequiredMixin, DetailView):
     context_object_name = "reservation"
     template_name = "reservations/reservation_detail.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        today = timezone.now()
+
+        # Duration of stay
+        duration = self.object.end - self.object.start
+        context["duration_of_stay"] = duration.days
+
+        # Days remaining
+        if self.object.end > today:
+            days_remaining = self.object.end - today
+            context["days_remaining"] = days_remaining.days
+        else:
+            context["days_remaining"] = 0
+
+        # Payment status
+        context["payment"] = Payment.objects.filter(
+            customer=self.object
+        ).first()
+
+        # Site Amenities
+        site = Site.objects.filter(identifier=self.object.site).first()
+        context["site"] = site
+
+        # Estimated total
+        if site and site.nightly_rate:
+            monthly = duration.days // 30
+            remaining_after_months = duration.days % 30
+            weekly = remaining_after_months // 7
+            remaining_days = remaining_after_months % 7
+
+            estimated_total = Decimal('0')
+
+            if site.monthly_rate and monthly:
+                estimated_total += site.monthly_rate * monthly
+            if site.weekly_rate and weekly:
+                estimated_total += site.weekly_rate * weekly
+            if remaining_days:
+                estimated_total += site.nightly_rate * remaining_days
+
+            # Fallback if no monthly/weekly rates set
+            if estimated_total == 0:
+                estimated_total = site.nightly_rate * duration.days
+
+            context["estimated_total"] = estimated_total
+            context["estimated_total_with_sales_tax"] = round(estimated_total * Decimal('1.07'), 2)
+
+        return context
+    
 
 class DeleteReservationView(LoginRequiredMixin, DeleteView):
     model = Reservation
