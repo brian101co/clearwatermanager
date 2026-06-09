@@ -270,7 +270,7 @@
             {% endif %}
         </div>
 
-        <div class="col-sm-12 col-lg-8 offset-lg-2 my-3">
+        <div class="col-sm-12 col-lg-4 offset-lg-2 my-3 my-lg-2">
             <h2 class="text-center mb-3">Reservations</h2>
             <div class="table-responsive">
             <table id="tb reservation-table" class="table table-striped display">
@@ -304,7 +304,7 @@
             </div>
         </div>
     
-        <div class="col-sm-12 col-lg-8 offset-lg-2 my-3">
+        <div class="col-sm-12 col-lg-4 my-3 my-lg-2">
             <h2 class="text-center mb-3">Longterm Residents</h2>
             <div class="table-responsive">
             <table id="tb-2" class="table table-striped display">
@@ -336,9 +336,7 @@
     </div>
 </section>
 
-{% include 'partials/_add_reservation_form.html' with reservation_form=reservation_form %}
 {% include "partials/_manage_reservation_modal.html" %}
-{% include "partials/_edit_reservation_modal.html" %}
 {% include "partials/_site_information_modal.html" %}
 {% include "partials/_availability_modal.html" %}
 

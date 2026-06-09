@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from datetime import timedelta
-from manager.models import Reservation
+from reservations.models import Reservation
 from metrics.models import Metric  # update 'manager' to your app name if different
 
 

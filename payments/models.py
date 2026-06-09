@@ -1,5 +1,5 @@
 from django.db import models
-from manager.models import Reservation
+from reservations.models import Reservation
 from django.utils import timezone
 
 class Payment(models.Model):
