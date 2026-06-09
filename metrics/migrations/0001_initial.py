@@ -5,7 +5,7 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('manager', '0017_auto_20260606_2338'),
+      
     ]
     operations = [
         migrations.SeparateDatabaseAndState(
