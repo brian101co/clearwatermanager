@@ -7,14 +7,26 @@
         <div class="col-sm-12 col-lg-8 offset-lg-2">
 
             <!-- Back Button -->
-            <a href="{% url 'home' %}" class="btn pure-material-button-contained bg-secondary mb-4">
-                ← Back to Dashboard
+            <a href="{% url 'list-reservation' %}" class="btn pure-material-button-contained bg-secondary mb-4">
+                ← Back to Reservations
             </a>
 
             <!-- Header -->
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h2 mb-0">{{ reservation.name|title }}</h1>
-                <span class="badge badge-success badge-pill">Site {{ reservation.site }}</span>
+                <div>
+                    <h1 class="h2 mb-0">{{ reservation.name|title }}</h1>
+                    <div class="mt-1">
+                        {% if reservation.is_long_term %}
+                            <span class="badge badge-info mr-1">Long Term</span>
+                        {% endif %}
+                        {% if reservation.confirmed_checkout %}
+                            <span class="badge badge-success mr-1">✓ Checked Out</span>
+                        {% else %}
+                            <span class="badge badge-primary mr-1">Active</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <span class="badge badge-secondary badge-pill">Site {{ reservation.site }}</span>
             </div>
 
             <!-- Details Card -->
@@ -31,7 +43,14 @@
                         <dd class="col-sm-8">{{ reservation.end|date:"l, M d Y" }}</dd>
 
                         <dt class="col-sm-4">Duration</dt>
-                        <dd class="col-sm-8">{{ reservation.start|timesince:reservation.end }}</dd>
+                        <dd class="col-sm-8">{{ duration_of_stay }} night{{ duration_of_stay|pluralize }}</dd>
+
+                        {% if days_remaining > 0 %}
+                        <dt class="col-sm-4">Days Remaining</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge badge-info">{{ days_remaining }} day{{ days_remaining|pluralize }} left</span>
+                        </dd>
+                        {% endif %}
 
                         <dt class="col-sm-4">Phone</dt>
                         <dd class="col-sm-8">
@@ -39,6 +58,28 @@
                                 📞 {{ reservation.phoneNum }}
                             </a>
                         </dd>
+
+                        <!-- Payment Status -->
+                        {% if payment %}
+                        <dt class="col-sm-4">Payment</dt>
+                        <dd class="col-sm-8">
+                            {% if payment.status == 'paid' %}
+                                <span class="badge badge-success p-2">✓ Paid</span>
+                            {% elif payment.status == 'partial' %}
+                                <span class="badge badge-warning p-2">⚡ Partial — ${{ payment.balance_due }} remaining</span>
+                            {% else %}
+                                <span class="badge badge-danger p-2">💰 Unpaid — ${{ payment.amount_due }} due</span>
+                            {% endif %}
+                            <a href="{% url 'payment-detail' payment.id %}" class="small ml-2">View →</a>
+                        </dd>
+                        {% else %}
+                        <dt class="col-sm-4">Payment</dt>
+                        <dd class="col-sm-8">
+                            <span class="text-muted small">No payment recorded</span>
+                            <a href="{% url 'payment-create' %}" class="small ml-2">+ Add →</a>
+                        </dd>
+                        {% endif %}
+
                     </dl>
                 </div>
             </div>
@@ -60,16 +101,20 @@
             <!-- Action Buttons -->
             <div class="d-flex justify-content-between">
                 <a href="{% url 'edit-reservation' reservation.id %}" class="btn btn-primary pure-material-button-contained">
-                    ✏️ Edit Reservation
+                    ✏️ Edit
                 </a>
+                {% if not reservation.confirmed_checkout %}
                 <form method="POST" action="{% url 'reservation-checkout' reservation.id %}" style="display: inline;">
                     {% csrf_token %}
-                    <button type="submit" class="btn bg-success pure-material-button-contained flex-fill flex-md-grow-0">
+                    <button type="submit" class="btn bg-success pure-material-button-contained">
                         ✓ Checkout
                     </button>
                 </form>
+                {% else %}
+                <span class="btn bg-success pure-material-button-contained disabled">✓ Checked Out</span>
+                {% endif %}
                 <a href="{% url 'delete-reservation' reservation.id %}" class="btn pure-material-button-contained bg-danger">
-                    🗑️ Delete Reservation
+                    🗑️ Delete
                 </a>
             </div>
 

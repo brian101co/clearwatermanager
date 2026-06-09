@@ -14,6 +14,7 @@ from django.views.generic import (
     ListView
 )
 from .models import Reservation
+from payments.models import Payment
 from metrics.models import Metric
 from sites.models import Site
 from django.contrib import messages
@@ -57,7 +58,7 @@ class ReservationListView(LoginRequiredMixin, ListView):
         if filter_by == 'active':
             queryset = queryset.filter(start__lte=today, end__gte=today, confirmed_checkout=False)
         elif filter_by == 'upcoming':
-            queryset = queryset.filter(start__gt=today)
+            queryset = queryset.filter(start__gt=today, confirmed_checkout=False)
         elif filter_by == 'longterm':
             queryset = queryset.filter(is_long_term=True, confirmed_checkout=False)
         elif filter_by == 'checkedout':
@@ -83,6 +84,28 @@ class ReservationDetailView(LoginRequiredMixin, DetailView):
     context_object_name = "reservation"
     template_name = "reservations/reservation_detail.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        today = timezone.now()
+
+        # Duration of stay
+        duration = self.object.end - self.object.start
+        context["duration_of_stay"] = duration.days
+
+        # Days remaining
+        if self.object.end > today:
+            days_remaining = self.object.end - today
+            context["days_remaining"] = days_remaining.days
+        else:
+            context["days_remaining"] = 0
+
+        # Payment status
+        context["payment"] = Payment.objects.filter(
+            customer=self.object
+        ).first()
+ 
+        return context
+    
 
 class DeleteReservationView(LoginRequiredMixin, DeleteView):
     model = Reservation
