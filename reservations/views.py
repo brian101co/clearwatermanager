@@ -20,6 +20,7 @@ from sites.models import Site
 from django.contrib import messages
 from datetime import datetime
 from django.utils import timezone
+from decimal import Decimal
 from django.db.models import Q
 from .helpers import ( 
     is_double_booked
@@ -103,7 +104,34 @@ class ReservationDetailView(LoginRequiredMixin, DetailView):
         context["payment"] = Payment.objects.filter(
             customer=self.object
         ).first()
- 
+
+        # Site Amenities
+        site = Site.objects.filter(identifier=self.object.site).first()
+        context["site"] = site
+
+        # Estimated total
+        if site and site.nightly_rate:
+            monthly = duration.days // 30
+            remaining_after_months = duration.days % 30
+            weekly = remaining_after_months // 7
+            remaining_days = remaining_after_months % 7
+
+            estimated_total = Decimal('0')
+
+            if site.monthly_rate and monthly:
+                estimated_total += site.monthly_rate * monthly
+            if site.weekly_rate and weekly:
+                estimated_total += site.weekly_rate * weekly
+            if remaining_days:
+                estimated_total += site.nightly_rate * remaining_days
+
+            # Fallback if no monthly/weekly rates set
+            if estimated_total == 0:
+                estimated_total = site.nightly_rate * duration.days
+
+            context["estimated_total"] = estimated_total
+            context["estimated_total_with_sales_tax"] = round(estimated_total * Decimal('1.07'), 2)
+
         return context
     
 

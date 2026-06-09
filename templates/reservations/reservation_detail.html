@@ -84,6 +84,87 @@
                 </div>
             </div>
 
+            <!-- Site Amenities Card -->
+            {% if site %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">🔌 Site {{ site.identifier }} Amenities</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap">
+                        {% if site.electric_50amp %}
+                            <span class="badge badge-info mr-2 mb-2 p-2">50 AMP</span>
+                        {% elif site.electric_30amp %}
+                            <span class="badge badge-info mr-2 mb-2 p-2">30 AMP</span>
+                        {% endif %}
+                        {% if site.water %}
+                            <span class="badge badge-primary mr-2 mb-2 p-2">💧 Water</span>
+                        {% endif %}
+                        {% if site.sewer %}
+                            <span class="badge badge-dark mr-2 mb-2 p-2">🔧 Sewer</span>
+                        {% endif %}
+                        {% if site.wifi %}
+                            <span class="badge badge-success mr-2 mb-2 p-2">📶 WiFi</span>
+                        {% endif %}
+                        {% if site.max_length_ft %}
+                            <span class="badge badge-light mr-2 mb-2 p-2">📏 {{ site.max_length_ft }}ft max</span>
+                        {% endif %}
+                        {% if site.under_maintenance %}
+                            <span class="badge badge-warning mr-2 mb-2 p-2">⚠ Under Maintenance</span>
+                        {% endif %}
+                    </div>
+                    {% if site.notes %}
+                        <p class="text-muted small mt-2 mb-0">📝 {{ site.notes }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Estimated Cost Card -->
+            {% if estimated_total %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">💰 Estimated Cost</h5>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        {% if site.nightly_rate %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">Nightly Rate</span>
+                            <strong>${{ site.nightly_rate }}/night</strong>
+                        </li>
+                        {% endif %}
+                        {% if site.weekly_rate %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">Weekly Rate</span>
+                            <strong>${{ site.weekly_rate }}/week</strong>
+                        </li>
+                        {% endif %}
+                        {% if site.monthly_rate %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">Monthly Rate</span>
+                            <strong>${{ site.monthly_rate }}/month</strong>
+                        </li>
+                        {% endif %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">Duration</span>
+                            <strong>{{ duration_of_stay }} night{{ duration_of_stay|pluralize }}</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="font-weight-bold">Estimated Total</span>
+                            <strong class="text-success">${{ estimated_total }}</strong>
+                        </li>
+                        {% if estimated_total_with_sales_tax %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">With 7% Sales Tax</span>
+                            <strong class="text-success">${{ estimated_total_with_sales_tax }}</strong>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+
             <!-- Additional Info Card -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header">
