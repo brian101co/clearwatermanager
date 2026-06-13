@@ -143,7 +143,7 @@ class DeleteReservationView(LoginRequiredMixin, DeleteView):
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
-        metric = Metric.objects.get(customer=self.object)
+        created, metric = Metric.objects.get_or_create(customer=self.object)
         metric.canceled = True
         metric.save()
         return super().delete(request, *args, **kwargs)
@@ -163,7 +163,7 @@ class EditReservationView(LoginRequiredMixin, UpdateView):
         all_reservations = Reservation.objects.exclude(pk=self.kwargs["id"]).filter(site=site, confirmed_checkout=False,)
         if not is_double_booked(all_reservations, start.isoformat(), end.isoformat()):
             self.object = form.save()
-            metric = Metric.objects.get(customer=self.object)
+            created, metric = Metric.objects.get_or_create(customer=self.object)
             metric.start = start
             metric.end = end
             metric.site = site
