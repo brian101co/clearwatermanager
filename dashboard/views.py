@@ -10,6 +10,7 @@ from django.views.generic import (
 )
 from reservations.models import Reservation
 from payments.models import Payment
+from sites.models import Site
 from django.db.models import Q
 from datetime import timedelta
 
@@ -20,57 +21,29 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        today = timezone.now()
+        
+        now = timezone.now()
+        today = now.date()
         tomorrow = today + timedelta(days=1)
-        today_date = today.date()
-        tomorrow_date = tomorrow.date()
 
-        # Base queryset
-        reservations = Reservation.objects.filter(
-            confirmed_checkout=False
-        ).order_by('start')
+        reservations = Reservation.objects.active().order_by("start")
+        occupied = Reservation.objects.occupied_on(today)
 
-        context["totalReservations"] = reservations.count()
-        context["checking_out_soon"] = reservations.filter(
-            end__date=tomorrow_date,
-            is_long_term=False
-        )
-        context["checking_in_soon"] = reservations.filter(
-            start__date=tomorrow_date,
-            is_long_term=False
-        )
-        context["expiring_leases"] = reservations.filter(
-            end__date=today_date,
-            is_long_term=True
-        )
-        context["checking_out_today"] = reservations.filter(
-            end__date=today_date,
-            is_long_term=False
-        )
-        context["overdue_checkouts"] = reservations.filter(
-            end__date__lt=today_date,
-            is_long_term=False
-        )
-
-        # Occupancy Rate
-        total_lots = 65
-        occupied_lots = Reservation.objects.filter(
-            start__date__lte=today_date,
-            end__date__gte=today_date,
-            confirmed_checkout=False,
-        ).values("site", "name", "end")
-
-        context["occupancy_rate"] = round((occupied_lots.count() / total_lots) * 100)
-        context["occupied_lots"] = json.dumps(list(occupied_lots), cls=DjangoJSONEncoder)
-        context["unpaid_payments"] = Payment.objects.filter(
-            status__in=['unpaid', 'partial']
-        ).count()
+        context.update({
+            # "total_reservations": reservations.count(),
+            "checking_out_today": reservations.checking_out_on(today),
+            "checking_out_tomorrow": reservations.checking_out_on(tomorrow),
+            "checking_in_tomorrow": reservations.checking_in_on(tomorrow),
+            "expiring_leases": reservations.expiring_leases_on(today),
+            "overdue_checkouts": reservations.overdue(today),
+            "occupancy_rate": round(occupied.count() / Site.objects.count() * 100),
+            "occupied_lots": json.dumps(list(occupied.values("site", "name", "end")), cls=DjangoJSONEncoder),
+            "unpaid_payments": Payment.objects.filter(
+                status__in=["unpaid", "partial"]
+            ).count(),
+        })
 
         return context
-
-    def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        return self.render_to_response(context)
 
 
 class DashboardLoginView(LoginView):

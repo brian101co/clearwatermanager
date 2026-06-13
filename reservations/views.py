@@ -51,19 +51,18 @@ class ReservationListView(LoginRequiredMixin, ListView):
     template_name = "reservations/list_reservations.html"
 
     def get_queryset(self):
-        today = timezone.now()
-        queryset = Reservation.objects.all().order_by('start')
+        queryset = Reservation.objects.active().order_by('start')
         filter_by = self.request.GET.get('filter')
         search = self.request.GET.get('q', '')
 
         if filter_by == 'active':
-            queryset = queryset.filter(start__lte=today, end__gte=today, confirmed_checkout=False)
+            queryset = queryset
         elif filter_by == 'upcoming':
-            queryset = queryset.filter(start__gt=today, confirmed_checkout=False)
+            queryset = queryset.upcoming()
         elif filter_by == 'longterm':
-            queryset = queryset.filter(is_long_term=True, confirmed_checkout=False)
+            queryset = queryset.long_term()
         elif filter_by == 'checkedout':
-            queryset = queryset.filter(confirmed_checkout=True)
+            queryset = Reservation.objects.checked_out()
 
         if search:
             queryset = queryset.filter(
@@ -143,7 +142,7 @@ class DeleteReservationView(LoginRequiredMixin, DeleteView):
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
-        created, metric = Metric.objects.get_or_create(customer=self.object)
+        metric, created = Metric.objects.get_or_create(customer=self.object)
         metric.canceled = True
         metric.save()
         return super().delete(request, *args, **kwargs)
@@ -163,7 +162,7 @@ class EditReservationView(LoginRequiredMixin, UpdateView):
         all_reservations = Reservation.objects.exclude(pk=self.kwargs["id"]).filter(site=site, confirmed_checkout=False,)
         if not is_double_booked(all_reservations, start.isoformat(), end.isoformat()):
             self.object = form.save()
-            created, metric = Metric.objects.get_or_create(customer=self.object)
+            metric, created = Metric.objects.get_or_create(customer=self.object)
             metric.start = start
             metric.end = end
             metric.site = site
