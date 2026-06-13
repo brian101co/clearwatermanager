@@ -156,9 +156,9 @@
             <!-- Checking Out Tomorrow -->
             <div class="notifications-container mt-4">
                 <h2 class="h5 mb-3">Checking Out Tomorrow
-                    <span class="badge badge-warning badge-pill ml-2">{{ checking_out_soon|length }}</span>
+                    <span class="badge badge-warning badge-pill ml-2">{{ checking_out_tomorrow|length }}</span>
                 </h2>
-                {% for guest in checking_out_soon %}
+                {% for guest in checking_out_tomorrow %}
                 <div class="card shadow-sm mb-2" style="border-left: 4px solid #ffc107;">
                     <div class="card-body py-2 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
                         <div>
@@ -195,9 +195,9 @@
         <div class="col-sm-12 col-lg-8 offset-lg-2">
             <!-- Checking In Tomorrow -->
             <h2 class="h5 mb-3 mt-4">Checking In Tomorrow
-                <span class="badge badge-success badge-pill ml-2">{{ checking_in_soon|length }}</span>
+                <span class="badge badge-success badge-pill ml-2">{{ checking_in_tomorrow|length }}</span>
             </h2>
-            {% for guest in checking_in_soon %}
+            {% for guest in checking_in_tomorrow %}
             <div class="card shadow-sm mb-2" style="border-left: 4px solid #28a745;">
                 <div class="card-body py-2 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
                     <div>
