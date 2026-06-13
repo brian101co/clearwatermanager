@@ -1,6 +1,6 @@
 import json
 
-from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 from .models import Site
@@ -74,6 +74,7 @@ class CreateSiteView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
+@login_required
 def get_site_info(request, site):
     if request.method == "POST":
         data = json.load(request)
