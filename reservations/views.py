@@ -50,14 +50,14 @@ class ReservationListView(LoginRequiredMixin, ListView):
         filter_by = self.request.GET.get('filter')
         search = self.request.GET.get('q', '')
 
-        if filter_by == 'active':
-            queryset = queryset
-        elif filter_by == 'upcoming':
+        if filter_by == 'upcoming':
             queryset = queryset.upcoming()
         elif filter_by == 'longterm':
             queryset = queryset.long_term()
         elif filter_by == 'checkedout':
             queryset = Reservation.objects.checked_out()
+        elif filter_by == 'all':
+            queryset = Reservation.objects.all().order_by('start')
 
         if search:
             queryset = queryset.filter(
