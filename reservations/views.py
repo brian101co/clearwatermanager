@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
@@ -190,7 +192,7 @@ def get_availability(request):
 
     context = {
         "reservation_form": ReservationForm(),
-        "sites": site_objects.values_list("identifier", flat=True),
+        "sites": json.dumps(list(site_objects.values_list("identifier", flat=True))),
         "site_objects": site_objects,
         "checkin": checkin,
         "checkout": checkout,
