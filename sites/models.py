@@ -1,4 +1,5 @@
 from django.db import models
+from decimal import Decimal
 
 class SiteQuerySet(models.QuerySet):
     
@@ -10,7 +11,9 @@ class SiteQuerySet(models.QuerySet):
     
     def by_lot_numbers(self, lot_nums):
         return self.filter(identifier__in=lot_nums).order_by("identifier")
-
+    
+    def by_lot(self, lot_num):
+        return self.filter(identifier=lot_num)
 
 
 class Site(models.Model):
@@ -48,3 +51,19 @@ class Site(models.Model):
 
     def __str__(self):
         return self.identifier
+    
+    def calculate_estimated_total(self, duration_days):
+        monthly = duration_days // 30
+        remaining_after_months = duration_days % 30
+        weekly = remaining_after_months // 7
+        remaining_days = remaining_after_months % 7
+
+        total = Decimal('0')
+        if self.monthly_rate and monthly:
+            total += self.monthly_rate * monthly
+        if self.weekly_rate and weekly:
+            total += self.weekly_rate * weekly
+        if remaining_days:
+            total += self.nightly_rate * remaining_days
+
+        return total or self.nightly_rate * duration_days
