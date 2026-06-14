@@ -11,6 +11,9 @@ class ReservationQuerySet(models.QuerySet):
     def long_term(self):
         return self.filter(is_long_term=True)
 
+    def get_by_site(self, site):
+        return self.filter(site=site)
+
     def checking_out_on(self, date):
         return self.short_term().filter(end__date=date)
 

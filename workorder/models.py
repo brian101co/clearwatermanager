@@ -21,6 +21,15 @@ class WorkorderQuerySet(models.QuerySet):
     def overdue(self):
         return self.filter(completed=False, created_at__lt=timezone.now() - timedelta(days=7))
     
+    def completed_orders(self):
+        return self.filter(completed=True)
+    
+    def active(self):
+        return self.filter(completed=False)
+    
+    def get_by_site(self, site):
+        return self.filter(site__identifier=site)
+    
 
 class WorkOrder(models.Model):
     PRIORITIES = (
