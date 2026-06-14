@@ -159,8 +159,9 @@ class EditReservationView(LoginRequiredMixin, UpdateView):
         site = form.cleaned_data["site"]
         start = form.cleaned_data["start"]
         end = form.cleaned_data["end"]
-        all_reservations = Reservation.objects.exclude(pk=self.kwargs["id"]).filter(site=site, confirmed_checkout=False,)
-        if not is_double_booked(all_reservations, start.isoformat(), end.isoformat()):
+        reservations = Reservation.objects.active().get_by_site(site).exclude(pk=self.kwargs["id"])
+
+        if not is_double_booked(reservations, start.isoformat(), end.isoformat()):
             self.object = form.save()
             metric, created = Metric.objects.get_or_create(customer=self.object)
             metric.start = start
@@ -168,6 +169,7 @@ class EditReservationView(LoginRequiredMixin, UpdateView):
             metric.site = site
             metric.save()
             return HttpResponseRedirect(self.get_success_url())
+        
         messages.error(self.request, 'Unavailable. That site is already booked for the selected dates.')
         return redirect('home')
 
@@ -181,13 +183,14 @@ class CreateReservationView(LoginRequiredMixin, CreateView):
         site = form.cleaned_data["site"]
         start = form.cleaned_data["start"]
         end = form.cleaned_data["end"]
-        all_reservations = Reservation.objects.filter(site=site, confirmed_checkout=False,)
-        if not is_double_booked(all_reservations, start.isoformat(), end.isoformat()):
+        reservations = Reservation.objects.active().get_by_site(site)
+
+        if not is_double_booked(reservations, start.isoformat(), end.isoformat()):
             self.object = form.save()
-            metric = Metric(site=site, start=start, end=end, customer=self.object)
-            metric.save()
+            Metric.objects.create(site=site, start=start, end=end, customer=self.object)
             return HttpResponseRedirect(self.get_success_url())
-        messages.error(self.request, 'Unavaliable.')
+        
+        messages.error(self.request, 'Unavailable. That site is already booked for the selected dates.')
         return redirect('home')
     
 

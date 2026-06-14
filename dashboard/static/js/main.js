@@ -70,8 +70,8 @@ window.onload = () => {
                     fetch(url)
                         .then(response => response.json())
                         .then(data => {
-                            const site = data[0].site_info[0];
-                            const total_workorders = data[0].workorders;
+                            const site = data.site_info[0];
+                            const total_workorders = data.workorders;
                             state.infoModalBadgeElem = BadgeManager.createBadge("warning", `${total_workorders} Uncompleted Workorder(s)`);
                             removeLoader(".info-model-body");
                             if (total_workorders > 0) {

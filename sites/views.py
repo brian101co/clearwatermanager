@@ -32,7 +32,7 @@ class SiteDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["workorders"] = self.object.workorders.filter(completed=False)
+        context["workorders"] = self.object.workorders.active()
         return context
 
 
@@ -44,7 +44,7 @@ class DeleteSiteView(LoginRequiredMixin, DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["workorders"] = self.object.workorders.filter(completed=False)
+        context["workorders"] = self.object.workorders.active()
         return context
 
     def delete(self, request, *args, **kwargs):
@@ -81,15 +81,16 @@ def get_site_info(request, site):
         site, created = Site.objects.get_or_create(identifier=site)
         site.info = data["info"]
         site.save()
-        return JsonResponse({"updated": True})
+        return JsonResponse({
+            "site": Site.objects.filter(pk=site.pk).values().first()
+        })
 
     site_info = Site.objects.filter(identifier=site).values()
-    total_workorders = WorkOrder.objects.filter(site__identifier=site, completed=False).count()
+
     if site_info:
-        data_dict = {
+        return JsonResponse({
             "site_info": list(site_info),
-            "workorders": total_workorders
-        }
-        data = json.dumps([data_dict])
-        return HttpResponse(data, content_type="application/json")
+            "workorders": WorkOrder.objects.active().get_by_site(site).count()
+        })
+    
     return HttpResponse(status=404)
