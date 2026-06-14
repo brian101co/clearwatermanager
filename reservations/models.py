@@ -26,6 +26,9 @@ class ReservationQuerySet(models.QuerySet):
     def expiring_leases_on(self, date):
         return self.long_term().filter(end__date=date)
 
+    def overdue_leases_on(self, date):
+        return self.long_term().filter(end__date__lt=date)
+
     def checked_out(self):
         return self.filter(confirmed_checkout=True)
 

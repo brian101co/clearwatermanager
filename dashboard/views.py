@@ -30,11 +30,11 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
         occupied = Reservation.objects.occupied_on(today)
 
         context.update({
-            # "total_reservations": reservations.count(),
             "checking_out_today": reservations.checking_out_on(today),
             "checking_out_tomorrow": reservations.checking_out_on(tomorrow),
             "checking_in_tomorrow": reservations.checking_in_on(tomorrow),
             "expiring_leases": reservations.expiring_leases_on(today),
+            "overdue_leases": reservations.overdue_leases_on(today),
             "overdue_checkouts": reservations.overdue(today),
             "occupancy_rate": round(occupied.count() / Site.objects.count() * 100),
             "occupied_lots": json.dumps(list(occupied.values("site", "name", "end")), cls=DjangoJSONEncoder),
