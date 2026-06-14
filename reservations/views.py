@@ -1,5 +1,3 @@
-import pytz
-
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
@@ -22,9 +20,6 @@ from datetime import datetime
 from django.utils import timezone
 from decimal import Decimal
 from django.db.models import Q
-from .helpers import ( 
-    is_double_booked
-)
 
 
 @login_required
@@ -55,14 +50,14 @@ class ReservationListView(LoginRequiredMixin, ListView):
         filter_by = self.request.GET.get('filter')
         search = self.request.GET.get('q', '')
 
-        if filter_by == 'active':
-            queryset = queryset
-        elif filter_by == 'upcoming':
+        if filter_by == 'upcoming':
             queryset = queryset.upcoming()
         elif filter_by == 'longterm':
             queryset = queryset.long_term()
         elif filter_by == 'checkedout':
             queryset = Reservation.objects.checked_out()
+        elif filter_by == 'all':
+            queryset = Reservation.objects.all().order_by('start')
 
         if search:
             queryset = queryset.filter(
@@ -159,9 +154,8 @@ class EditReservationView(LoginRequiredMixin, UpdateView):
         site = form.cleaned_data["site"]
         start = form.cleaned_data["start"]
         end = form.cleaned_data["end"]
-        reservations = Reservation.objects.active().get_by_site(site).exclude(pk=self.kwargs["id"])
 
-        if not is_double_booked(reservations, start.isoformat(), end.isoformat()):
+        if not Reservation.objects.active().get_by_site(site).exclude(pk=self.kwargs["id"]).overlapping(start, end).exists():
             self.object = form.save()
             metric, created = Metric.objects.get_or_create(customer=self.object)
             metric.start = start
@@ -183,9 +177,8 @@ class CreateReservationView(LoginRequiredMixin, CreateView):
         site = form.cleaned_data["site"]
         start = form.cleaned_data["start"]
         end = form.cleaned_data["end"]
-        reservations = Reservation.objects.active().get_by_site(site)
 
-        if not is_double_booked(reservations, start.isoformat(), end.isoformat()):
+        if not Reservation.objects.active().get_by_site(site).overlapping(start, end).exists():
             self.object = form.save()
             Metric.objects.create(site=site, start=start, end=end, customer=self.object)
             return HttpResponseRedirect(self.get_success_url())
@@ -195,11 +188,9 @@ class CreateReservationView(LoginRequiredMixin, CreateView):
     
 
 @login_required
-def getAvailability(request):    
+def get_availability(request):    
     if request.method != "POST":
         return redirect('home')
-    
-    sites = list(Site.objects.filter(under_maintenance=False).values_list("identifier", flat=True))
 
     checkin_str = request.POST.get('checkin')
     checkout_str = request.POST.get('checkout')
@@ -209,8 +200,8 @@ def getAvailability(request):
         return redirect('home')
 
     try:
-        checkin = datetime.fromisoformat(checkin_str).replace(tzinfo=pytz.UTC)
-        checkout = datetime.fromisoformat(checkout_str).replace(tzinfo=pytz.UTC)
+        checkin = datetime.fromisoformat(checkin_str).replace(tzinfo=timezone.utc)
+        checkout = datetime.fromisoformat(checkout_str).replace(tzinfo=timezone.utc)
     except ValueError:
         messages.error(request, 'Invalid date format.')
         return redirect('home')
@@ -218,23 +209,13 @@ def getAvailability(request):
     if checkout <= checkin:
         messages.error(request, 'Checkout must be after checkin.')
         return redirect('home')
-
-    for reservation in Reservation.objects.filter(confirmed_checkout=False).all():
-        start = reservation.start.replace(tzinfo=pytz.UTC)
-        end = reservation.end.replace(tzinfo=pytz.UTC)
-        if checkin < end and checkout > start:  
-            try:
-                sites.remove(reservation.site.strip())
-            except ValueError:
-                pass  # site already removed or not in list
     
-    site_objects = Site.objects.filter(
-        identifier__in=sites
-    ).order_by("identifier")
+    booked_sites = Reservation.objects.active().overlapping(checkin, checkout).values_list("site", flat=True)
+    site_objects = Site.objects.operational().exclude(identifier__in=booked_sites).order_by("identifier")
 
     context = {
         "reservation_form": ReservationForm(),
-        "sites": sites,
+        "sites": site_objects.values_list("identifier", flat=True),
         "site_objects": site_objects,
         "checkin": checkin,
         "checkout": checkout,

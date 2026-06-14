@@ -1,5 +1,18 @@
 from django.db import models
 
+class SiteQuerySet(models.QuerySet):
+    
+    def under_maintenance(self):
+        return self.filter(under_maintenance=True)
+    
+    def operational(self):
+        return self.filter(under_maintenance=False)
+    
+    def by_lot_numbers(self, lot_nums):
+        return self.filter(identifier__in=lot_nums).order_by("identifier")
+
+
+
 class Site(models.Model):
     LOT_TYPES = (
         ('rv', 'RV'),
@@ -30,6 +43,8 @@ class Site(models.Model):
     
     # Notes
     notes = models.TextField(blank=True)
+
+    objects = SiteQuerySet.as_manager()
 
     def __str__(self):
         return self.identifier

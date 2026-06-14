@@ -17,11 +17,7 @@
     <ul class="nav nav-tabs mb-3">
         <li class="nav-item">
             <a class="nav-link {% if not request.GET.filter %}active{% endif %}"
-               href="{% url 'list-reservation' %}">All</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {% if request.GET.filter == 'active' %}active{% endif %}"
-               href="?filter=active">Active</a>
+               href="{% url 'list-reservation' %}">Active</a>
         </li>
         <li class="nav-item">
             <a class="nav-link {% if request.GET.filter == 'upcoming' %}active{% endif %}"
@@ -30,6 +26,10 @@
         <li class="nav-item">
             <a class="nav-link {% if request.GET.filter == 'longterm' %}active{% endif %}"
                href="?filter=longterm">Long Term</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.GET.filter == 'active' %}active{% endif %}"
+               href="?filter=all">All</a>
         </li>
         <li class="nav-item">
             <a class="nav-link {% if request.GET.filter == 'checkedout' %}active{% endif %}"

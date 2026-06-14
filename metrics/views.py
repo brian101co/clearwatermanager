@@ -1,15 +1,9 @@
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import (
-    DetailView, 
-    DeleteView, 
     TemplateView, 
-    CreateView,
-    UpdateView
 )
-from django.contrib import messages
 from .models import Metric
 from workorder.models import WorkOrder
 from datetime import datetime
