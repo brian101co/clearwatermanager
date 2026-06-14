@@ -26,7 +26,6 @@
                     <small class="text-muted">Occupied</small>
                 </div>
             </div>
-
         </div>
 
 
@@ -49,7 +48,6 @@
                     {% endfor %}
                 {% endif %}
             </div>
-
             
             <!-- Occupancy Bar -->
             <div class="mb-3">
@@ -98,30 +96,9 @@
                 <span class="badge badge-danger badge-pill ml-2">{{ overdue_checkouts|length }}</span>
             </h2>
             {% for guest in overdue_checkouts %}
-            <div class="card shadow-sm mb-2" style="border-left: 4px solid #dc3545;">
-                <div class="card-body py-2 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
-                    <div>
-                        <strong>{{ guest.name|title }}</strong>
-                        <span class="badge badge-secondary ml-2">Site {{ guest.site }}</span>
-                        <span class="badge badge-danger ml-1">⚠ Overdue</span>
-                        <div class="text-muted small mt-1">
-                            Was due: {{ guest.end|date:"D, M d Y" }} at {{ guest.end|time:"g:i A" }}
-                        </div>
-                    </div>
-                    <div class="d-flex mt-2 mt-md-0">
-                        <a href="tel:{{ guest.phoneNum }}" class="btn btn-sm btn-outline-secondary mr-2 flex-fill flex-md-grow-0">📞 Call</a>
-                        <a href="{% url 'reservation-detail' guest.id %}" class="btn btn-sm btn-outline-primary mr-2 flex-fill flex-md-grow-0">View</a>
-                        <form method="POST" action="{% url 'reservation-checkout' guest.id %}" style="display: inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-success flex-fill flex-md-grow-0">
-                                ✓ Checkout
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+                {% include "dashboard/partials/notification_card.html" with reservation=guest border_color="#dc3545" date_label="Was due" date_value=guest.end show_checkout=True %}           
             {% empty %}
-            <p class="text-muted small">No overdue checkouts. 🎉</p>
+                <p class="text-muted small">No overdue checkouts. 🎉</p>
             {% endfor %}
         </div>
 
@@ -131,29 +108,9 @@
                 <span class="badge badge-warning badge-pill ml-2">{{ checking_out_today|length }}</span>
             </h2>
             {% for guest in checking_out_today %}
-            <div class="card shadow-sm mb-2" style="border-left: 4px solid #fd7e14;">
-                <div class="card-body py-2 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
-                    <div>
-                        <strong>{{ guest.name|title }}</strong>
-                        <span class="badge badge-secondary ml-2">Site {{ guest.site }}</span>
-                        <div class="text-muted small mt-1">
-                            Checkout: {{ guest.end|date:"D, M d Y" }} at {{ guest.end|time:"g:i A" }}
-                        </div>
-                    </div>
-                    <div class="d-flex mt-2 mt-md-0">
-                        <a href="tel:{{ guest.phoneNum }}" class="btn btn-sm btn-outline-secondary mr-2 flex-fill flex-md-grow-0">📞 Call</a>
-                        <a href="{% url 'reservation-detail' guest.id %}" class="btn btn-sm btn-outline-primary mr-2 flex-fill flex-md-grow-0">View</a>
-                        <form method="POST" action="{% url 'reservation-checkout' guest.id %}" style="display: inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-success flex-fill flex-md-grow-0">
-                                ✓ Checkout
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+                {% include "dashboard/partials/notification_card.html" with reservation=guest border_color="#fd7e14" date_label="Checkout" date_value=guest.end show_checkout=True %}           
             {% empty %}
-            <p class="text-muted small">No checkouts today.</p>
+                <p class="text-muted small">No checkouts today.</p>
             {% endfor %}
         </div>
 
@@ -164,35 +121,9 @@
                     <span class="badge badge-warning badge-pill ml-2">{{ checking_out_tomorrow|length }}</span>
                 </h2>
                 {% for guest in checking_out_tomorrow %}
-                <div class="card shadow-sm mb-2" style="border-left: 4px solid #ffc107;">
-                    <div class="card-body py-2 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
-                        <div>
-                            <strong>{{ guest.name|title }}</strong>
-                            <span class="ml-2">
-                                <span class="badge badge-secondary">Site {{ guest.site }}</span>
-                            </span>
-                            <div class="text-muted small mt-1">
-                                Checkout: {{ guest.end|date:"D, M d Y" }} at {{ guest.end|time:"g:i A" }}
-                            </div>
-                        </div>
-                        <div class="d-flex mt-2 mt-md-0">
-                            <a href="tel:{{ guest.phoneNum }}" class="btn btn-sm btn-outline-secondary mr-2 flex-fill flex-md-grow-0">
-                                📞 Call
-                            </a>
-                            <a href="{% url 'reservation-detail' guest.id %}" class="btn btn-sm btn-outline-primary flex-fill flex-md-grow-0 mr-2">
-                                View
-                            </a>
-                            <form method="POST" action="{% url 'reservation-checkout' guest.id %}" style="display: inline;">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-sm btn-success flex-fill flex-md-grow-0">
-                                    ✓ Checkout
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+                    {% include "dashboard/partials/notification_card.html" with reservation=guest border_color="#ffc107" date_label="Checkout" date_value=guest.end show_checkout=True %}           
                 {% empty %}
-                <p class="text-muted small">No checkouts tomorrow.</p>
+                    <p class="text-muted small">No checkouts tomorrow.</p>
                 {% endfor %}
             </div>
         </div>
@@ -203,25 +134,9 @@
                 <span class="badge badge-success badge-pill ml-2">{{ checking_in_tomorrow|length }}</span>
             </h2>
             {% for guest in checking_in_tomorrow %}
-            <div class="card shadow-sm mb-2" style="border-left: 4px solid #28a745;">
-                <div class="card-body py-2 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
-                    <div>
-                        <strong>{{ guest.name|title }}</strong>
-                        <span class="ml-2">
-                            <span class="badge badge-secondary">Site {{ guest.site }}</span>
-                        </span>
-                        <div class="text-muted small mt-1">
-                            Checkin: {{ guest.start|date:"D, M d Y" }} at {{ guest.start|time:"g:i A" }}
-                        </div>
-                    </div>
-                    <div class="d-flex mt-2 mt-md-0">
-                        <a href="tel:{{ guest.phoneNum }}" class="btn btn-sm btn-outline-secondary mr-2 flex-fill flex-md-grow-0">📞 Call</a>
-                        <a href="{% url 'reservation-detail' guest.id %}" class="btn btn-sm btn-outline-primary flex-fill flex-md-grow-0">View</a>
-                    </div>
-                </div>
-            </div>
+                {% include "dashboard/partials/notification_card.html" with reservation=guest border_color="#28a745" date_label="Checkin" date_value=guest.end show_checkout=False %}           
             {% empty %}
-            <p class="text-muted small">No checkins tomorrow.</p>
+                <p class="text-muted small">No checkins tomorrow.</p>
             {% endfor %}
         </div>
 
@@ -233,31 +148,9 @@
                 <span class="badge badge-danger badge-pill ml-2">{{ overdue_leases|length }}</span>
             </h2>
             {% for resident in overdue_leases %}
-            <div class="card shadow-sm mb-2" style="border-left: 4px solid #dc3545;">
-                <div class="card-body py-2 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
-                    <div>
-                        <strong>{{ resident.name|title }}</strong>
-                        <span class="ml-2">
-                            <span class="badge badge-secondary">Site {{ resident.site }}</span>
-                        </span>
-                        <div class="text-muted small mt-1">
-                            Lease ends: {{ resident.end|date:"D, M d Y" }}
-                        </div>
-                    </div>
-                    <div class="d-flex mt-2 mt-md-0">
-                        <a href="tel:{{ resident.phoneNum }}" class="btn btn-sm btn-outline-secondary mr-2 flex-fill flex-md-grow-0">📞 Call</a>
-                        <a href="{% url 'reservation-detail' resident.id %}" class="btn btn-sm btn-outline-primary flex-fill flex-md-grow-0 mr-2" >View</a>
-                        <form method="POST" action="{% url 'reservation-checkout' resident.id %}" style="display: inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-success flex-fill flex-md-grow-0">
-                                ✓ Checkout
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+                {% include "dashboard/partials/notification_card.html" with reservation=resident border_color="#dc3545" date_label="Lease ends" date_value=resident.end show_checkout=True %}           
             {% empty %}
-            <p class="text-muted small">No leases overdue today.</p>
+                <p class="text-muted small">No leases overdue today.</p>
             {% endfor %}
 
             <!-- Expiring Leases -->
@@ -265,31 +158,9 @@
                 <span class="badge badge-warning badge-pill ml-2">{{ expiring_leases|length }}</span>
             </h2>
             {% for resident in expiring_leases %}
-            <div class="card shadow-sm mb-2" style="border-left: 4px solid #fd7e14;">
-                <div class="card-body py-2 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
-                    <div>
-                        <strong>{{ resident.name|title }}</strong>
-                        <span class="ml-2">
-                            <span class="badge badge-secondary">Site {{ resident.site }}</span>
-                        </span>
-                        <div class="text-muted small mt-1">
-                            Lease ends: {{ resident.end|date:"D, M d Y" }}
-                        </div>
-                    </div>
-                    <div class="d-flex mt-2 mt-md-0">
-                        <a href="tel:{{ resident.phoneNum }}" class="btn btn-sm btn-outline-secondary mr-2 flex-fill flex-md-grow-0">📞 Call</a>
-                        <a href="{% url 'reservation-detail' resident.id %}" class="btn btn-sm btn-outline-primary flex-fill flex-md-grow-0 mr-2" >View</a>
-                        <form method="POST" action="{% url 'reservation-checkout' resident.id %}" style="display: inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-success flex-fill flex-md-grow-0">
-                                ✓ Checkout
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+                {% include "dashboard/partials/notification_card.html" with reservation=resident border_color="#fd7e14" date_label="Lease ends" date_value=resident.end show_checkout=True %}           
             {% empty %}
-            <p class="text-muted small">No leases expiring today.</p>
+                <p class="text-muted small">No leases expiring today.</p>
             {% endfor %}
 
         </div>
