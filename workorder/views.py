@@ -1,4 +1,5 @@
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from .models import WorkOrder
 from .forms import WorkorderForm
@@ -14,8 +15,9 @@ from django.views.generic import (
     ListView
 )
 
+@login_required
 def workorder_completed_view(request, id):
-    workorder = WorkOrder.objects.get(pk=id)
+    workorder = get_object_or_404(WorkOrder, pk=id)
     workorder.completed = True
     workorder.completed_at = timezone.now()
     workorder.save()
@@ -45,8 +47,8 @@ class WorkorderListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         site = self.request.GET.get("site", None)
         if site:
-            return WorkOrder.objects.all().filter(site__identifier=site, completed=False)
-        return WorkOrder.objects.all().filter(completed=False).order_by("-priority")
+            return WorkOrder.objects.active().get_by_site(site).order_by("-priority")
+        return WorkOrder.objects.active().order_by("-priority")
 
 class CompletedWorkorderListView(LoginRequiredMixin, ListView):
     context_object_name = "workorders"
