@@ -42,7 +42,7 @@
             <div class="mt-3">
                 {% if sites %}
                     <span class="badge badge-success badge-pill p-2">
-                        {{ sites|length }} site{{ sites|length|pluralize }} available
+                        {{ site_objects|length }} site{{ site_objects|length|pluralize }} available
                     </span>
                 {% else %}
                     <span class="badge badge-danger badge-pill p-2">
@@ -58,7 +58,7 @@
 <section class="container">
     <div class="row">
         <div class="col col-lg-8 offset-lg-2 py-3 px-sm-0 px-md-5">
-            {% include "partials/_map.html" %}
+            {% include "components/map.html" %}
         </div>
     </div>
 </section>
@@ -131,13 +131,13 @@
     </div>
 </section>
 
-{% include "partials/_add_reservation_form.html" %}
+{% include "reservations/partials/add_reservation_form.html" %}
 {% endblock %}
 
 {% block extraJS %} 
-<script data-sites="{{ sites }}"></script>
+<script type="application/json" id="sites-data">{{ sites | safe }}</script>
 <script>
-    const openSites = eval(document.querySelector("[data-sites]").dataset.sites);
+    const openSites = JSON.parse(document.getElementById("sites-data").textContent);
     const mapSites = document.querySelectorAll("[data-site]");
 
     function handleForm(ev) {

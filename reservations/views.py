@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
@@ -29,16 +31,10 @@ def checkout_reservation(request, id):
     
     reservation = get_object_or_404(Reservation, id=id)
     reservation.confirmed_checkout = True
-    
-    try:
-        reservation.save()
-        messages.success(request, f'{reservation.name} checked out.')
-        return redirect('home')
-    except Exception as e:
-        messages.error(request, f'An error has occurred. Please try again.')
-        print(e) 
-        return redirect('home')
-    
+    reservation.save()
+    messages.success(request, f'{reservation.name} checked out.')
+    return redirect('home')
+
 
 class ReservationListView(LoginRequiredMixin, ListView):
     model = Reservation
@@ -95,34 +91,15 @@ class ReservationDetailView(LoginRequiredMixin, DetailView):
             context["days_remaining"] = 0
 
         # Payment status
-        context["payment"] = Payment.objects.filter(
-            customer=self.object
-        ).first()
+        context["payment"] = Payment.objects.by_customer(self.object).first()
 
         # Site Amenities
-        site = Site.objects.filter(identifier=self.object.site).first()
+        site = Site.objects.by_lot(self.object.site).first()
         context["site"] = site
 
         # Estimated total
         if site and site.nightly_rate:
-            monthly = duration.days // 30
-            remaining_after_months = duration.days % 30
-            weekly = remaining_after_months // 7
-            remaining_days = remaining_after_months % 7
-
-            estimated_total = Decimal('0')
-
-            if site.monthly_rate and monthly:
-                estimated_total += site.monthly_rate * monthly
-            if site.weekly_rate and weekly:
-                estimated_total += site.weekly_rate * weekly
-            if remaining_days:
-                estimated_total += site.nightly_rate * remaining_days
-
-            # Fallback if no monthly/weekly rates set
-            if estimated_total == 0:
-                estimated_total = site.nightly_rate * duration.days
-
+            estimated_total = site.calculate_estimated_total(duration.days)
             context["estimated_total"] = estimated_total
             context["estimated_total_with_sales_tax"] = round(estimated_total * Decimal('1.07'), 2)
 
@@ -215,7 +192,7 @@ def get_availability(request):
 
     context = {
         "reservation_form": ReservationForm(),
-        "sites": site_objects.values_list("identifier", flat=True),
+        "sites": json.dumps(list(site_objects.values_list("identifier", flat=True))),
         "site_objects": site_objects,
         "checkin": checkin,
         "checkout": checkout,

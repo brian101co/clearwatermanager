@@ -8,19 +8,18 @@ class PaymentListView(LoginRequiredMixin, ListView):
     model = Payment
     context_object_name = 'payments'
     template_name = 'payments/list_payments.html'
-    ordering = ['-created_at']
 
     def get_queryset(self):
         status = self.request.GET.get('status')
         if status:
-            return Payment.objects.filter(status=status).order_by('-created_at')
-        return Payment.objects.all().order_by('-created_at')
+            return Payment.objects.by_status(status).order_by('-created_at')
+        return Payment.objects.order_by('-created_at')
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["unpaid_count"] = Payment.objects.filter(status='unpaid').count()
-        context["partial_count"] = Payment.objects.filter(status='partial').count()
-        context["paid_count"] = Payment.objects.filter(status='paid').count()
+        context["unpaid_count"] = Payment.objects.unpaid().count()
+        context["partial_count"] = Payment.objects.partial().count()
+        context["paid_count"] = Payment.objects.paid().count()
         return context
 
 
