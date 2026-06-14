@@ -52,7 +52,7 @@ class WorkorderListView(LoginRequiredMixin, ListView):
 
 class CompletedWorkorderListView(LoginRequiredMixin, ListView):
     context_object_name = "workorders"
-    queryset = WorkOrder.objects.filter(completed=True)
+    queryset = WorkOrder.objects.completed_orders()
     ordering = "created_at"
     template_name = "workorders/completed_workorders.html"
 
