@@ -43,32 +43,16 @@
     <!-- Summary Stats -->
     <div class="row px-2 mb-4">
         <div class="col-6 col-md-3 mb-2">
-            <div class="card shadow-sm text-center py-3 h-100">
-                <div class="text-muted small mb-1">Total Reservations</div>
-                <h3 class="mb-0 font-weight-bold" id="stat-reservations">—</h3>
-                <small class="text-muted" id="trend-reservations">—</small>
-            </div>
+            {% include "metrics/partials/summary_stat_card.html" with stat_name="Total Reservations" stat_id_ending="reservations" cls="" %}
         </div>
         <div class="col-6 col-md-3 mb-2">
-            <div class="card shadow-sm text-center py-3 h-100">
-                <div class="text-muted small mb-1">Cancellations</div>
-                <h3 class="mb-0 font-weight-bold text-danger" id="stat-cancellations">—</h3>
-                <small class="text-muted" id="trend-cancellations">—</small>
-            </div>
+            {% include "metrics/partials/summary_stat_card.html" with stat_name="Cancellations" stat_id_ending="cancellations" cls="text-danger" %}
         </div>
         <div class="col-6 col-md-3 mb-2">
-            <div class="card shadow-sm text-center py-3 h-100">
-                <div class="text-muted small mb-1">Cancellation Rate</div>
-                <h3 class="mb-0 font-weight-bold text-warning" id="stat-cancellation-rate">—</h3>
-                <small class="text-muted" id="trend-cancellation-rate">—</small>
-            </div>
+            {% include "metrics/partials/summary_stat_card.html" with stat_name="Cancellation Rate" stat_id_ending="cancellation-rate" cls="text-warning" %}
         </div>
         <div class="col-6 col-md-3 mb-2">
-            <div class="card shadow-sm text-center py-3 h-100">
-                <div class="text-muted small mb-1">Maintenance Costs</div>
-                <h3 class="mb-0 font-weight-bold text-danger" id="stat-maintenance">—</h3>
-                <small class="text-muted" id="trend-maintenance">—</small>
-            </div>
+            {% include "metrics/partials/summary_stat_card.html" with stat_name="Maintenance Costs" stat_id_ending="maintenance" cls="text-danger" %}
         </div>
     </div>
 
