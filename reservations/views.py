@@ -1,5 +1,3 @@
-import pytz
-
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
@@ -22,9 +20,6 @@ from datetime import datetime
 from django.utils import timezone
 from decimal import Decimal
 from django.db.models import Q
-from .helpers import ( 
-    is_double_booked
-)
 
 
 @login_required
@@ -159,9 +154,8 @@ class EditReservationView(LoginRequiredMixin, UpdateView):
         site = form.cleaned_data["site"]
         start = form.cleaned_data["start"]
         end = form.cleaned_data["end"]
-        reservations = Reservation.objects.active().get_by_site(site).exclude(pk=self.kwargs["id"])
 
-        if not is_double_booked(reservations, start.isoformat(), end.isoformat()):
+        if not Reservation.objects.active().get_by_site(site).exclude(pk=self.kwargs["id"]).overlapping(start, end).exists():
             self.object = form.save()
             metric, created = Metric.objects.get_or_create(customer=self.object)
             metric.start = start
@@ -183,9 +177,8 @@ class CreateReservationView(LoginRequiredMixin, CreateView):
         site = form.cleaned_data["site"]
         start = form.cleaned_data["start"]
         end = form.cleaned_data["end"]
-        reservations = Reservation.objects.active().get_by_site(site)
 
-        if not is_double_booked(reservations, start.isoformat(), end.isoformat()):
+        if not Reservation.objects.active().get_by_site(site).overlapping(start, end).exists():
             self.object = form.save()
             Metric.objects.create(site=site, start=start, end=end, customer=self.object)
             return HttpResponseRedirect(self.get_success_url())
