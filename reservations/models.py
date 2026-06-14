@@ -32,6 +32,9 @@ class ReservationQuerySet(models.QuerySet):
     def upcoming(self):
         today = timezone.now().date()
         return self.filter(start__date__gt=today)
+    
+    def overlapping(self, checkin, checkout):
+        return self.filter(start__lt=checkout, end__gt=checkin)
 
     def occupied_on(self, date):
         return self.filter(

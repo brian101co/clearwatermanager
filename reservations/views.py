@@ -195,11 +195,9 @@ class CreateReservationView(LoginRequiredMixin, CreateView):
     
 
 @login_required
-def getAvailability(request):    
+def get_availability(request):    
     if request.method != "POST":
         return redirect('home')
-    
-    sites = list(Site.objects.filter(under_maintenance=False).values_list("identifier", flat=True))
 
     checkin_str = request.POST.get('checkin')
     checkout_str = request.POST.get('checkout')
@@ -209,8 +207,8 @@ def getAvailability(request):
         return redirect('home')
 
     try:
-        checkin = datetime.fromisoformat(checkin_str).replace(tzinfo=pytz.UTC)
-        checkout = datetime.fromisoformat(checkout_str).replace(tzinfo=pytz.UTC)
+        checkin = datetime.fromisoformat(checkin_str).replace(tzinfo=timezone.utc)
+        checkout = datetime.fromisoformat(checkout_str).replace(tzinfo=timezone.utc)
     except ValueError:
         messages.error(request, 'Invalid date format.')
         return redirect('home')
@@ -218,23 +216,13 @@ def getAvailability(request):
     if checkout <= checkin:
         messages.error(request, 'Checkout must be after checkin.')
         return redirect('home')
-
-    for reservation in Reservation.objects.filter(confirmed_checkout=False).all():
-        start = reservation.start.replace(tzinfo=pytz.UTC)
-        end = reservation.end.replace(tzinfo=pytz.UTC)
-        if checkin < end and checkout > start:  
-            try:
-                sites.remove(reservation.site.strip())
-            except ValueError:
-                pass  # site already removed or not in list
     
-    site_objects = Site.objects.filter(
-        identifier__in=sites
-    ).order_by("identifier")
+    booked_sites = Reservation.objects.active().overlapping(checkin, checkout).values_list("site", flat=True)
+    site_objects = Site.objects.operational().exclude(identifier__in=booked_sites).order_by("identifier")
 
     context = {
         "reservation_form": ReservationForm(),
-        "sites": sites,
+        "sites": site_objects.values_list("identifier", flat=True),
         "site_objects": site_objects,
         "checkin": checkin,
         "checkout": checkout,
