@@ -61,52 +61,27 @@
 
         <!-- Chart 1 — Reservations per Month -->
         <div class="col-sm-12 col-md-6 mb-4">
-            <div class="card shadow-sm">
-                <div class="card-header">
-                    <h5 class="mb-0">📅 Reservations per Month</h5>
-                </div>
-                <div id="chart-1" class="p-2 chart-container"></div>
-            </div>
+            {% include "metrics/partials/chart.html" with title="📅 Reservations per Month" id="chart-1" %}
         </div>
 
         <!-- Chart 2 — Cancellations per Month -->
         <div class="col-sm-12 col-md-6 mb-4">
-            <div class="card shadow-sm">
-                <div class="card-header">
-                    <h5 class="mb-0">❌ Cancellations per Month</h5>
-                </div>
-                <div id="chart-2" class="p-2 chart-container"></div>
-            </div>
+            {% include "metrics/partials/chart.html" with title="❌ Cancellations per Month" id="chart-2" %}
         </div>
 
         <!-- Chart 3 — Maintenance Costs -->
         <div class="col-sm-12 col-md-6 mb-4">
-            <div class="card shadow-sm">
-                <div class="card-header">
-                    <h5 class="mb-0">🔧 Maintenance Costs</h5>
-                </div>
-                <div id="chart-3" class="p-2 chart-container"></div>
-            </div>
+            {% include "metrics/partials/chart.html" with title="🔧 Maintenance Costs" id="chart-3" %}
         </div>
 
         <!-- Chart 4 — Most Popular Sites -->
         <div class="col-sm-12 col-md-6 mb-4">
-            <div class="card shadow-sm">
-                <div class="card-header">
-                    <h5 class="mb-0">🏕️ Most Popular Sites</h5>
-                </div>
-                <div id="chart-4" class="p-2 chart-container"></div>
-            </div>
+            {% include "metrics/partials/chart.html" with title="🏕️ Most Popular Sites" id="chart-4" %}
         </div>
 
         <!-- Chart 5 — Long Term vs Short Term -->
         <div class="col-sm-12 col-md-6 mb-4">
-            <div class="card shadow-sm">
-                <div class="card-header">
-                    <h5 class="mb-0">🏡 Long Term vs Short Term</h5>
-                </div>
-                <div id="chart-5" class="p-2 chart-container"></div>
-            </div>
+            {% include "metrics/partials/chart.html" with title="🏡 Long Term vs Short Term" id="chart-5" %}
         </div>
 
     </div>
