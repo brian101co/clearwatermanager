@@ -2,6 +2,18 @@
 
 {% load static %}
 
+{% block extraCSS %}
+<style>
+.notification-banner {
+    background-color: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    color: #856404;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <section class="container-fluid">
     <div class="row">
@@ -63,7 +75,7 @@
 
             <!-- Payments Badge -->
             {% if unpaid_payments %}
-            <div class="alert alert-warning py-2 mt-3">
+            <div class="notification-banner py-2 mt-3">
                 💰 <strong>{{ unpaid_payments }}</strong> unpaid or partial payment{{ unpaid_payments|pluralize }}
                 <a href="{% url 'payment-list' %}" class="ml-2">View →</a>
             </div>
