@@ -29,12 +29,6 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
         reservations = Reservation.objects.active().order_by("start")
         occupied = Reservation.objects.occupied_on(today)
 
-        # Temporary test messages — remove after previewing
-        messages.success(self.request, 'This is a success message')
-        messages.error(self.request, 'This is an error message')
-        messages.warning(self.request, 'This is a warning message')
-        messages.info(self.request, 'This is an info message')
-
         context.update({
             "checking_out_today": reservations.checking_out_on(today),
             "checking_out_tomorrow": reservations.checking_out_on(tomorrow),
