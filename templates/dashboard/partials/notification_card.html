@@ -12,7 +12,7 @@
             <a href="tel:{{ reservation.phoneNum }}" class="btn btn-sm btn-outline-secondary mr-2 flex-fill flex-md-grow-0">📞 Call</a>
             <a href="{% url 'reservation-detail' reservation.id %}" class="btn btn-sm btn-outline-primary mr-2 flex-fill flex-md-grow-0">View</a>
             {% if show_checkout %}
-            <form method="POST" action="{% url 'reservation-checkout' reservation.id %}" style="display: inline;">
+            <form method="POST" action="{% url 'reservation-checkout' reservation.id %}" style="display: inline;" class="checkout-form">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-sm btn-success flex-fill flex-md-grow-0">✓ Checkout</button>
             </form>

@@ -38,7 +38,7 @@
     </ul>
 
     <!-- Search Bar -->
-    <form method="GET" class="form-inline mb-3">
+    <form method="GET" class="form-inline mb-3 search-form">
         {% if request.GET.filter %}
             <input type="hidden" name="filter" value="{{ request.GET.filter }}">
         {% endif %}

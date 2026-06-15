@@ -11,11 +11,31 @@
 </head>
 <body>
     <div class="container-fluid p-0">
-        {% include "components/_main_navbar.html" %}
+        {% include "components/main_navbar.html" %}
+    </div>
+    
+    <!-- Messages -->
+    <div>
+        {% include "components/messages.html" %}
     </div>
     {% block content %} {% endblock %}
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script>
+        // Auto remove alerts
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(alert => {
+                $(alert).alert('close');
+            });
+        }, 3000);
+
+        // Disable all form submit buttons on submission
+        $('form:not(.search-form)').on('submit', function() {
+            $(this).find('button[type="submit"]')
+                .prop('disabled', true)
+                .text('Processing...');
+        });
+    </script>
     {% block extraJS %} {% endblock %}
 </body>
 </html>

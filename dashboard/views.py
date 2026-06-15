@@ -11,9 +11,7 @@ from django.views.generic import (
 from reservations.models import Reservation
 from payments.models import Payment
 from sites.models import Site
-from django.db.models import Q
 from datetime import timedelta
-
 
 
 class DashboardHomeView(LoginRequiredMixin, TemplateView):
