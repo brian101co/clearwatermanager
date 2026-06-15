@@ -117,6 +117,7 @@ class DeleteReservationView(LoginRequiredMixin, DeleteView):
         metric, created = Metric.objects.get_or_create(customer=self.object)
         metric.canceled = True
         metric.save()
+        messages.success(request, f"Reservation for {self.object.name} has been canceled.")
         return super().delete(request, *args, **kwargs)
 
 
@@ -139,10 +140,11 @@ class EditReservationView(LoginRequiredMixin, UpdateView):
             metric.end = end
             metric.site = site
             metric.save()
-            return HttpResponseRedirect(self.get_success_url())
+            messages.success(self.request, f"Reservation for {self.object.name} has been updated.")
+            return redirect('reservation-detail', id=self.kwargs["id"])
         
         messages.error(self.request, 'Unavailable. That site is already booked for the selected dates.')
-        return redirect('home')
+        return redirect('reservation-detail', id=self.kwargs["id"])
 
 
 class CreateReservationView(LoginRequiredMixin, CreateView):
@@ -158,10 +160,11 @@ class CreateReservationView(LoginRequiredMixin, CreateView):
         if not Reservation.objects.active().get_by_site(site).overlapping(start, end).exists():
             self.object = form.save()
             Metric.objects.create(site=site, start=start, end=end, customer=self.object)
-            return HttpResponseRedirect(self.get_success_url())
+            messages.success(self.request, f'Reservation for {self.object.name} has been successfully created.')
+            return redirect('reservation-detail', id=self.object.id)
         
         messages.error(self.request, 'Unavailable. That site is already booked for the selected dates.')
-        return redirect('home')
+        return redirect('list-reservation')
     
 
 @login_required

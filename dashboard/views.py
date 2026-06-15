@@ -12,8 +12,6 @@ from reservations.models import Reservation
 from payments.models import Payment
 from sites.models import Site
 from datetime import timedelta
-from django.contrib import messages
-
 
 
 class DashboardHomeView(LoginRequiredMixin, TemplateView):
