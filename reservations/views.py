@@ -190,11 +190,11 @@ def get_availability(request):
         return redirect('home')
     
     booked_sites = Reservation.objects.active().overlapping(checkin, checkout).values_list("site", flat=True)
-    site_objects = Site.objects.operational().exclude(identifier__in=booked_sites).order_by("identifier")
+    site_objects = Site.objects.operational().exclude(lot_id__in=booked_sites).order_by("lot_id")
 
     context = {
         "reservation_form": ReservationForm(),
-        "sites": json.dumps(list(site_objects.values_list("identifier", flat=True))),
+        "sites": json.dumps(list(site_objects.values_list("lot_id", flat=True))),
         "site_objects": site_objects,
         "checkin": checkin,
         "checkout": checkout,
