@@ -1,13 +1,13 @@
 from django import forms
 from .models import Site
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Field, Submit, HTML
+from crispy_forms.layout import Layout, Field, HTML
 
 class SiteForm(forms.ModelForm):
     class Meta:
         model = Site
         fields = [
-            'identifier', 'info', 'lot_type', 'under_maintenance',
+            'lot_id', 'info', 'lot_type', 'under_maintenance',
             'water', 'electric_30amp', 'electric_50amp', 'sewer',
             'wifi', 'max_length_ft', 'nightly_rate', 'weekly_rate',
             'monthly_rate', 'notes'
@@ -15,7 +15,7 @@ class SiteForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["identifier"].label = "Lot Number"
+        self.fields["lot_id"].label = "Lot Number"
         self.fields["info"].label = "Information"
         self.fields["lot_type"].label = "Lot Type"
         self.fields["under_maintenance"].label = "Under Maintenance"
@@ -39,7 +39,7 @@ class SiteForm(forms.ModelForm):
         self.helper.layout = Layout(
             # Basic Info
             HTML('<h6 class="text-muted mt-3 mb-2">Basic Information</h6>'),
-            Field("identifier", placeholder="e.g. 12, 10C"),
+            Field("lot_id", placeholder="e.g. 12, 10C"),
             Field("lot_type"),
             Field("info"),
             

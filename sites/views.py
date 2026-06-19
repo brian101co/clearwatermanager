@@ -21,7 +21,7 @@ class SiteListView(LoginRequiredMixin, ListView):
     model = Site
     context_object_name = "sites"
     template_name = "sites/list_sites.html"
-    ordering = ["identifier"]
+    ordering = ["lot_id"]
 
 
 class SiteDetailView(LoginRequiredMixin, DetailView):
@@ -48,7 +48,7 @@ class DeleteSiteView(LoginRequiredMixin, DeleteView):
         return context
 
     def delete(self, request, *args, **kwargs):
-        messages.success(request, f'Site {self.get_object().identifier} has been deleted.')
+        messages.success(request, f'Site {self.get_object().lot_id} has been deleted.')
         return super().delete(request, *args, **kwargs)
 
 
@@ -60,7 +60,7 @@ class EditSiteView(LoginRequiredMixin, UpdateView):
     template_name = "sites/edit_site.html"
 
     def form_valid(self, form):
-        messages.success(self.request, f'Site {form.instance.identifier} has been updated.')
+        messages.success(self.request, f'Site {form.instance.lot_id} has been updated.')
         return super().form_valid(form)
 
 
@@ -70,7 +70,7 @@ class CreateSiteView(LoginRequiredMixin, CreateView):
     template_name = "sites/create_site.html"
 
     def form_valid(self, form):
-        messages.success(self.request, f'Site {form.instance.identifier} has been created.')
+        messages.success(self.request, f'Site {form.instance.lot_id} has been created.')
         return super().form_valid(form)
 
 
@@ -78,14 +78,14 @@ class CreateSiteView(LoginRequiredMixin, CreateView):
 def get_site_info(request, site):
     if request.method == "POST":
         data = json.load(request)
-        site, created = Site.objects.get_or_create(identifier=site)
+        site, created = Site.objects.get_or_create(lot_id=site)
         site.info = data["info"]
         site.save()
         return JsonResponse({
             "site": Site.objects.filter(pk=site.pk).values().first()
         })
 
-    site_info = Site.objects.filter(identifier=site).values()
+    site_info = Site.objects.filter(lot_id=site).values()
 
     if site_info:
         return JsonResponse({

@@ -28,7 +28,7 @@ class WorkorderQuerySet(models.QuerySet):
         return self.filter(completed=False)
     
     def get_by_site(self, site):
-        return self.filter(site__identifier=site)
+        return self.filter(site__lot_id=site)
     
 
 class WorkOrder(models.Model):
