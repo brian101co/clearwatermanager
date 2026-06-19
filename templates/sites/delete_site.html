@@ -5,11 +5,11 @@
 <section class="container py-4">
 
     <!-- Back -->
-    <a href="{% url 'site-detail' object.id %}" class="btn btn-secondary btn-sm mb-3">← Back to Site {{ object.identifier }}</a>
+    <a href="{% url 'site-detail' object.id %}" class="btn btn-secondary btn-sm mb-3">← Back to Site {{ object.lot_id }}</a>
 
     <!-- Header -->
     <div class="mb-4">
-        <h1 class="h3 mb-1">Delete Site {{ object.identifier }}</h1>
+        <h1 class="h3 mb-1">Delete Site {{ object.lot_id }}</h1>
         <span class="badge badge-secondary">{{ object.get_lot_type_display }}</span>
         {% if object.under_maintenance %}
             <span class="badge badge-warning ml-1">⚠ Under Maintenance</span>
@@ -28,7 +28,7 @@
                     <ul class="list-group mb-3">
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <span class="text-muted small">Lot Number</span>
-                            <strong>{{ object.identifier }}</strong>
+                            <strong>{{ object.lot_id }}</strong>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <span class="text-muted small">Lot Type</span>

@@ -26,7 +26,7 @@ class WorkorderForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields["title"].label = "Title"
         self.fields["site"].label = "Lot"
-        self.fields["site"].queryset = Site.objects.order_by("identifier")
+        self.fields["site"].queryset = Site.objects.order_by("lot_id")
         self.fields["category"].label = "Category"
         self.fields["description"].label = "Description of the Issue"
         self.fields["priority"].label = "Urgency Level"

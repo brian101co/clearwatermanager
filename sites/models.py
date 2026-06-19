@@ -10,10 +10,10 @@ class SiteQuerySet(models.QuerySet):
         return self.filter(under_maintenance=False)
     
     def by_lot_numbers(self, lot_nums):
-        return self.filter(identifier__in=lot_nums).order_by("identifier")
+        return self.filter(lot_id__in=lot_nums).order_by("lot_id")
     
     def by_lot(self, lot_num):
-        return self.filter(identifier=lot_num)
+        return self.filter(lot_id=lot_num)
 
 
 class Site(models.Model):
@@ -24,7 +24,7 @@ class Site(models.Model):
         ('pullthrough', 'Pull Through'),
     )
         
-    identifier = models.CharField(max_length=10)
+    lot_id = models.CharField(max_length=10)
     info = models.TextField()
     lot_type = models.CharField(max_length=20, choices=LOT_TYPES, default='rv')
     under_maintenance = models.BooleanField(default=False)
@@ -50,7 +50,7 @@ class Site(models.Model):
     objects = SiteQuerySet.as_manager()
 
     def __str__(self):
-        return self.identifier
+        return self.lot_id
     
     def calculate_estimated_total(self, duration_days):
         monthly = duration_days // 30

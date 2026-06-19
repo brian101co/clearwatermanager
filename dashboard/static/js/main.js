@@ -77,9 +77,9 @@ window.onload = () => {
                             if (total_workorders > 0) {
                                 this.infoModal.querySelector(".modal-header").append(state.infoModalBadgeElem);
                             }
-                            this.infoModal.querySelector(".modal-title").innerText = `Site ${site.identifier}`;
+                            this.infoModal.querySelector(".modal-title").innerText = `Site ${site.lot_id}`;
                             this.infoModal.querySelector(".content").innerText = site.info;
-                            this.infoModal.querySelector(".content").setAttribute("site", site.identifier);
+                            this.infoModal.querySelector(".content").setAttribute("site", site.lot_id);
                         })
                         .catch(err => {
                             removeLoader(".info-model-body");

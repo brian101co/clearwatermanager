@@ -210,7 +210,7 @@ class Command(BaseCommand):
             site = None
             if site_identifier:
                 try:
-                    site = Site.objects.get(identifier=site_identifier)
+                    site = Site.objects.get(lot_id=site_identifier)
                 except Site.DoesNotExist:
                     self.stdout.write(self.style.WARNING(f'Site {site_identifier} not found, skipping site assignment.'))
 
