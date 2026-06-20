@@ -59,7 +59,7 @@ class ReservationListView(LoginRequiredMixin, ListView):
             queryset = queryset.filter(
                 Q(name__icontains=search) |
                 Q(site__icontains=search) |
-                Q(phoneNum__icontains=search)
+                Q(phone_num__icontains=search)
             )
         return queryset
 

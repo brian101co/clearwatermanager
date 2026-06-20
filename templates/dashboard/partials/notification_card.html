@@ -9,7 +9,7 @@
             </div>
         </div>
         <div class="d-flex mt-2 mt-md-0">
-            <a href="tel:{{ reservation.phoneNum }}" class="btn btn-sm btn-outline-secondary mr-2 flex-fill flex-md-grow-0">📞 Call</a>
+            <a href="tel:{{ reservation.phone_num }}" class="btn btn-sm btn-outline-secondary mr-2 flex-fill flex-md-grow-0">📞 Call</a>
             <a href="{% url 'reservation-detail' reservation.id %}" class="btn btn-sm btn-outline-primary mr-2 flex-fill flex-md-grow-0">View</a>
             {% if show_checkout %}
             <form method="POST" action="{% url 'reservation-checkout' reservation.id %}" style="display: inline;" class="checkout-form">

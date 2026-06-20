@@ -11,20 +11,20 @@ class ReservationForm(forms.ModelForm):
 
     class Meta:
         model = Reservation
-        fields = ["name", "site", "start", "end", "phoneNum", "is_long_term", "info"]
+        fields = ["name", "site", "start", "end", "phone_num", "is_long_term", "info"]
         labels = {
             "name": "Name",
             "site": "Lot No.",
             "start": "Checkin",
             "end": "Checkout",
-            "phoneNum": "Phone Number",
+            "phone_num": "Phone Number",
             "info": "Additional Information (optional)",
             "is_long_term": "Long Term Resident (optional)"
         }
         widgets = {
             "start": forms.DateTimeInput(attrs={"type": "datetime-local"}, format="%Y-%m-%dT%H:%M"),
             "end": forms.DateTimeInput(attrs={"type": "datetime-local"}, format="%Y-%m-%dT%H:%M"),
-            "phoneNum": forms.TextInput(attrs={"type": "tel"}),
+            "phone_num": forms.TextInput(attrs={"type": "tel"}),
             "info": forms.Textarea(attrs={"rows": 3}),
         }
 
@@ -44,7 +44,7 @@ class ReservationForm(forms.ModelForm):
             Field("start"),
             Field("end"),
             Field("site", placeholder="Lot No."),
-            Field("phoneNum", placeholder="Phone Number"),
+            Field("phone_num", placeholder="Phone Number"),
             Field("is_long_term"),
             Field("info"),
         )
@@ -61,8 +61,8 @@ class ReservationForm(forms.ModelForm):
     def clean_site(self):
         return self.cleaned_data["site"].strip().upper()
     
-    def clean_phoneNum(self):
-        digits = re.sub(r"\D", "", self.cleaned_data["phoneNum"])
+    def clean_phone_num(self):
+        digits = re.sub(r"\D", "", self.cleaned_data["phone_num"])
         if len(digits) != 10:
             raise forms.ValidationError("Enter a 10-digit phone number.")
         return f"({digits[:3]}) {digits[3:6]}-{digits[6:]}"
