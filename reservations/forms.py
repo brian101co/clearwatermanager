@@ -47,8 +47,6 @@ class ReservationForm(forms.ModelForm):
             Field("phoneNum", placeholder="Phone Number"),
             Field("is_long_term"),
             Field("info"),
-            HTML('<button type="button" class="btn pure-material-button-contained bg-secondary mr-2" data-dismiss="modal">Close</button>'),
-            Submit("submit", "Submit", css_class="btn pure-material-button-contained"),
         )
 
     def clean(self):
