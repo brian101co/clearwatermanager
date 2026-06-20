@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'payments',
     'workorder',
     'crispy_forms',
+    "crispy_bootstrap4",
     "debug_toolbar",
 ]
 
@@ -125,7 +126,8 @@ USE_I18N = True
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'loginuser'
 
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/

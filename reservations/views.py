@@ -18,6 +18,7 @@ from metrics.models import Metric
 from sites.models import Site
 from django.contrib import messages
 from datetime import datetime
+from datetime import timezone as tz
 from django.utils import timezone
 from decimal import Decimal
 from django.db.models import Q
@@ -179,8 +180,8 @@ def get_availability(request):
         return redirect('home')
 
     try:
-        checkin = datetime.fromisoformat(checkin_str).replace(tzinfo=timezone.utc)
-        checkout = datetime.fromisoformat(checkout_str).replace(tzinfo=timezone.utc)
+        checkin = datetime.fromisoformat(checkin_str).replace(tzinfo=tz.utc)
+        checkout = datetime.fromisoformat(checkout_str).replace(tzinfo=tz.utc)
     except ValueError:
         messages.error(request, 'Invalid date format.')
         return redirect('home')
