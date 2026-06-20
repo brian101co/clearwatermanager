@@ -14,26 +14,10 @@
                         <strong>Editing:</strong> {{ object.name|title }} — Site {{ object.site }}
                     </div>
 
-                    <!-- Error Messages -->
-                    {% if messages %}
-                        {% for message in messages %}
-                            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-                                <div class="alert alert-danger" role="alert">
-                                    {{ message }}
-                                </div>
-                            {% endif %}
-                            {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
-                                <div class="alert alert-success" role="alert">
-                                    {{ message }}
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-
                     <!-- Edit Form -->
                     <form method="POST">
                         {% csrf_token %}
-                        {{ form|crispy }}
+                        {% crispy form form.helper %}
                         <div class="d-flex justify-content-between mt-4">
                             <a href="{% url 'home' %}" class="btn pure-material-button-contained bg-secondary">
                                 ← Cancel
