@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'payments',
     'workorder',
     'crispy_forms',
+    "crispy_bootstrap4",
     "debug_toolbar",
 ]
 
@@ -53,6 +54,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    "django.contrib.auth.middleware.LoginRequiredMiddleware",
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "debug_toolbar.middleware.DebugToolbarMiddleware",
@@ -125,24 +127,30 @@ USE_I18N = True
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'loginuser'
 
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATIC_URL = '/static/'
-
-STATICFILES_DIR = [
-    os.path.join(BASE_DIR, 'static')
-]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
 
 try:
     from .local_settings import *
