@@ -142,8 +142,8 @@
 
     function handleForm(ev) {
         document.querySelector('[name="site"]').value = ev.currentTarget.querySelector('[data-site]').dataset.site
-        document.querySelector('[name="end"]').value = '{{ end }}'
-        document.querySelector('[name="start"]').value = '{{ start }}'
+        document.querySelector('[name="checkout"]').value = '{{ checkout }}'
+        document.querySelector('[name="checkin"]').value = '{{ checkin }}'
     }
 
     for (let siteNum of openSites) {

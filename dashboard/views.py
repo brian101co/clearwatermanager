@@ -24,7 +24,7 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
         today = now.date()
         tomorrow = today + timedelta(days=1)
 
-        reservations = Reservation.objects.active().order_by("start")
+        reservations = Reservation.objects.active().order_by("checkin")
         occupied = Reservation.objects.occupied_on(today)
 
         context.update({
@@ -35,7 +35,7 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
             "overdue_leases": reservations.overdue_leases_on(today),
             "overdue_checkouts": reservations.overdue(today),
             "occupancy_rate": round(occupied.count() / Site.objects.count() * 100),
-            "occupied_lots": json.dumps(list(occupied.values("site", "name", "end")), cls=DjangoJSONEncoder),
+            "occupied_lots": json.dumps(list(occupied.values("site", "name", "checkout")), cls=DjangoJSONEncoder),
             "unpaid_payments": Payment.objects.filter(
                 status__in=["unpaid", "partial"]
             ).count(),

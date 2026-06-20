@@ -83,9 +83,9 @@
                     <span class="badge badge-success ml-1">✓ Checked Out</span>
                 {% endif %}
                 <div class="text-muted small mt-1">
-                    <span>📅 {{ reservation.start|date:"M d Y" }}</span>
+                    <span>📅 {{ reservation.checkin|date:"M d Y" }}</span>
                     <span class="mx-1">→</span>
-                    <span>{{ reservation.end|date:"M d Y" }}</span>
+                    <span>{{ reservation.checkout|date:"M d Y" }}</span>
                     <span class="mx-2">·</span>
                     <a href="tel:{{ reservation.phone_num }}">📞 {{ reservation.phone_num }}</a>
                 </div>

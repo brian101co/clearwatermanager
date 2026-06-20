@@ -42,7 +42,7 @@ class ReservationListView(LoginRequiredMixin, ListView):
     template_name = "reservations/list_reservations.html"
 
     def get_queryset(self):
-        queryset = Reservation.objects.active().order_by('start')
+        queryset = Reservation.objects.active().order_by('checkin')
         filter_by = self.request.GET.get('filter')
         search = self.request.GET.get('q', '')
 
@@ -53,7 +53,7 @@ class ReservationListView(LoginRequiredMixin, ListView):
         elif filter_by == 'checkedout':
             queryset = Reservation.objects.checked_out()
         elif filter_by == 'all':
-            queryset = Reservation.objects.all().order_by('start')
+            queryset = Reservation.objects.all().order_by('checkin')
 
         if search:
             queryset = queryset.filter(
@@ -80,12 +80,12 @@ class ReservationDetailView(LoginRequiredMixin, DetailView):
         today = timezone.now()
 
         # Duration of stay
-        duration = self.object.end - self.object.start
+        duration = self.object.checkout - self.object.checkin
         context["duration_of_stay"] = duration.days
 
         # Days remaining
-        if self.object.end > today:
-            days_remaining = self.object.end - today
+        if self.object.checkout > today:
+            days_remaining = self.object.checkout - today
             context["days_remaining"] = days_remaining.days
         else:
             context["days_remaining"] = 0
@@ -130,14 +130,14 @@ class EditReservationView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         site = form.cleaned_data["site"]
-        start = form.cleaned_data["start"]
-        end = form.cleaned_data["end"]
+        checkin = form.cleaned_data["checkin"]
+        checkout = form.cleaned_data["checkout"]
 
-        if not Reservation.objects.active().get_by_site(site).exclude(pk=self.kwargs["id"]).overlapping(start, end).exists():
+        if not Reservation.objects.active().get_by_site(site).exclude(pk=self.kwargs["id"]).overlapping(checkin, checkout).exists():
             self.object = form.save()
             metric, created = Metric.objects.get_or_create(customer=self.object)
-            metric.start = start
-            metric.end = end
+            metric.start = checkin
+            metric.end = checkout
             metric.site = site
             metric.save()
             messages.success(self.request, f"Reservation for {self.object.name} has been updated.")
@@ -154,12 +154,12 @@ class CreateReservationView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         site = form.cleaned_data["site"]
-        start = form.cleaned_data["start"]
-        end = form.cleaned_data["end"]
+        checkin = form.cleaned_data["checkin"]
+        checkout = form.cleaned_data["checkout"]
 
-        if not Reservation.objects.active().get_by_site(site).overlapping(start, end).exists():
+        if not Reservation.objects.active().get_by_site(site).overlapping(checkin, checkout).exists():
             self.object = form.save()
-            Metric.objects.create(site=site, start=start, end=end, customer=self.object)
+            Metric.objects.create(site=site, start=checkin, end=checkout, customer=self.object)
             messages.success(self.request, f'Reservation for {self.object.name} has been successfully created.')
             return redirect('reservation-detail', id=self.object.id)
         
@@ -199,8 +199,8 @@ def get_availability(request):
         "site_objects": site_objects,
         "checkin": checkin,
         "checkout": checkout,
-        "start": checkin_str,
-        "end": checkout_str,
+        "checkin": checkin_str,
+        "checkout": checkout_str,
     }
     return render(request, "reservations/available_sites.html", context=context)
 

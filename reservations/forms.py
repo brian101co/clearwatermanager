@@ -11,38 +11,38 @@ class ReservationForm(forms.ModelForm):
 
     class Meta:
         model = Reservation
-        fields = ["name", "site", "start", "end", "phone_num", "is_long_term", "info"]
+        fields = ["name", "site", "checkin", "checkout", "phone_num", "is_long_term", "info"]
         labels = {
             "name": "Name",
             "site": "Lot No.",
-            "start": "Checkin",
-            "end": "Checkout",
+            "checkin": "Checkin",
+            "checkout": "Checkout",
             "phone_num": "Phone Number",
             "info": "Additional Information (optional)",
             "is_long_term": "Long Term Resident (optional)"
         }
         widgets = {
-            "start": forms.DateTimeInput(attrs={"type": "datetime-local"}, format="%Y-%m-%dT%H:%M"),
-            "end": forms.DateTimeInput(attrs={"type": "datetime-local"}, format="%Y-%m-%dT%H:%M"),
+            "checkin": forms.DateTimeInput(attrs={"type": "datetime-local"}, format="%Y-%m-%dT%H:%M"),
+            "checkout": forms.DateTimeInput(attrs={"type": "datetime-local"}, format="%Y-%m-%dT%H:%M"),
             "phone_num": forms.TextInput(attrs={"type": "tel"}),
             "info": forms.Textarea(attrs={"rows": 3}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for f in ("start", "end"):
+        for f in ("checkin", "checkout"):
             self.fields[f].input_formats = [self.DATETIME_FORMAT]
 
         if not self.instance.pk:
-            self.fields["start"].initial = timezone.now()
+            self.fields["checkin"].initial = timezone.now()
 
         self.fields["name"].widget.attrs["autofocus"] = True
         
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Field("name", placeholder="Guest name"),
-            Field("start"),
-            Field("end"),
+            Field("checkin"),
+            Field("checkout"),
             Field("site", placeholder="Lot No."),
             Field("phone_num", placeholder="Phone Number"),
             Field("is_long_term"),
@@ -51,10 +51,10 @@ class ReservationForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        start, end = cleaned_data.get("start"), cleaned_data.get("end")
+        checkin, checkout = cleaned_data.get("checkin"), cleaned_data.get("checkout")
 
-        if start and end and end <= start:
-            self.add_error("end", "Checkout must be after checkin.")
+        if checkin and checkout and checkout <= checkin:
+            self.add_error("checkout", "Checkout must be after checkin.")
 
         return cleaned_data
     

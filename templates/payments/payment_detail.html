@@ -95,11 +95,11 @@
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <span class="text-muted small">Check-in</span>
-                            <strong>{{ payment.customer.start|date:"M d, Y" }}</strong>
+                            <strong>{{ payment.customer.checkin|date:"M d, Y" }}</strong>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <span class="text-muted small">Check-out</span>
-                            <strong>{{ payment.customer.end|date:"M d, Y" }}</strong>
+                            <strong>{{ payment.customer.checkout|date:"M d, Y" }}</strong>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <span class="text-muted small">Phone</span>

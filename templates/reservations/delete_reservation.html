@@ -19,8 +19,8 @@
                     <ul class="list-group mb-4">
                         <li class="list-group-item"><strong>Name:</strong> {{ object.name }}</li>
                         <li class="list-group-item"><strong>Site:</strong> {{ object.site }}</li>
-                        <li class="list-group-item"><strong>Check-in:</strong> {{ object.start|date:"M d Y" }}</li>
-                        <li class="list-group-item"><strong>Check-out:</strong> {{ object.end|date:"M d Y" }}</li>
+                        <li class="list-group-item"><strong>Check-in:</strong> {{ object.checkin|date:"M d Y" }}</li>
+                        <li class="list-group-item"><strong>Check-out:</strong> {{ object.checkout|date:"M d Y" }}</li>
                         <li class="list-group-item"><strong>Phone:</strong> 
                             <a href="tel:{{ object.phone_num }}">{{ object.phone_num }}</a>
                         </li>

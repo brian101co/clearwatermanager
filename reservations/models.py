@@ -15,34 +15,34 @@ class ReservationQuerySet(models.QuerySet):
         return self.filter(site=site)
 
     def checking_out_on(self, date):
-        return self.short_term().filter(end__date=date)
+        return self.short_term().filter(checkout__date=date)
 
     def checking_in_on(self, date):
-        return self.short_term().filter(start__date=date)
+        return self.short_term().filter(checkin__date=date)
 
     def overdue(self, date):
-        return self.short_term().filter(end__date__lt=date)
+        return self.short_term().filter(checkout__date__lt=date)
 
     def expiring_leases_on(self, date):
-        return self.long_term().filter(end__date=date)
+        return self.long_term().filter(checkout__date=date)
 
     def overdue_leases_on(self, date):
-        return self.long_term().filter(end__date__lt=date)
+        return self.long_term().filter(checkout__date__lt=date)
 
     def checked_out(self):
         return self.filter(confirmed_checkout=True)
 
     def upcoming(self):
         today = timezone.now().date()
-        return self.filter(start__date__gt=today)
+        return self.filter(checkin__date__gt=today)
     
     def overlapping(self, checkin, checkout):
-        return self.filter(start__lt=checkout, end__gt=checkin)
+        return self.filter(checkin__lt=checkout, checkout__gt=checkin)
 
     def occupied_on(self, date):
         return self.filter(
-            start__date__lte=date,
-            end__date__gte=date,
+            checkin__date__lte=date,
+            checkout__date__gte=date,
             confirmed_checkout=False,
         )
 
@@ -67,8 +67,8 @@ class Reservation(models.Model):
 
     name = models.CharField(max_length=255)
     site = models.CharField(max_length=4)
-    start = models.DateTimeField()
-    end = models.DateTimeField()
+    checkin = models.DateTimeField()
+    checkout = models.DateTimeField()
     phone_num = models.CharField(max_length=25)
     info = models.TextField(blank=True)
     is_long_term = models.BooleanField(default=False)
