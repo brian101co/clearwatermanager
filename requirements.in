@@ -1,4 +1,4 @@
-Django==5.0.14
+Django==5.1.15
 django-crispy-forms
 django-debug-toolbar
 pillow
