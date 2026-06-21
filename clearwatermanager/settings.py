@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -86,11 +89,8 @@ WSGI_APPLICATION = 'clearwatermanager.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'clearwaterrv$default',
-        'USER': 'clearwaterrv',
-        'PASSWORD': os.getenv("DB_PASS"),
-        'HOST': 'clearwaterrv.mysql.pythonanywhere-services.com',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, os.environ.get('DB_NAME')),
     }
 }
 
@@ -155,4 +155,4 @@ STORAGES = {
 try:
     from .local_settings import *
 except ImportError:
-    print('Looks like no local file you must be on produciton')
+    print('Looks like no local file you must be on production')
