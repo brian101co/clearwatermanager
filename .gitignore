@@ -55,3 +55,5 @@ htmlcov/
 .mypy_cache/
 
 data.json
+Clearwater-Manager
+Clearwater-Manager*
