@@ -3,7 +3,7 @@
     <div class="card-body py-2 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
         <div>
             <strong>{{ reservation.name|title }}</strong>
-            <span class="badge badge-secondary ml-2">Site {{ reservation.site }}</span>
+            <span class="badge badge-secondary ml-2">Site {{ reservation.site.lot_id }}</span>
             <div class="text-muted small mt-1">
                 {{ date_label }}: {{ date_value|date:"D, M d Y" }} at {{ date_value|time:"g:i A" }}
             </div>

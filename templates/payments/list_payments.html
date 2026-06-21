@@ -83,7 +83,7 @@
                 <a href="{% url 'payment-detail' payment.id %}" class="text-dark font-weight-bold">
                     {{ payment.customer.name|title }}
                 </a>
-                <span class="badge badge-secondary ml-2">Site {{ payment.customer.site }}</span>
+                <span class="badge badge-secondary ml-2">Site {{ payment.customer.site.lot_id }}</span>
                 <div class="text-muted small mt-1">
                     Due: <strong class="text-dark">${{ payment.amount_due }}</strong>
                     · Paid: <strong class="text-success">${{ payment.amount_paid }}</strong>

@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from sites.models import Site
 
 class ReservationQuerySet(models.QuerySet):
     def active(self):
@@ -12,7 +13,7 @@ class ReservationQuerySet(models.QuerySet):
         return self.filter(is_long_term=True)
 
     def get_by_site(self, site):
-        return self.filter(site=site)
+        return self.filter(site__lot_id=site)
 
     def checking_out_on(self, date):
         return self.short_term().filter(checkout__date=date)
@@ -66,7 +67,7 @@ class Reservation(models.Model):
     objects = ReservationManager()
 
     name = models.CharField(max_length=255)
-    site = models.CharField(max_length=4)
+    site = models.ForeignKey(Site, on_delete=models.PROTECT)
     checkin = models.DateTimeField()
     checkout = models.DateTimeField()
     phone_num = models.CharField(max_length=25)

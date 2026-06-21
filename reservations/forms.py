@@ -2,6 +2,7 @@ import re
 
 from django import forms
 from .models import Reservation
+from sites.models import Site
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field, HTML, Submit
 from django.utils import timezone
@@ -37,8 +38,15 @@ class ReservationForm(forms.ModelForm):
             self.fields["checkin"].initial = timezone.now()
 
         self.fields["name"].widget.attrs["autofocus"] = True
+
+        active_sites = Site.objects.active()
+        if self.instance.pk and self.instance.site and self.instance.site.retired:
+            self.fields["site"].queryset = active_sites | Site.objects.filter(pk=self.instance.site.pk)
+        else:
+            self.fields["site"].queryset = active_sites
         
         self.helper = FormHelper()
+        self.helper.form_tag = False
         self.helper.layout = Layout(
             Field("name", placeholder="Guest name"),
             Field("checkin"),
@@ -57,9 +65,6 @@ class ReservationForm(forms.ModelForm):
             self.add_error("checkout", "Checkout must be after checkin.")
 
         return cleaned_data
-    
-    def clean_site(self):
-        return self.cleaned_data["site"].strip().upper()
     
     def clean_phone_num(self):
         digits = re.sub(r"\D", "", self.cleaned_data["phone_num"])

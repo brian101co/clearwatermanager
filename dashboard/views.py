@@ -12,6 +12,7 @@ from reservations.models import Reservation
 from payments.models import Payment
 from sites.models import Site
 from datetime import timedelta
+from django.db.models import F
 
 
 class DashboardHomeView(LoginRequiredMixin, TemplateView):
@@ -35,7 +36,7 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
             "overdue_leases": reservations.overdue_leases_on(today),
             "overdue_checkouts": reservations.overdue(today),
             "occupancy_rate": round(occupied.count() / Site.objects.count() * 100),
-            "occupied_lots": json.dumps(list(occupied.values("site", "name", "checkout")), cls=DjangoJSONEncoder),
+            "occupied_lots": json.dumps(list(occupied.values("name", "checkout", lot_id=F("site__lot_id"))), cls=DjangoJSONEncoder),
             "unpaid_payments": Payment.objects.filter(
                 status__in=["unpaid", "partial"]
             ).count(),

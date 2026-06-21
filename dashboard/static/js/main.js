@@ -120,7 +120,7 @@ window.onload = () => {
         highlightLots() {
             this.mapLots.forEach(lot => {
                 const siteNum = lot.getAttribute("data-site");
-                const reservation = occupiedLots.find(r => r.site === siteNum);
+                const reservation = occupiedLots.find(r => r.lot_id === siteNum);
                 if (reservation) {
                     lot.setAttribute("id", "active");
                     const titleElem = document.createElementNS("http://www.w3.org/2000/svg", "title");

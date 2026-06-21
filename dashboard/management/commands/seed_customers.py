@@ -190,7 +190,7 @@ class Command(BaseCommand):
             customer = Reservation.objects.create(**data)
             Metric.objects.create(
                 customer=customer,
-                site=customer.site,
+                site=customer.site.lot_id,
                 start=customer.checkin,
                 end=customer.checkout,
             )
