@@ -26,7 +26,7 @@
                         {% endif %}
                     </div>
                 </div>
-                <span class="badge badge-secondary badge-pill">Site {{ reservation.site }}</span>
+                <span class="badge badge-secondary badge-pill">Site {{ reservation.site.lot_id }}</span>
             </div>
 
             <!-- Details Card -->
@@ -37,10 +37,10 @@
                 <div class="card-body">
                     <dl class="row mb-0">
                         <dt class="col-sm-4">Check-in</dt>
-                        <dd class="col-sm-8">{{ reservation.start|date:"l, M d Y" }}</dd>
+                        <dd class="col-sm-8">{{ reservation.checkin|date:"l, M d Y" }}</dd>
 
                         <dt class="col-sm-4">Check-out</dt>
-                        <dd class="col-sm-8">{{ reservation.end|date:"l, M d Y" }}</dd>
+                        <dd class="col-sm-8">{{ reservation.checkout|date:"l, M d Y" }}</dd>
 
                         <dt class="col-sm-4">Duration</dt>
                         <dd class="col-sm-8">{{ duration_of_stay }} night{{ duration_of_stay|pluralize }}</dd>
@@ -54,8 +54,8 @@
 
                         <dt class="col-sm-4">Phone</dt>
                         <dd class="col-sm-8">
-                            <a href="tel:{{ reservation.phoneNum }}">
-                                📞 {{ reservation.phoneNum }}
+                            <a href="tel:{{ reservation.phone_num }}">
+                                📞 {{ reservation.phone_num }}
                             </a>
                         </dd>
 

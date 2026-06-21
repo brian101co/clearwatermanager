@@ -90,7 +90,7 @@
                 <span class="badge badge-danger badge-pill ml-2">{{ overdue_checkouts|length }}</span>
             </h2>
             {% for guest in overdue_checkouts %}
-                {% include "dashboard/partials/notification_card.html" with reservation=guest border_color="#dc3545" date_label="Was due" date_value=guest.end show_checkout=True %}           
+                {% include "dashboard/partials/notification_card.html" with reservation=guest border_color="#dc3545" date_label="Was due" date_value=guest.checkout show_checkout=True %}           
             {% empty %}
                 <p class="text-muted small">No overdue checkouts. 🎉</p>
             {% endfor %}
@@ -102,7 +102,7 @@
                 <span class="badge badge-warning badge-pill ml-2">{{ checking_out_today|length }}</span>
             </h2>
             {% for guest in checking_out_today %}
-                {% include "dashboard/partials/notification_card.html" with reservation=guest border_color="#fd7e14" date_label="Checkout" date_value=guest.end show_checkout=True %}           
+                {% include "dashboard/partials/notification_card.html" with reservation=guest border_color="#fd7e14" date_label="Checkout" date_value=guest.checkout show_checkout=True %}           
             {% empty %}
                 <p class="text-muted small">No checkouts today.</p>
             {% endfor %}
@@ -115,7 +115,7 @@
                     <span class="badge badge-warning badge-pill ml-2">{{ checking_out_tomorrow|length }}</span>
                 </h2>
                 {% for guest in checking_out_tomorrow %}
-                    {% include "dashboard/partials/notification_card.html" with reservation=guest border_color="#ffc107" date_label="Checkout" date_value=guest.end show_checkout=True %}           
+                    {% include "dashboard/partials/notification_card.html" with reservation=guest border_color="#ffc107" date_label="Checkout" date_value=guest.checkout show_checkout=True %}           
                 {% empty %}
                     <p class="text-muted small">No checkouts tomorrow.</p>
                 {% endfor %}
@@ -128,7 +128,7 @@
                 <span class="badge badge-success badge-pill ml-2">{{ checking_in_tomorrow|length }}</span>
             </h2>
             {% for guest in checking_in_tomorrow %}
-                {% include "dashboard/partials/notification_card.html" with reservation=guest border_color="#28a745" date_label="Checkin" date_value=guest.end show_checkout=False %}           
+                {% include "dashboard/partials/notification_card.html" with reservation=guest border_color="#28a745" date_label="Checkin" date_value=guest.checkout show_checkout=False %}           
             {% empty %}
                 <p class="text-muted small">No checkins tomorrow.</p>
             {% endfor %}
@@ -142,7 +142,7 @@
                 <span class="badge badge-danger badge-pill ml-2">{{ overdue_leases|length }}</span>
             </h2>
             {% for resident in overdue_leases %}
-                {% include "dashboard/partials/notification_card.html" with reservation=resident border_color="#dc3545" date_label="Lease ends" date_value=resident.end show_checkout=True %}           
+                {% include "dashboard/partials/notification_card.html" with reservation=resident border_color="#dc3545" date_label="Lease ends" date_value=resident.checkout show_checkout=True %}           
             {% empty %}
                 <p class="text-muted small">No leases overdue today.</p>
             {% endfor %}
@@ -152,7 +152,7 @@
                 <span class="badge badge-warning badge-pill ml-2">{{ expiring_leases|length }}</span>
             </h2>
             {% for resident in expiring_leases %}
-                {% include "dashboard/partials/notification_card.html" with reservation=resident border_color="#fd7e14" date_label="Lease ends" date_value=resident.end show_checkout=True %}           
+                {% include "dashboard/partials/notification_card.html" with reservation=resident border_color="#fd7e14" date_label="Lease ends" date_value=resident.checkout show_checkout=True %}           
             {% empty %}
                 <p class="text-muted small">No leases expiring today.</p>
             {% endfor %}

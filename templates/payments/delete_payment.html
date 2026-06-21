@@ -12,7 +12,7 @@
         <h1 class="h3 mb-1">Delete Payment</h1>
         <div>
             <span class="badge badge-secondary">{{ object.customer.name|title }}</span>
-            <span class="badge badge-secondary ml-1">Site {{ object.customer.site }}</span>
+            <span class="badge badge-secondary ml-1">Site {{ object.customer.site.lot_id }}</span>
             {% if object.status == 'paid' %}
                 <span class="badge badge-success ml-1">✓ Paid</span>
             {% elif object.status == 'partial' %}

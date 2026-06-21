@@ -64,7 +64,7 @@ class WorkOrder(models.Model):
     objects = WorkorderQuerySet.as_manager()
 
     def __str__(self):
-        return f"{self.site}: {self.title}"
+        return f"{self.site.lot_id}: {self.title}"
     
     def delete(self, *args, **kwargs):
         # Delete image file from storage if it exists

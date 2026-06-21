@@ -58,7 +58,7 @@ class MetricQuerySet(models.QuerySet):
         from django.db.models import Avg, ExpressionWrapper, F, DurationField
         return self.filter(start__year=year).annotate(
             duration=ExpressionWrapper(
-                F('end') - F('start'),
+                F('checkout') - F('checkin'),
                 output_field=DurationField()
             )
         ).aggregate(avg=Avg('duration'))

@@ -75,7 +75,7 @@
                 <a href="{% url 'reservation-detail' reservation.id %}" class="text-dark font-weight-bold">
                     {{ reservation.name|title }}
                 </a>
-                <span class="badge badge-secondary ml-2">Site {{ reservation.site }}</span>
+                <span class="badge badge-secondary ml-2">Site {{ reservation.site.lot_id }}</span>
                 {% if reservation.is_long_term %}
                     <span class="badge badge-info ml-1">Long Term</span>
                 {% endif %}
@@ -83,11 +83,11 @@
                     <span class="badge badge-success ml-1">✓ Checked Out</span>
                 {% endif %}
                 <div class="text-muted small mt-1">
-                    <span>📅 {{ reservation.start|date:"M d Y" }}</span>
+                    <span>📅 {{ reservation.checkin|date:"M d Y" }}</span>
                     <span class="mx-1">→</span>
-                    <span>{{ reservation.end|date:"M d Y" }}</span>
+                    <span>{{ reservation.checkout|date:"M d Y" }}</span>
                     <span class="mx-2">·</span>
-                    <a href="tel:{{ reservation.phoneNum }}">📞 {{ reservation.phoneNum }}</a>
+                    <a href="tel:{{ reservation.phone_num }}">📞 {{ reservation.phone_num }}</a>
                 </div>
             </div>
 

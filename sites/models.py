@@ -2,6 +2,9 @@ from django.db import models
 from decimal import Decimal
 
 class SiteQuerySet(models.QuerySet):
+
+    def active(self):
+        return self.filter(retired=False)
     
     def under_maintenance(self):
         return self.filter(under_maintenance=True)
@@ -24,10 +27,11 @@ class Site(models.Model):
         ('pullthrough', 'Pull Through'),
     )
         
-    lot_id = models.CharField(max_length=10)
+    lot_id = models.CharField(max_length=10, unique=True)
     info = models.TextField()
     lot_type = models.CharField(max_length=20, choices=LOT_TYPES, default='rv')
     under_maintenance = models.BooleanField(default=False)
+    retired = models.BooleanField(default=False)
 
     # Amenities
     water = models.BooleanField(default=True)
