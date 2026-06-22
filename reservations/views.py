@@ -172,8 +172,8 @@ def get_availability(request):
     if request.method != "POST":
         return redirect('home')
 
-    checkin_str = request.POST.get('checkin')
-    checkout_str = request.POST.get('checkout')
+    checkin_str = request.POST.get('checkin').replace(' at ', ' ')
+    checkout_str = request.POST.get('checkout').replace(' at ', ' ')
 
     if not checkin_str or not checkout_str:
         messages.error(request, 'Please provide both checkin and checkout dates.')
