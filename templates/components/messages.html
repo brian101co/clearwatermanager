@@ -4,7 +4,7 @@
     <div class="position-fixed w-100" style="top: 1rem; z-index: 9999;">
         <div class="col-sm-12 col-md-6 offset-md-3">
             {% for message in messages %}
-                <div class="alert 
+                <div class="alert message
                     {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}alert-danger
                     {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}alert-success
                     {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}alert-warning
