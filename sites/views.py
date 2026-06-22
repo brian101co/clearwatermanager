@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 from .models import Site
+from reservations.models import Reservation
 from .forms import SiteForm
 from workorder.models import WorkOrder
 from django.urls import reverse_lazy
@@ -48,7 +49,7 @@ class RetireSiteView(LoginRequiredMixin, DeleteView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["workorders"] = self.object.workorders.active()
-        context["active_reservations"] = self.object.reservations.active().current_and_upcoming()
+        context["active_reservations"] = Reservation.objects.active().current_and_upcoming()
         return context
 
     def delete(self, request, *args, **kwargs):

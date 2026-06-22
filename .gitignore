@@ -57,3 +57,5 @@ htmlcov/
 data.json
 Clearwater-Manager
 Clearwater-Manager*
+
+test_db.sqlite3
