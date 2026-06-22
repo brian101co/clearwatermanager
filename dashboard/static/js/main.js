@@ -141,7 +141,6 @@ window.onload = () => {
         allowInput: true,
         time_24hr: false,
         minDate: "today",
-        disableMobile: true,
         onChange: function(selectedDates) {
             // When checkin changes, update checkout's minDate
             if (selectedDates.length > 0) {
@@ -157,7 +156,6 @@ window.onload = () => {
         allowInput: true,
         time_24hr: false,
         minDate: "today",
-        disableMobile: true,
     });
 
     setTimeout(() => location.reload(), 600000);
