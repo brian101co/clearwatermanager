@@ -133,4 +133,42 @@ window.onload = () => {
 
     const NewMap = new Map(lotNodes);
     NewMap.highlightLots();
+
+    const checkinPicker = flatpickr("#checkin", {
+        enableTime: true,
+        dateFormat: "m/d/Y H:i K",
+        minuteIncrement: 30,
+        allowInput: true,
+        time_24hr: false,
+        minDate: "today",
+        disableMobile: true,
+        onChange: function(selectedDates) {
+            // When checkin changes, update checkout's minDate
+            if (selectedDates.length > 0) {
+                checkoutPicker.set("minDate", selectedDates[0]);
+            }
+        }
+    });
+
+    const checkoutPicker = flatpickr("#checkout", {
+        enableTime: true,
+        dateFormat: "m/d/Y H:i K",
+        minuteIncrement: 30,
+        allowInput: true,
+        time_24hr: false,
+        minDate: "today",
+        disableMobile: true,
+    });
+
+    setTimeout(() => location.reload(), 600000);
+
+    $('.checkout-form').on('submit', function(e) {
+        if (!confirm('Are you sure you want to check this guest out?')) {
+            e.preventDefault();
+            $(this).find('button[type="submit"]')
+                .prop('disabled', false)
+                .text('✓ Checkout');
+            return false;
+        }
+    });
 }
