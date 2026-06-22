@@ -3,6 +3,7 @@
 {% load static %}
 
 {% block extraCSS %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <style>
 .notification-banner {
     background-color: #fff3cd;
@@ -169,20 +170,47 @@
 
 {% block extraJS %}
 <script src="{% static 'js/main.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script id="occupied-lots-data" type="application/json">
     {{ occupied_lots|safe }}
 </script>
 <script>
-    setTimeout(() => location.reload(), 600000);
+    $(document).ready(function() {
+        const checkinPicker = flatpickr("#checkin", {
+            enableTime: true,
+            dateFormat: "m/d/Y H:i K",
+            minuteIncrement: 30,
+            allowInput: true,
+            time_24hr: false,
+            minDate: "today",
+            onChange: function(selectedDates) {
+                // When checkin changes, update checkout's minDate
+                if (selectedDates.length > 0) {
+                    checkoutPicker.set("minDate", selectedDates[0]);
+                }
+            }
+        });
 
-    $('.checkout-form').on('submit', function(e) {
-        if (!confirm('Are you sure you want to check this guest out?')) {
-            e.preventDefault();
-            $(this).find('button[type="submit"]')
-                .prop('disabled', false)
-                .text('✓ Checkout');
-            return false;
-        }
+        const checkoutPicker = flatpickr("#checkout", {
+            enableTime: true,
+            dateFormat: "m/d/Y H:i K",
+            minuteIncrement: 30,
+            allowInput: true,
+            time_24hr: false,
+            minDate: "today",
+        });
+
+        setTimeout(() => location.reload(), 600000);
+
+        $('.checkout-form').on('submit', function(e) {
+            if (!confirm('Are you sure you want to check this guest out?')) {
+                e.preventDefault();
+                $(this).find('button[type="submit"]')
+                    .prop('disabled', false)
+                    .text('✓ Checkout');
+                return false;
+            }
+        });
     });
 </script>
 {% endblock %}

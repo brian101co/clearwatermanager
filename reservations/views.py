@@ -180,9 +180,12 @@ def get_availability(request):
         return redirect('home')
 
     try:
-        checkin = datetime.fromisoformat(checkin_str).replace(tzinfo=tz.utc)
-        checkout = datetime.fromisoformat(checkout_str).replace(tzinfo=tz.utc)
-    except ValueError:
+        checkin = datetime.strptime(checkin_str, '%m/%d/%Y %I:%M %p')
+        checkin = timezone.make_aware(checkin)
+
+        checkout = datetime.strptime(checkout_str, '%m/%d/%Y %I:%M %p')
+        checkout = timezone.make_aware(checkout)
+    except (ValueError, TypeError):
         messages.error(request, 'Invalid date format.')
         return redirect('home')
 
@@ -191,7 +194,7 @@ def get_availability(request):
         return redirect('home')
     
     booked_sites = Reservation.objects.active().overlapping(checkin, checkout).values_list("site", flat=True)
-    site_objects = Site.objects.operational().exclude(pk__in=booked_sites).order_by("lot_id")
+    site_objects = Site.objects.available().exclude(pk__in=booked_sites).order_by("lot_id")
 
     context = {
         "reservation_form": ReservationForm(),
