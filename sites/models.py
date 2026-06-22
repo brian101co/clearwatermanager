@@ -17,6 +17,9 @@ class SiteQuerySet(models.QuerySet):
     
     def by_lot(self, lot_num):
         return self.filter(lot_id=lot_num)
+    
+    def available(self):
+        return self.active().operational()
 
 
 class Site(models.Model):

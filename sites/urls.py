@@ -4,7 +4,7 @@ from .views import (
     SiteListView,
     EditSiteView,
     CreateSiteView,
-    DeleteSiteView
+    RetireSiteView
 )
 
 urlpatterns = [
@@ -12,5 +12,5 @@ urlpatterns = [
     path("<int:id>/", SiteDetailView.as_view(), name="site-detail"),
     path("create/", CreateSiteView.as_view(), name="site-create"),
     path("edit/<int:id>/", EditSiteView.as_view(), name="site-edit"),
-    path("delete/<int:id>/", DeleteSiteView.as_view(), name="site-delete"),
+    path("retire/<int:id>/", RetireSiteView.as_view(), name="site-delete"),
 ]
