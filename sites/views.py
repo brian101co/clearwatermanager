@@ -7,6 +7,7 @@ from .models import Site
 from .forms import SiteForm
 from workorder.models import WorkOrder
 from django.urls import reverse_lazy
+from django.shortcuts import redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import (
     DetailView, 
@@ -21,7 +22,9 @@ class SiteListView(LoginRequiredMixin, ListView):
     model = Site
     context_object_name = "sites"
     template_name = "sites/list_sites.html"
-    ordering = ["lot_id"]
+
+    def get_queryset(self):
+        return Site.objects.active().order_by("lot_id")
 
 
 class SiteDetailView(LoginRequiredMixin, DetailView):
@@ -36,20 +39,24 @@ class SiteDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class DeleteSiteView(LoginRequiredMixin, DeleteView):
+class RetireSiteView(LoginRequiredMixin, DeleteView):
     model = Site
     pk_url_kwarg = "id"
     success_url = reverse_lazy('home')
-    template_name = "sites/delete_site.html"
+    template_name = "sites/retire_site.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["workorders"] = self.object.workorders.active()
+        context["active_reservations"] = self.object.reservations.active().current_and_upcoming()
         return context
 
     def delete(self, request, *args, **kwargs):
-        messages.success(request, f'Site {self.get_object().lot_id} has been deleted.')
-        return super().delete(request, *args, **kwargs)
+        site = self.get_object()
+        site.retired = True
+        site.save()
+        messages.success(request, f'Site {site.lot_id} has been retired.')
+        return redirect(self.get_success_url())
 
 
 class EditSiteView(LoginRequiredMixin, UpdateView):
