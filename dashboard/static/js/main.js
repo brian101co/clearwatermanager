@@ -136,10 +136,10 @@ window.onload = () => {
 
     const checkinPicker = flatpickr("#checkin", {
         enableTime: true,
-        dateFormat: "m/d/Y H:i K",
+        dateFormat: "m/d/Y H:i",
         minuteIncrement: 30,
         allowInput: true,
-        time_24hr: false,
+        time_24hr: true,
         minDate: "today",
         onChange: function(selectedDates) {
             // When checkin changes, update checkout's minDate
@@ -151,10 +151,10 @@ window.onload = () => {
 
     const checkoutPicker = flatpickr("#checkout", {
         enableTime: true,
-        dateFormat: "m/d/Y H:i K",
+        dateFormat: "m/d/Y H:i",
         minuteIncrement: 30,
         allowInput: true,
-        time_24hr: false,
+        time_24hr: true,
         minDate: "today",
     });
 

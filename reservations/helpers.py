@@ -15,6 +15,7 @@ def get_reservation_type(checkin, checkout):
     return 1
 
 DATE_FORMATS = [
+    '%m/%d/%Y %H:%M',           # 06/22/2026 14:30
     '%m/%d/%Y %I:%M %p',        # 06/22/2026 02:30 PM (desktop flatpickr)
     '%m/%d/%Y at %I:%M %p',     # 06/22/2026 at 02:30 PM (mobile flatpickr)
     '%m/%d/%Y %H:%M',           # 06/22/2026 14:30 (24hr variation)
