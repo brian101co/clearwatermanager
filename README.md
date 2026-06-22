@@ -55,6 +55,6 @@ The application is organized into focused Django apps following the single respo
 - **metrics** — reporting and analytics
 
 ## Tech Stack
-- **Backend** — Python 3.10, Django 5.2.15
+- **Backend** — Python 3.13, Django 5.2.15
 - **Frontend** — Bootstrap 4, JavaScript, Plotly
 - **Database** — SQLite
