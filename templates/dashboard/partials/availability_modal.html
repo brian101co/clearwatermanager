@@ -12,11 +12,25 @@
           {% csrf_token %}
           <div class="form-group">
             <label for="checkin">Check-in</label>
-            <input type="datetime-local" class="form-control" id="checkin" name="checkin" placeholder="Check-in date">
+            <input 
+            type="datetime-local" 
+            class="form-control" 
+            id="checkin" 
+            name="checkin" 
+            placeholder="Select check-in date & time"
+            autocomplete="off">
+            <small class="form-text text-muted">Format: MM/DD/YYYY HH:MM (e.g. 06/22/2026 02:30 PM)</small>
           </div>
           <div class="form-group">
             <label for="checkout">Check-out</label>
-            <input type="datetime-local" class="form-control" id="checkout" name="checkout" placeholder="Check-out date">
+            <input 
+            type="datetime-local" 
+            class="form-control" 
+            id="checkout" 
+            name="checkout" 
+            placeholder="Select check-out date & time"
+            autocomplete="off">
+            <small class="form-text text-muted">Format: MM/DD/YYYY HH:MM (e.g. 06/22/2026 02:30 PM)</small>
           </div>
           <button type="button" class="btn pure-material-button-contained bg-secondary" data-dismiss="modal">Close</button>
           <button type="submit" class="btn pure-material-button-contained bg-primary">Check</button>
