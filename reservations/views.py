@@ -22,6 +22,7 @@ from datetime import timezone as tz
 from django.utils import timezone
 from decimal import Decimal
 from django.db.models import Q
+from .helpers import parse_datetime
 
 
 @login_required
@@ -180,10 +181,10 @@ def get_availability(request):
         return redirect('home')
 
     try:
-        checkin = datetime.strptime(checkin_str, '%m/%d/%Y %I:%M %p')
+        checkin = parse_datetime(checkin_str)
         checkin = timezone.make_aware(checkin)
 
-        checkout = datetime.strptime(checkout_str, '%m/%d/%Y %I:%M %p')
+        checkout = parse_datetime(checkout_str)
         checkout = timezone.make_aware(checkout)
      
         if checkin.minute not in (0, 30):
