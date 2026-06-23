@@ -186,14 +186,6 @@ def get_availability(request):
 
         checkout = parse_datetime(checkout_str)
         checkout = timezone.make_aware(checkout)
-     
-        if checkin.minute not in (0, 30):
-            messages.error(request, 'Check-in time must be on the hour or half hour (e.g. 2:00 PM or 2:30 PM).')
-            return redirect('home')
-
-        if checkout.minute not in (0, 30):
-            messages.error(request, 'Check-out time must be on the hour or half hour (e.g. 2:00 PM or 2:30 PM).')
-            return redirect('home')
         
     except (ValueError, TypeError):
         messages.error(request, 'Invalid date format.')
