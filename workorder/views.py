@@ -1,4 +1,6 @@
 from django.shortcuts import redirect, get_object_or_404
+from django.http import JsonResponse, HttpResponse
+from django.core import serializers
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from .models import WorkOrder
@@ -76,3 +78,13 @@ class CompletedWorkorderDetailView(LoginRequiredMixin, DetailView):
     queryset = WorkOrder.objects.filter(completed=True)
     pk_url_kwarg = 'id'
     template_name= "workorders/workorder_detail.html"
+
+
+@login_required
+def api_workorders_by_lot(request, lot_id):
+    if request.method == "GET":
+        workorders = WorkOrder.objects.active().get_by_site(lot_id)
+        data = serializers.serialize("json", workorders)
+        return HttpResponse(data, content_type="application/json", status=200)
+
+    return HttpResponse(status=405)

@@ -9,6 +9,12 @@ from reservations.api_views import (
     api_get_reservation_by_lot,
     api_get_reservations_on,
 )
+from workorder.views import (
+    api_workorders_by_lot
+)
+from sites.views import (
+    api_site_by_lot_id
+)
 
 class DateConverter:
     regex = r'\d{4}-\d{2}-\d{2}'
@@ -38,6 +44,8 @@ urlpatterns = [
 urlpatterns += [
     path('api/reservations/on/<date:date>/', api_get_reservations_on, name="api-reservations-on"),
     path('api/reservations/by-lot/<str:lot_id>/', api_get_reservation_by_lot, name="api-reservations-by-lot"),
+    path('api/sites/<str:lot_id>/', api_site_by_lot_id, name="api-sites-by-lot"),
+    path('api/workorders/by-lot/<str:lot_id>/', api_workorders_by_lot, name="api-workorders-by-lot"),
 ]
 
 
