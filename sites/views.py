@@ -3,6 +3,8 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
+from django.shortcuts import get_object_or_404
+from django.core import serializers
 from .models import Site
 from reservations.models import Reservation
 from .forms import SiteForm
@@ -83,22 +85,21 @@ class CreateSiteView(LoginRequiredMixin, CreateView):
 
 
 @login_required
-def get_site_info(request, site):
-    if request.method == "POST":
-        data = json.load(request)
-        site, created = Site.objects.get_or_create(lot_id=site)
-        site.info = data["info"]
+def api_site_by_lot_id(request, lot_id):
+    if request.method == "GET":
+        site = get_object_or_404(Site.objects.active(), lot_id=lot_id)
+        data = serializers.serialize("json", [site])
+        return HttpResponse(data, content_type="application/json")
+
+    elif request.method == "PUT":
+        site = get_object_or_404(Site, lot_id=lot_id)
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return HttpResponse(status=400)
+        site.info = data.get("info", site.info)
         site.save()
-        return JsonResponse({
-            "site": Site.objects.filter(pk=site.pk).values().first()
-        })
+        data = serializers.serialize("json", [site])
+        return HttpResponse(data, content_type="application/json", status=200)
 
-    site_info = Site.objects.filter(lot_id=site).values()
-
-    if site_info:
-        return JsonResponse({
-            "site_info": list(site_info),
-            "workorders": WorkOrder.objects.active().get_by_site(site).count()
-        })
-    
-    return HttpResponse(status=404)
+    return HttpResponse(status=405)
