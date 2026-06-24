@@ -103,3 +103,12 @@ def api_site_by_lot_id(request, lot_id):
         return HttpResponse(data, content_type="application/json", status=200)
 
     return HttpResponse(status=405)
+
+@login_required
+def api_sites_under_maintenance(request):
+    if request.method == "GET":
+        sites = Site.objects.active().under_maintenance()
+        data = serializers.serialize("json", sites)
+        return HttpResponse(data, content_type="application/json", status=200)
+    
+    return HttpResponse(status=405)

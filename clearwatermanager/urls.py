@@ -12,7 +12,8 @@ from workorder.views import (
     api_workorders_by_lot
 )
 from sites.views import (
-    api_site_by_lot_id
+    api_site_by_lot_id,
+    api_sites_under_maintenance,
 )
 
 class DateConverter:
@@ -42,6 +43,7 @@ urlpatterns = [
 urlpatterns += [
     path('api/reservations/on/<date:date>/', api_get_reservations_on, name="api-reservations-on"),
     path('api/reservations/by-lot/<str:lot_id>/', api_get_reservation_by_lot, name="api-reservations-by-lot"),
+    path('api/sites/under-maintenance/', api_sites_under_maintenance, name="api-sites-under-maintenance"),
     path('api/sites/<str:lot_id>/', api_site_by_lot_id, name="api-sites-by-lot"),
     path('api/workorders/by-lot/<str:lot_id>/', api_workorders_by_lot, name="api-workorders-by-lot"),
 ]

@@ -22,7 +22,7 @@
         <div class="col-sm-12 col-lg-8 offset-lg-2 my-3">
             
             <!-- SVG Park Map -->
-            {% include 'components/map.html' %}
+            {% include 'components/revised_map.html' %}
 
             <!-- Map Legend -->
             <div class="d-flex flex-wrap justify-content-end mt-2 mb-5">
@@ -37,6 +37,20 @@
                         <rect width="16" height="16" rx="3" fill="rgb(255, 0, 0)"/>
                     </svg>
                     <small class="text-muted">Occupied</small>
+                </div>
+                <div class="d-flex align-items-center mr-3 mb-1">
+                    <svg width="16" height="16" class="mr-1">
+                        <defs>
+                            <pattern id="legend-hatch" patternUnits="userSpaceOnUse" 
+                                    width="4" height="4" patternTransform="rotate(45)">
+                                <rect width="4" height="4" fill="#f7b84a" opacity="0.6"/>
+                                <line x1="0" y1="0" x2="0" y2="4" 
+                                    stroke="#555" stroke-width="1"/>
+                            </pattern>
+                        </defs>
+                        <rect width="16" height="16" rx="3" fill="url(#legend-hatch)"/>
+                    </svg>
+                    <small class="text-muted">Maintenance</small>
                 </div>
             </div>
         </div>

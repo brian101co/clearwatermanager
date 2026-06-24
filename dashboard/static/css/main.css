@@ -224,15 +224,6 @@ body {
     opacity: 0;
 }
 
-#active {
-    fill: red;
-}
-
-[data-site] {
-    cursor: pointer;
-}
-
-
 @media(max-width:800px) {
     .map {
         margin-top: -1.0rem;

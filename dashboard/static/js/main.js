@@ -1,8 +1,6 @@
 window.onload = () => {
-    const lotNodes = document.querySelectorAll("[data-site]");
 
     const state = {
-        activeSiteId: null,
         infoModalBadgeElem: null,
     }
 
@@ -55,7 +53,7 @@ window.onload = () => {
 
     class Map {
         constructor(mapLots) {
-            this.mapLots = mapLots;
+            this.mapLots = document.querySelectorAll("[data-site]");
             this.infoModal = document.querySelector("#site-info");
             this.setEventListeners();
         }
@@ -121,40 +119,56 @@ window.onload = () => {
             fetch(`/api/reservations/on/${today}/`)
                 .then(response => response.json())
                 .then(data => {
-                    this.occupiedLots = data.map(r => ({
+                    const occupiedLots = data.map(r => ({
                         lot_id: r.site__lot_id,
                         name: r.name,
                         end: r.checkout,
                     }));
-                    this.highlightLots();
+                    
+                    this.mapLots.forEach(lot => {
+                        // Reset Map State
+                        lot.classList.remove("occupied")
+                        const existingTitle = lot.querySelector("title");
+                        if (existingTitle) existingTitle.remove();
+
+                        // Set New Map State
+                        const siteNum = lot.getAttribute("data-site");
+                        const reservation = occupiedLots.find(r => r.lot_id === siteNum);
+                        if (reservation) {
+                            lot.classList.add("occupied");
+                            const titleElem = document.createElementNS("http://www.w3.org/2000/svg", "title");
+                            titleElem.textContent = `${reservation.name} — Checkout: ${new Date(reservation.end).toDateString()}`;
+                            lot.appendChild(titleElem);
+                        }
+                    });
                 })
                 .catch(err => {
                     console.error('Failed to load occupied lots:', err);
                 });
         }
 
-        highlightLots() {
-            this.mapLots.forEach(lot => {
-                lot.removeAttribute("id");
-                const existingTitle = lot.querySelector("title");
-                if (existingTitle) existingTitle.remove();
-            });
-            
-            this.mapLots.forEach(lot => {
-                const siteNum = lot.getAttribute("data-site");
-                const reservation = this.occupiedLots.find(r => r.lot_id === siteNum);
-                if (reservation) {
-                    lot.setAttribute("id", "active");
-                    const titleElem = document.createElementNS("http://www.w3.org/2000/svg", "title");
-                    titleElem.textContent = `${reservation.name} — Checkout: ${new Date(reservation.end).toDateString()}`;
-                    lot.appendChild(titleElem);
-                }
-            })
+        loadLotsUnderMaintenance() {
+            fetch(`/api/sites/under-maintenance/`)
+                .then(response => response.json())
+                .then(data => {         
+                    this.mapLots.forEach(lot => {
+                        lot.classList.remove("maintenance")
+                        
+                        const siteNum = lot.getAttribute("data-site");
+                        const lotUnderMaintenance = data.find(s => s.fields.lot_id === siteNum);
+                        if (lotUnderMaintenance) lot.classList.add("maintenance");
+                    });
+                })
+                .catch(err => {
+                    console.error('Failed to load lots:', err);
+                });
         }
+
     }
 
-    const NewMap = new Map(lotNodes);
-    NewMap.loadOccupiedLots();
+    const ParkMap = new Map();
+    ParkMap.loadOccupiedLots();
+    ParkMap.loadLotsUnderMaintenance();
 
     const checkinPicker = flatpickr("#checkin", {
         enableTime: true,
@@ -180,7 +194,10 @@ window.onload = () => {
         minDate: "today",
     });
 
-    setInterval(() => NewMap.loadOccupiedLots(), 600000);
+    setInterval(() => {
+        ParkMap.loadOccupiedLots();
+        ParkMap.loadLotsUnderMaintenance();
+    }, 600000);
 
     $('.checkout-form').on('submit', function(e) {
         if (!confirm('Are you sure you want to check this guest out?')) {
