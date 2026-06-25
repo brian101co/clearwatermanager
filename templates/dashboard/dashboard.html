@@ -3,7 +3,6 @@
 {% load static %}
 
 {% block extraCSS %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <style>
 .notification-banner {
     background-color: #fff3cd;
@@ -143,7 +142,7 @@
                 <span class="badge badge-success badge-pill ml-2">{{ checking_in_tomorrow|length }}</span>
             </h2>
             {% for guest in checking_in_tomorrow %}
-                {% include "dashboard/partials/notification_card.html" with reservation=guest border_color="#28a745" date_label="Checkin" date_value=guest.checkout show_checkout=False %}           
+                {% include "dashboard/partials/notification_card.html" with reservation=guest border_color="#28a745" date_label="Checkin" date_value=guest.checkin show_checkout=False %}           
             {% empty %}
                 <p class="text-muted small">No checkins tomorrow.</p>
             {% endfor %}
@@ -184,5 +183,4 @@
 
 {% block extraJS %}
 <script src="{% static 'js/main.js' %}"></script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 {% endblock %}

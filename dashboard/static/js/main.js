@@ -170,30 +170,6 @@ window.onload = () => {
     ParkMap.loadOccupiedLots();
     ParkMap.loadLotsUnderMaintenance();
 
-    const checkinPicker = flatpickr("#checkin", {
-        enableTime: true,
-        dateFormat: "m/d/Y H:i",
-        minuteIncrement: 30,
-        allowInput: true,
-        time_24hr: true,
-        minDate: "today",
-        onChange: function(selectedDates) {
-            // When checkin changes, update checkout's minDate
-            if (selectedDates.length > 0) {
-                checkoutPicker.set("minDate", selectedDates[0]);
-            }
-        }
-    });
-
-    const checkoutPicker = flatpickr("#checkout", {
-        enableTime: true,
-        dateFormat: "m/d/Y H:i",
-        minuteIncrement: 30,
-        allowInput: true,
-        time_24hr: true,
-        minDate: "today",
-    });
-
     setInterval(() => {
         ParkMap.loadOccupiedLots();
         ParkMap.loadLotsUnderMaintenance();
