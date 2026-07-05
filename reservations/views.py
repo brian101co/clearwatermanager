@@ -115,7 +115,14 @@ class DeleteReservationView(LoginRequiredMixin, DeleteView):
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
-        metric, created = Metric.objects.get_or_create(customer=self.object)
+        metric, created = Metric.objects.get_or_create(
+            customer=self.object,
+            defaults={
+                "start": self.object.checkin,
+                "end": self.object.checkout,
+                "site": self.object.site.lot_id,
+            }
+        )
         metric.canceled = True
         metric.save()
         messages.success(request, f"Reservation for {self.object.name} has been canceled.")
@@ -136,11 +143,19 @@ class EditReservationView(LoginRequiredMixin, UpdateView):
 
         if not Reservation.objects.active().get_by_site(site.lot_id).exclude(pk=self.kwargs["id"]).overlapping(checkin, checkout).exists():
             self.object = form.save()
-            metric, created = Metric.objects.get_or_create(customer=self.object)
-            metric.start = checkin
-            metric.end = checkout
-            metric.site = site.lot_id
-            metric.save()
+            metric, created = Metric.objects.get_or_create(
+                customer=self.object,
+                defaults={
+                    "start": checkin,
+                    "end": checkout,
+                    "site": site.lot_id,
+                }
+            )
+            if not created:
+                metric.start = checkin
+                metric.end = checkout
+                metric.site = site.lot_id
+                metric.save()
             messages.success(self.request, f"Reservation for {self.object.name} has been updated.")
             return redirect('reservation-detail', id=self.kwargs["id"])
         
