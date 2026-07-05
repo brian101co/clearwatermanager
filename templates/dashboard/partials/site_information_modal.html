@@ -1,18 +1,73 @@
-<div class="modal fade" id="site-info" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="form">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Site Information</h5>
-      </div>
-      <div class="modal-body info-model-body">
-        <p class="content py-2 px-3" contenteditable="true"></p>
-        <button type="button" data-dismiss="modal" class="btn btn-primary save" aria-label="Save">
-          Save
-        </button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">
-          Close
-        </button>
-      </div>
+<div class="modal fade" id="site-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="form">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Site <span id="site-modal-lot-id"></span>
+                </h5>
+                <div>
+                    <span id="site-modal-lot-type" class="badge badge-secondary"></span>
+                    <span id="site-modal-maintenance" class="badge badge-warning ml-1 d-none">
+                        ⚠ Maintenance
+                    </span>
+
+                    <!-- Workorders -->
+                    <span class="badge badge-danger d-none" id="site-modal-workorders">
+                        <span id="site-modal-workorder-count"></span> Open Work Order(s)
+                    </span>
+                   
+                </div>
+            </div>
+
+            <div class="modal-body info-model-body">
+
+                <div class="card shadow-sm mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Amenities</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush">
+                            <!-- JavaScript Inserts List Items via API -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Editable Info Card -->
+                <div class="card shadow-sm mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="content py-2 px-3 border rounded" contenteditable="true"
+                        id="site-modal-info">
+                            No information provided.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mt-3 active-reservations">
+                    <h6>Active Reservations</h6>
+                
+                
+                </div>
+
+                <div class="d-flex justify-content-between mt-3">
+                    <button type="button" 
+                            class="btn btn-secondary" 
+                            data-dismiss="modal" 
+                            aria-label="Close">
+                        Close
+                    </button>
+                    <button type="button" 
+                            data-dismiss="modal" 
+                            class="btn btn-primary save" 
+                            aria-label="Save">
+                        Save
+                    </button>
+                </div>
+
+            </div>
+        </div>
     </div>
-  </div>
 </div>
