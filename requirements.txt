@@ -20,7 +20,7 @@ django-crispy-forms==2.6
     #   crispy-bootstrap4
 django-debug-toolbar==7.0.0
     # via -r requirements.in
-pillow==12.2.0
+pillow==12.3.0
     # via -r requirements.in
 python-dotenv==1.2.2
     # via -r requirements.in
